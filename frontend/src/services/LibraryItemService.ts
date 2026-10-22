@@ -4,8 +4,9 @@ import type {
   LibrarySort,
 } from "../types/library";
 import axios from "axios";
+import API_BASE_URL from "../api";
 
-const API_BASEURL = "http://localhost:5001/api/library-items";
+const API_BASEURL = `${API_BASE_URL}/library-items`;
 
 export async function borrowLibraryItem(id: string, borrower: string) {
   return axios.post<LibraryItem>(`${API_BASEURL}/${id}/borrow`, {

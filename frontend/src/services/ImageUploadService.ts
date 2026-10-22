@@ -1,6 +1,7 @@
 import axios from "axios";
+import API_BASE_URL from "../api";
 
-const UPLOAD_URL = "http://localhost:5001/api/upload";
+const UPLOAD_URL = `${API_BASE_URL}/upload`;
 
 interface ImageUploadResponse {
   imageUrl: string;
