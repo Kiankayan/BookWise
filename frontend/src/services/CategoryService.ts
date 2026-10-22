@@ -3,6 +3,7 @@ import type { Category } from "../types/library";
 import API_BASE_URL from "../api";
 
 const API_BASEURL = `${API_BASE_URL}/categories`;
+
 export async function getCategories() {
   return axios.get<Category[]>(API_BASEURL);
 }
