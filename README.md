@@ -2,15 +2,19 @@
 
 A full-stack library management system built with React, TypeScript, Node.js, Express, Prisma, PostgreSQL, and Cloudinary.
 
-BookWise helps users manage library items, organize categories, and handle borrowing and returns through a clean web interface.
+BookWise is a library management application that allows users to manage library items, organize categories, upload cover images, and handle borrowing and returns through a clean web interface.
+
+**Live Demo:** [BookWise](https://bookwise-books.vercel.app)
 
 ## Features
 
-- Manage library items: create, view, edit, and delete.
-- Organize items into categories.
-- Handle borrowing, returns, and due dates.
-- Upload item images using Cloudinary.
-- Validate data on the frontend and backend.
+- Create, view, edit, and delete library items.
+- Organize library items into categories.
+- Borrow and return items.
+- Track borrowing and due dates.
+- Upload cover images using Cloudinary.
+- Validate data on both the frontend and backend.
+- Store library data in a PostgreSQL database.
 
 ## Tech Stack
 
@@ -19,6 +23,7 @@ BookWise helps users manage library items, organize categories, and handle borro
 - **Database:** PostgreSQL, Prisma ORM
 - **Validation:** Zod
 - **Image Uploads:** Cloudinary
+- **Deployment:** Vercel (frontend and database), Render (backend)
 
 ## Project Structure
 
@@ -31,12 +36,67 @@ BookWise/
 
 ## Getting Started
 
-Install dependencies in both the `frontend` and `backend` directories using `npm install`.
+### Prerequisites
 
-Configure the required environment variables before starting the applications.
+- Node.js and npm
+- A PostgreSQL database
+- A Cloudinary account for image uploads
 
-Run the frontend with `npm run dev` from the `frontend` directory. Start the backend using the scripts defined in `backend/package.json`.
+### Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/Kiankayan/BookWise.git
+cd BookWise
+```
+
+Install the frontend dependencies:
+
+```bash
+cd frontend
+npm install
+```
+
+Install the backend dependencies:
+
+```bash
+cd ../backend
+npm install
+```
+
+### Environment Variables
+
+Configure the required environment variables in the backend and frontend before running the application locally.
+
+- **Backend:** Database connection and Cloudinary configuration.
+- **Frontend:** `VITE_API_URL`, pointing to the backend API.
+
+Use the example environment file in the frontend as a reference. Never commit secret environment variables to GitHub.
+
+### Running Locally
+
+Start the backend using the scripts defined in `backend/package.json`.
+
+Start the frontend from the `frontend` directory:
+
+```bash
+npm run dev
+```
+
+Make sure the frontend's `VITE_API_URL` points to the running backend.
+
+## Deployment
+
+- **Frontend:** Vercel
+- **Backend:** Render
+- **Database:** Vercel PostgreSQL
+- **Image Storage:** Cloudinary
 
 ## Project Status
 
-BookWise is being prepared for independent deployment as a portfolio project.
+BookWise is deployed as a full-stack portfolio project. The live application has been tested for library item management, image uploads, and data persistence.
+
+## License
+
+This project is available as a portfolio project. No separate license has been specified.
