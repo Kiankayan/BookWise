@@ -174,9 +174,6 @@ router.post("/:id/borrow", async (req, res) => {
       where: {
         id: req.params.id,
       },
-      include: {
-        category: true,
-      },
     });
 
     if (!libraryItem) {
@@ -191,31 +188,42 @@ router.post("/:id/borrow", async (req, res) => {
       });
     }
 
-    if (libraryItem.borrower || libraryItem.borrowDate) {
-      return res.status(409).json({
-        message: "Library item är redan utlånat.",
-      });
-    }
+    const now = new Date();
 
-    const updatedLibraryItem = await prisma.libraryItem.update({
+    const resultUpdate = await prisma.libraryItem.updateMany({
       where: {
         id: req.params.id,
+        isBorrowable: true,
+        borrower: null,
+        borrowDate: null,
       },
       data: {
         borrower: result.data.borrower,
-        borrowDate: new Date(),
-        dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000),
+        borrowDate: now,
+        dueDate: new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000),
+      },
+    });
+
+    if (resultUpdate.count === 0) {
+      return res.status(409).json({
+        message: "Library item är redan utlånat eller kan inte lånas.",
+      });
+    }
+
+    const updatedLibraryItem = await prisma.libraryItem.findUnique({
+      where: {
+        id: req.params.id,
       },
       include: {
         category: true,
       },
     });
 
-    res.json(updatedLibraryItem);
+    return res.json(updatedLibraryItem);
   } catch (error) {
     console.error(error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Kunde inte låna library item.",
     });
   }
