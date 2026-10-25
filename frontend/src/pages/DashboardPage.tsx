@@ -7,6 +7,15 @@ import {
   CircleCheck,
   CircleAlert,
 } from "lucide-react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { motion, useReducedMotion } from "motion/react";
 
 type DashboardPageProps = {
@@ -23,6 +32,17 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
   ).length;
 
   const availableItems = libraryItems.length - borrowedItems;
+
+  const availabilityData = [
+    {
+      name: "Utlånade",
+      antal: borrowedItems,
+    },
+    {
+      name: "Tillgängliga",
+      antal: availableItems,
+    },
+  ];
 
   const now = new Date();
 
@@ -157,6 +177,31 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
             </article>
           );
         })}
+      </section>
+
+      <section className="dashboard-chart-card">
+        <div className="dashboard-chart-header">
+          <p className="eyebrow">BIBLIOTEKSSTATISTIK</p>
+          <h3>Utlånade kontra tillgängliga</h3>
+          <p>Fördelningen av bibliotekets material just nu.</p>
+        </div>
+
+        <div className="dashboard-chart-container">
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={availabilityData}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} />
+              <XAxis dataKey="name" />
+              <YAxis allowDecimals={false} />
+              <Tooltip />
+              <Bar
+                dataKey="antal"
+                name="Antal material"
+                fill="#8b5cf6"
+                radius={[6, 6, 0, 0]}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </section>
 
       <section className="dashboard-recent-loans">
