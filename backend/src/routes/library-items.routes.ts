@@ -246,6 +246,7 @@ router.post("/:id/borrow", async (req, res) => {
           itemTitle: item.title,
           categoryId: item.categoryId,
           categoryName: item.category.name,
+          dueDate: item.dueDate,
         },
       });
 

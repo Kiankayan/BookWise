@@ -1086,6 +1086,40 @@ button:active {
   margin-bottom: 22px;
 }
 
+.dashboard-stat-change {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #e8f8ee;
+  color: #16803d;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.dashboard-stat-change.is-no-history {
+  background: #e8f8ee;
+  color: #15803d;
+}
+
+.dashboard-stat-change.is-neutral {
+  background: #e8f2ff;
+  color: #2878d0;
+}
+
+.dashboard-stat-change.is-positive {
+  background: #e8f8ee;
+  color: #15803d;
+}
+
+.dashboard-stat-change.is-negative {
+  background: #fde8e7;
+  color: #dc2626;
+}
+
 .dashboard-stat-icon {
   display: grid;
   place-items: center;

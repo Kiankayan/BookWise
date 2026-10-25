@@ -1,12 +1,18 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Category, LibraryItem } from "../types/library";
 import { getLibraryItemImage } from "../utils/libraryItemImage";
+import { getDashboardStats } from "../services/dashboardService";
+import type { DashboardStatsResponse } from "../services/dashboardService";
 import {
   BookOpen,
   Tags,
   ArrowUpRight,
   CircleCheck,
   CircleAlert,
+  ChartNoAxesCombined,
+  TrendingUp,
+  TrendingDown,
 } from "lucide-react";
 import {
   Bar,
@@ -31,6 +37,27 @@ type DashboardPageProps = {
 function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
   const navigate = useNavigate();
   const shouldReduceMotion = useReducedMotion();
+
+  const [dashboardStats, setDashboardStats] =
+    useState<DashboardStatsResponse | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    getDashboardStats()
+      .then((data) => {
+        if (isMounted) {
+          setDashboardStats(data);
+        }
+      })
+      .catch((error) => {
+        console.error("Kunde inte hämta dashboardstatistik.", error);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const borrowedItems = libraryItems.filter(
     (item) => item.borrower !== null,
@@ -85,30 +112,35 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
 
   const stats = [
     {
+      key: "totalItems",
       label: "Totalt material",
       value: libraryItems.length,
       icon: BookOpen,
       description: "Bibliotekets samlade material",
     },
     {
+      key: "categories",
       label: "Kategorier",
       value: categories.length,
       icon: Tags,
       description: "Organiserade kategorier",
     },
     {
+      key: "borrowed",
       label: "Utlånade",
       value: borrowedItems,
       icon: ArrowUpRight,
       description: "Material som är utlånat",
     },
     {
+      key: "available",
       label: "Tillgängliga",
       value: availableItems,
       icon: CircleCheck,
       description: "Material som inte är utlånat",
     },
     {
+      key: "overdue",
       label: "Försenade lån",
       value: overdueItems,
       icon: CircleAlert,
@@ -174,6 +206,10 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
       <section className="dashboard-stats" aria-label="Biblioteksstatistik">
         {stats.map((stat, index) => {
           const Icon = stat.icon;
+          const comparison = dashboardStats?.stats.find(
+            (entry) => entry.key === stat.key,
+          );
+          const change = comparison?.change ?? 0;
 
           return (
             <article className="dashboard-stat-card" key={stat.label}>
@@ -189,6 +225,29 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
                 <div className="dashboard-stat-top">
                   <span className="dashboard-stat-icon" aria-hidden="true">
                     <Icon size={22} strokeWidth={1.8} />
+                  </span>
+
+                  <span
+                    className={`dashboard-stat-change ${
+                      change > 0
+                        ? "is-positive"
+                        : change < 0
+                          ? "is-negative"
+                          : "is-neutral"
+                    }`}
+                  >
+                    {change > 0 ? (
+                      <TrendingUp size={14} strokeWidth={2.5} />
+                    ) : change < 0 ? (
+                      <TrendingDown size={14} strokeWidth={2.5} />
+                    ) : (
+                      <ChartNoAxesCombined size={14} strokeWidth={2.5} />
+                    )}
+
+                    <span>
+                      {change > 0 ? "+" : ""}
+                      {change}%
+                    </span>
                   </span>
                 </div>
 

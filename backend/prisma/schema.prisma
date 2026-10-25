@@ -50,11 +50,12 @@ enum LibraryEventType {
 }
 
 model LibraryEvent {
-  id        String           @id @default(cuid())
-  type      LibraryEventType
-  createdAt DateTime         @default(now())
-  itemId    String?
-  itemTitle String?
-  categoryId String?
+  id           String           @id @default(cuid())
+  type         LibraryEventType
+  createdAt    DateTime         @default(now())
+  itemId       String?
+  itemTitle    String?
+  categoryId   String?
   categoryName String?
+  dueDate      DateTime?
 }

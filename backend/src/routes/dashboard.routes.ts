@@ -12,29 +12,139 @@ router.get("/stats", async (_req, res) => {
       now.getMonth() - 1,
       1,
     );
+    const nextMonthStart = new Date(now.getFullYear(), now.getMonth() + 1, 1);
 
-    const [currentMonthEvents, previousMonthEvents] = await Promise.all([
-      prisma.libraryEvent.count({
-        where: {
-          createdAt: {
-            gte: currentMonthStart,
-            lt: new Date(now.getFullYear(), now.getMonth() + 1, 1),
-          },
+    const [items, categories, events] = await Promise.all([
+      prisma.libraryItem.findMany({
+        select: {
+          id: true,
+          borrower: true,
+          dueDate: true,
         },
       }),
-      prisma.libraryEvent.count({
+      prisma.category.count(),
+      prisma.libraryEvent.findMany({
         where: {
           createdAt: {
-            gte: previousMonthStart,
-            lt: currentMonthStart,
+            lt: nextMonthStart,
           },
+        },
+        orderBy: {
+          createdAt: "desc",
         },
       }),
     ]);
 
+    const itemEvents = events.filter((event) => event.itemId !== null);
+
+    const categoryEvents = events.filter(
+      (event) =>
+        event.type === "CATEGORY_CREATED" || event.type === "CATEGORY_DELETED",
+    );
+
+    const currentBorrowed = items.filter(
+      (item) => item.borrower !== null,
+    ).length;
+
+    const currentAvailable = items.length - currentBorrowed;
+
+    const currentOverdue = items.filter(
+      (item) =>
+        item.borrower !== null && item.dueDate !== null && item.dueDate < now,
+    ).length;
+
+    const getPreviousItemCount = () => {
+      let count = items.length;
+
+      for (const event of itemEvents) {
+        if (event.createdAt >= currentMonthStart) {
+          if (event.type === "ITEM_CREATED") count -= 1;
+          if (event.type === "ITEM_DELETED") count += 1;
+        }
+      }
+
+      return count;
+    };
+
+    const getPreviousCategoryCount = () => {
+      let count = categories;
+
+      for (const event of categoryEvents) {
+        if (event.createdAt >= currentMonthStart) {
+          if (event.type === "CATEGORY_CREATED") count -= 1;
+          if (event.type === "CATEGORY_DELETED") count += 1;
+        }
+      }
+
+      return count;
+    };
+
+    const getPreviousBorrowedCount = () => {
+      let count = currentBorrowed;
+
+      for (const event of events) {
+        if (event.createdAt >= currentMonthStart) {
+          if (event.type === "BORROWED") count -= 1;
+          if (event.type === "RETURNED") count += 1;
+        }
+      }
+
+      return count;
+    };
+
+    const previousItems = getPreviousItemCount();
+    const previousCategories = getPreviousCategoryCount();
+    const previousBorrowed = getPreviousBorrowedCount();
+
+    const hasPreviousMonthHistory = events.some(
+      (event) =>
+        event.createdAt >= previousMonthStart &&
+        event.createdAt < currentMonthStart,
+    );
+
+    const hasReliableComparison = hasPreviousMonthHistory;
+
+    const stats = [
+      {
+        key: "totalItems",
+        current: items.length,
+        previous: previousItems,
+      },
+      {
+        key: "categories",
+        current: categories,
+        previous: previousCategories,
+      },
+      {
+        key: "borrowed",
+        current: currentBorrowed,
+        previous: previousBorrowed,
+      },
+      {
+        key: "available",
+        current: currentAvailable,
+        previous: previousItems - previousBorrowed,
+      },
+      {
+        key: "overdue",
+        current: currentOverdue,
+        previous: null,
+      },
+    ].map((stat) => {
+      const change =
+        !hasReliableComparison || stat.previous === null || stat.previous === 0
+          ? null
+          : Math.round(((stat.current - stat.previous) / stat.previous) * 100);
+
+      return {
+        ...stat,
+        change,
+      };
+    });
+
     res.json({
-      currentMonthEvents,
-      previousMonthEvents,
+      stats,
+      hasPreviousMonthHistory,
     });
   } catch (error) {
     console.error(error);
