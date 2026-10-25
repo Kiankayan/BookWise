@@ -18,6 +18,7 @@ import {
 } from "../services/LibraryItemService";
 import EditLibraryItemForm from "./EditLibraryItemForm";
 import type { Category, LibraryItem, LibrarySort } from "../types/library";
+import BookDetailsModal from "./BookDetailsModal";
 
 interface LibraryItemListProps {
   libraryItems: LibraryItem[];
@@ -77,6 +78,7 @@ function LibraryItemList({
   const [borrower, setBorrower] = useState("");
   const [borrowError, setBorrowError] = useState("");
   const [itemToReturn, setItemToReturn] = useState<LibraryItem | null>(null);
+  const [selectedItem, setSelectedItem] = useState<LibraryItem | null>(null);
 
   const normalizedSearchTerm = searchTerm.trim().toLowerCase();
 
@@ -240,10 +242,34 @@ function LibraryItemList({
             key={item.id}
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
+            whileHover={{ y: -5, scale: 1.015 }}
             transition={{
-              duration: 0.4,
+              duration: 0.25,
               delay: Math.min(index * 0.08, 0.48),
               ease: "easeOut",
+            }}
+            onClick={(event) => {
+              if (
+                event.target instanceof Element &&
+                event.target.closest("button, input, select, textarea, a")
+              ) {
+                return;
+              }
+
+              if (editingItemId !== item.id) {
+                setSelectedItem(item);
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            aria-label={`Visa detaljer för ${item.title}`}
+            onKeyDown={(event) => {
+              if (event.target !== event.currentTarget) return;
+
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                setSelectedItem(item);
+              }
             }}
           >
             {editingItemId === item.id ? (
@@ -604,6 +630,11 @@ function LibraryItemList({
           </MuiButton>
         </DialogActions>
       </Dialog>
+
+      <BookDetailsModal
+        item={selectedItem}
+        onClose={() => setSelectedItem(null)}
+      />
     </div>
   );
 }

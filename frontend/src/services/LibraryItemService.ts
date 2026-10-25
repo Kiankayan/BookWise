@@ -26,6 +26,10 @@ export async function getLibraryItems(sort: LibrarySort = "title-asc") {
   });
 }
 
+export async function getLibraryItem(id: string) {
+  return axios.get<LibraryItem>(`${API_BASEURL}/${id}`);
+}
+
 export async function createLibraryItem(data: LibraryItemInput) {
   return axios.post<LibraryItem>(API_BASEURL, data);
 }
