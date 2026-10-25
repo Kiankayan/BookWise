@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import type { Category, LibraryItem } from "../types/library";
+import { getLibraryItemImage } from "../utils/libraryItemImage";
 import {
   BookOpen,
   Tags,
@@ -285,13 +286,25 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
 
                 return (
                   <article className="dashboard-recent-loan" key={item.id}>
-                    <div className="dashboard-recent-loan-info">
-                      <h4>{item.title}</h4>
-                      <p>Låntagare: {item.borrower}</p>
-                      <p>
-                        Utlånad:{" "}
-                        {new Date(item.borrowDate!).toLocaleDateString("sv-SE")}
-                      </p>
+                    <div className="dashboard-recent-loan-details">
+                      <img
+                        className={`dashboard-recent-loan-cover ${
+                          item.imageUrl ? "" : "is-default-image"
+                        }`}
+                        src={getLibraryItemImage(item)}
+                        alt={`Omslag till ${item.title}`}
+                      />
+
+                      <div className="dashboard-recent-loan-info">
+                        <h4>{item.title}</h4>
+                        <p>Låntagare: {item.borrower}</p>
+                        <p>
+                          Utlånad:{" "}
+                          {new Date(item.borrowDate!).toLocaleDateString(
+                            "sv-SE",
+                          )}
+                        </p>
+                      </div>
                     </div>
 
                     <span

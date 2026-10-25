@@ -1191,6 +1191,43 @@ button:active {
   border-color: #d8ccff;
 }
 
+.dashboard-recent-loan-details {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.dashboard-recent-loan-cover,
+.dashboard-recent-loan-cover-placeholder {
+  width: 48px;
+  height: 64px;
+  flex-shrink: 0px;
+  border-radius: 6px;
+}
+
+.dashboard-recent-loan-cover {
+  display: block;
+  object-fit: cover;
+  background: #f3effa;
+}
+
+.dashboard-recent-loan-cover-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8b5cf6;
+  background: #f3effa;
+}
+
+.dashboard-recent-loan-cover.is-default-image {
+  object-fit: contain;
+  padding: 0px;
+  box-sizing: border-box;
+  background: #ffffff;
+}
+
 .dashboard-recent-loan-info {
   min-width: 0;
 }
