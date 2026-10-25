@@ -53,7 +53,7 @@ function App() {
         await Promise.all([loadCategories(), loadLibraryItems()]);
       } finally {
         const elapsedTime = Date.now() - startTime;
-        const remainingTime = Math.max(0, 3000 - elapsedTime);
+        const remainingTime = Math.max(0, 1500 - elapsedTime);
 
         setTimeout(() => {
           setIsLoading(false);
