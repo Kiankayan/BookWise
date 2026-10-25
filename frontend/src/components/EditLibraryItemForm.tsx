@@ -24,6 +24,7 @@ function EditLibraryItemForm({
   const [categoryId, setCategoryId] = useState(item.categoryId);
   const [title, setTitle] = useState(item.title);
   const [author, setAuthor] = useState(item.author ?? "");
+  const [isbn, setIsbn] = useState(item.isbn ?? "");
   const [nbrPages, setNbrPages] = useState(item.nbrPages?.toString() ?? "");
   const [runTimeMinutes, setRunTimeMinutes] = useState(
     item.runTimeMinutes?.toString() ?? "",
@@ -52,6 +53,7 @@ function EditLibraryItemForm({
   function handleTypeChange(newType: LibraryItemType) {
     setType(newType);
     setAuthor("");
+    setIsbn("");
     setNbrPages("");
     setRunTimeMinutes("");
     setIsBorrowable(newType !== "REFERENCE_BOOK");
@@ -66,6 +68,7 @@ function EditLibraryItemForm({
       isBorrowable,
       type,
       author,
+      isbn,
       nbrPages,
       runTimeMinutes,
     });
@@ -144,6 +147,7 @@ function EditLibraryItemForm({
         categoryId={categoryId}
         title={title}
         author={author}
+        isbn={isbn}
         nbrPages={nbrPages}
         runTimeMinutes={runTimeMinutes}
         isBorrowable={isBorrowable}
@@ -151,6 +155,7 @@ function EditLibraryItemForm({
         onCategoryChange={setCategoryId}
         onTitleChange={setTitle}
         onAuthorChange={setAuthor}
+        onIsbnChange={setIsbn}
         onNbrPagesChange={setNbrPages}
         onRunTimeMinutesChange={setRunTimeMinutes}
         onIsBorrowableChange={setIsBorrowable}

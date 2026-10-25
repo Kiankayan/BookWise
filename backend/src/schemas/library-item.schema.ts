@@ -19,6 +19,8 @@ export const createBookSchema = baseLibraryItemSchema.extend({
 
   author: z.string().trim().min(1, "Författare krävs."),
 
+  isbn: z.string().trim().optional(),
+
   nbrPages: z.number().int().positive("Antal sidor måste vara större än 0."),
 });
 
@@ -38,6 +40,8 @@ export const createReferenceBookSchema = baseLibraryItemSchema.extend({
   type: z.literal("REFERENCE_BOOK"),
 
   author: z.string().trim().min(1, "Författare krävs."),
+
+  isbn: z.string().trim().optional(),
 
   nbrPages: z.number().int().positive("Antal sidor måste vara större än 0."),
 

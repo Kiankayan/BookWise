@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { X } from "lucide-react";
 import type { LibraryItem } from "../types/library";
+import { getLibraryItemImage } from "../utils/libraryItemImage";
 
 type BookDetailsModalProps = {
   item: LibraryItem | null;
@@ -39,17 +40,11 @@ function BookDetailsModal({ item, onClose }: BookDetailsModalProps) {
             </button>
 
             <div className="book-details-content">
-              {item.imageUrl ? (
-                <img
-                  className="book-details-cover"
-                  src={item.imageUrl}
-                  alt={`Omslag till ${item.title}`}
-                />
-              ) : (
-                <div className="book-details-cover-placeholder">
-                  Inget omslag
-                </div>
-              )}
+              <img
+                className="book-details-cover"
+                src={getLibraryItemImage(item)}
+                alt={`Omslag till ${item.title}`}
+              />
 
               <div className="book-details-info">
                 <p className="eyebrow">BOKDETALJER</p>
@@ -59,6 +54,12 @@ function BookDetailsModal({ item, onClose }: BookDetailsModalProps) {
                 </p>
 
                 <dl className="book-details-metadata">
+                  {item.isbn && (
+                    <div>
+                      <dt>ISBN</dt>
+                      <dd>{item.isbn}</dd>
+                    </div>
+                  )}
                   <div>
                     <dt>Kategori</dt>
                     <dd>{item.category?.name ?? "Ingen kategori"}</dd>

@@ -7,6 +7,7 @@ interface LibraryItemFieldsProps {
   categoryId: string;
   title: string;
   author: string;
+  isbn: string;
   nbrPages: string;
   runTimeMinutes: string;
   isBorrowable: boolean;
@@ -14,6 +15,7 @@ interface LibraryItemFieldsProps {
   onCategoryChange: (categoryId: string) => void;
   onTitleChange: (title: string) => void;
   onAuthorChange: (author: string) => void;
+  onIsbnChange: (isbn: string) => void;
   onNbrPagesChange: (nbrPages: string) => void;
   onRunTimeMinutesChange: (runTimeMinutes: string) => void;
   onIsBorrowableChange: (isBorrowable: boolean) => void;
@@ -26,6 +28,7 @@ function LibraryItemFields({
   categoryId,
   title,
   author,
+  isbn,
   nbrPages,
   runTimeMinutes,
   isBorrowable,
@@ -33,6 +36,7 @@ function LibraryItemFields({
   onCategoryChange,
   onTitleChange,
   onAuthorChange,
+  onIsbnChange,
   onNbrPagesChange,
   onRunTimeMinutesChange,
   onIsBorrowableChange,
@@ -75,6 +79,17 @@ function LibraryItemFields({
                 type="text"
                 value={author}
                 onChange={(event) => onAuthorChange(event.target.value)}
+              />
+            </div>
+
+            <div className="form-group">
+              <label htmlFor={`${idPrefix}-isbn`}>ISBN (valfritt)</label>
+              <input
+                id={`${idPrefix}-isbn`}
+                type="text"
+                value={isbn}
+                onChange={(event) => onIsbnChange(event.target.value)}
+                maxLength={17}
               />
             </div>
 

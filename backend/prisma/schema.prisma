@@ -25,6 +25,7 @@ model LibraryItem {
   id             String          @id @default(cuid())
   title          String
   author         String?
+  isbn           String?
   nbrPages       Int?
   runTimeMinutes Int?
   type           LibraryItemType

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { createLibraryItem } from "../services/LibraryItemService";
@@ -6,8 +6,8 @@ import type { Category, LibraryItemType } from "../types/library";
 import { libraryItemSchema } from "../schemas/libraryItemSchema";
 import { buildLibraryItemFormData } from "../utils/libraryItemFormUtils";
 import LibraryItemFields from "./LibraryItemFields";
+import ImageDropzone from "./ImageDropzone";
 import { uploadLibraryItemImage } from "../services/ImageUploadService";
-import { CloudUpload } from "lucide-react";
 import axios from "axios";
 
 interface LibraryItemFormProps {
@@ -25,56 +25,16 @@ function LibraryItemForm({
   const [categoryId, setCategoryId] = useState("");
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
+  const [isbn, setIsbn] = useState("");
   const [nbrPages, setNbrPages] = useState("");
   const [runTimeMinutes, setRunTimeMinutes] = useState("");
   const [isBorrowable, setIsBorrowable] = useState(true);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (!imageFile) {
-      setImagePreview(null);
-      return;
-    }
-
-    const previewUrl = URL.createObjectURL(imageFile);
-    setImagePreview(previewUrl);
-
-    return () => URL.revokeObjectURL(previewUrl);
-  }, [imageFile]);
-
-  function handleImageChange(file: File | null) {
-    if (!file) return;
-
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
-
-    if (!allowedTypes.includes(file.type)) {
-      toast.error("Välj en JPG-, PNG- eller WebP-bild.");
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Bilden får vara högst 5 MB.");
-      return;
-    }
-
-    setImageFile(file);
-  }
-
-  function handleDrop(event: React.DragEvent<HTMLDivElement>) {
-    event.preventDefault();
-    setIsDragging(false);
-
-    const file = event.dataTransfer.files[0];
-    handleImageChange(file ?? null);
-  }
 
   function handleTypeChange(newType: LibraryItemType) {
     setType(newType);
     setAuthor("");
+    setIsbn("");
     setNbrPages("");
     setRunTimeMinutes("");
     setIsBorrowable(newType !== "REFERENCE_BOOK");
@@ -89,6 +49,7 @@ function LibraryItemForm({
       isBorrowable,
       type,
       author,
+      isbn,
       nbrPages,
       runTimeMinutes,
     });
@@ -114,6 +75,7 @@ function LibraryItemForm({
 
       setTitle("");
       setAuthor("");
+      setIsbn("");
       setNbrPages("");
       setRunTimeMinutes("");
       setCategoryId("");
@@ -141,66 +103,7 @@ function LibraryItemForm({
 
   return (
     <form className="library-item-form" onSubmit={handleSubmit}>
-      <label htmlFor="library-item-image">Omslagsbild (valfritt)</label>
-
-      <div
-        className={`image-dropzone${isDragging ? " image-dropzone-active" : ""}`}
-        onDragOver={(event) => {
-          event.preventDefault();
-          setIsDragging(true);
-        }}
-        onDragLeave={() => setIsDragging(false)}
-        onDrop={handleDrop}
-        onClick={() => fileInputRef.current?.click()}
-      >
-        <input
-          ref={fileInputRef}
-          id="library-item-image"
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          hidden
-          onChange={(event) => {
-            handleImageChange(event.target.files?.[0] ?? null);
-            event.target.value = "";
-          }}
-        />
-
-        {imagePreview ? (
-          <div className="image-preview-container">
-            <img
-              className="image-preview"
-              src={imagePreview}
-              alt="Förhandsvisning av omslagsbild"
-            />
-
-            <span>{imageFile?.name}</span>
-
-            <button
-              type="button"
-              className="image-remove-button"
-              onClick={(event) => {
-                event.stopPropagation();
-                setImageFile(null);
-
-                if (fileInputRef.current) {
-                  fileInputRef.current.value = "";
-                }
-              }}
-            >
-              Ta bort bild
-            </button>
-          </div>
-        ) : (
-          <div className="image-dropzone-content">
-            <span className="image-upload-icon">
-              <CloudUpload size={32} strokeWidth={1.8} />
-            </span>
-            <strong>Dra och släpp en bild här</strong>
-            <span>eller klicka för att välja från datorn</span>
-            <small>JPG, PNG eller WebP · Max 5 MB</small>
-          </div>
-        )}
-      </div>
+      <ImageDropzone imageFile={imageFile} onImageChange={setImageFile} />
 
       <LibraryItemFields
         idPrefix="create"
@@ -209,6 +112,7 @@ function LibraryItemForm({
         categoryId={categoryId}
         title={title}
         author={author}
+        isbn={isbn}
         nbrPages={nbrPages}
         runTimeMinutes={runTimeMinutes}
         isBorrowable={isBorrowable}
@@ -216,6 +120,7 @@ function LibraryItemForm({
         onCategoryChange={setCategoryId}
         onTitleChange={setTitle}
         onAuthorChange={setAuthor}
+        onIsbnChange={setIsbn}
         onNbrPagesChange={setNbrPages}
         onRunTimeMinutesChange={setRunTimeMinutes}
         onIsBorrowableChange={setIsBorrowable}

@@ -6,6 +6,7 @@ interface LibraryItemFormValues {
   isBorrowable: boolean;
   type: LibraryItemType;
   author: string;
+  isbn: string;
   nbrPages: string;
   runTimeMinutes: string;
 }
@@ -19,6 +20,7 @@ export function buildLibraryItemFormData(
     isBorrowable,
     type,
     author,
+    isbn,
     nbrPages,
     runTimeMinutes,
   } = values;
@@ -31,6 +33,7 @@ export function buildLibraryItemFormData(
     ...(type === "BOOK" || type === "REFERENCE_BOOK"
       ? {
           author: author.trim(),
+          ...(isbn.trim() ? { isbn: isbn.trim() } : {}),
           nbrPages: Number(nbrPages),
         }
       : {}),

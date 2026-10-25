@@ -19,6 +19,7 @@ import {
 import EditLibraryItemForm from "./EditLibraryItemForm";
 import type { Category, LibraryItem, LibrarySort } from "../types/library";
 import BookDetailsModal from "./BookDetailsModal";
+import { getLibraryItemImage } from "../utils/libraryItemImage";
 
 interface LibraryItemListProps {
   libraryItems: LibraryItem[];
@@ -283,15 +284,7 @@ function LibraryItemList({
               <>
                 <img
                   className="library-item-image"
-                  src={
-                    item.imageUrl ??
-                    {
-                      BOOK: "/images/bok.png",
-                      DVD: "/images/dvd.png",
-                      AUDIOBOOK: "/images/ljudbok.png",
-                      REFERENCE_BOOK: "/images/referensbok.png",
-                    }[item.type]
-                  }
+                  src={getLibraryItemImage(item)}
                   alt={`Omslag till ${item.title}`}
                   loading="lazy"
                 />

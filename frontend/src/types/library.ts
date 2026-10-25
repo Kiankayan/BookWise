@@ -9,6 +9,7 @@ export interface LibraryItem {
   id: string;
   title: string;
   author: string | null;
+  isbn: string | null;
   nbrPages: number | null;
   runTimeMinutes: number | null;
   type: LibraryItemType;
@@ -26,6 +27,7 @@ export interface LibraryItemInput {
   categoryId: string;
   isBorrowable: boolean;
   type: LibraryItemType;
+  isbn?: string;
   author?: string;
   nbrPages?: number;
   runTimeMinutes?: number;
