@@ -39,3 +39,22 @@ model LibraryItem {
 
   category       Category @relation(fields: [categoryId], references: [id])
 }
+
+enum LibraryEventType {
+  ITEM_CREATED
+  ITEM_DELETED
+  CATEGORY_CREATED
+  CATEGORY_DELETED
+  BORROWED
+  RETURNED
+}
+
+model LibraryEvent {
+  id        String           @id @default(cuid())
+  type      LibraryEventType
+  createdAt DateTime         @default(now())
+  itemId    String?
+  itemTitle String?
+  categoryId String?
+  categoryName String?
+}

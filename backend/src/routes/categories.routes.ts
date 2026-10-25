@@ -33,10 +33,22 @@ router.post("/", async (req, res) => {
       });
     }
 
-    const category = await prisma.category.create({
-      data: {
-        name: result.data.name,
-      },
+    const category = await prisma.$transaction(async (tx) => {
+      const createdCategory = await tx.category.create({
+        data: {
+          name: result.data.name,
+        },
+      });
+
+      await tx.libraryEvent.create({
+        data: {
+          type: "CATEGORY_CREATED",
+          categoryId: createdCategory.id,
+          categoryName: createdCategory.name,
+        },
+      });
+
+      return createdCategory;
     });
 
     res.status(201).json(category);
@@ -126,10 +138,20 @@ router.delete("/:id", async (req, res) => {
       });
     }
 
-    await prisma.category.delete({
-      where: {
-        id: req.params.id,
-      },
+    await prisma.$transaction(async (tx) => {
+      await tx.libraryEvent.create({
+        data: {
+          type: "CATEGORY_DELETED",
+          categoryId: category.id,
+          categoryName: category.name,
+        },
+      });
+
+      await tx.category.delete({
+        where: {
+          id: req.params.id,
+        },
+      });
     });
 
     res.status(204).send();

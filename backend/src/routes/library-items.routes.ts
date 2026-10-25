@@ -19,8 +19,25 @@ router.post("/", async (req, res) => {
       });
     }
 
-    const libraryItem = await prisma.libraryItem.create({
-      data: result.data,
+    const libraryItem = await prisma.$transaction(async (tx) => {
+      const item = await tx.libraryItem.create({
+        data: result.data,
+        include: {
+          category: true,
+        },
+      });
+
+      await tx.libraryEvent.create({
+        data: {
+          type: "ITEM_CREATED",
+          itemId: item.id,
+          itemTitle: item.title,
+          categoryId: item.categoryId,
+          categoryName: item.category.name,
+        },
+      });
+
+      return item;
     });
 
     res.status(201).json(libraryItem);
@@ -190,34 +207,56 @@ router.post("/:id/borrow", async (req, res) => {
 
     const now = new Date();
 
-    const resultUpdate = await prisma.libraryItem.updateMany({
-      where: {
-        id: req.params.id,
-        isBorrowable: true,
-        borrower: null,
-        borrowDate: null,
-      },
-      data: {
-        borrower: result.data.borrower,
-        borrowDate: now,
-        dueDate: new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000),
-      },
+    const updatedLibraryItem = await prisma.$transaction(async (tx) => {
+      const resultUpdate = await tx.libraryItem.updateMany({
+        where: {
+          id: req.params.id,
+          isBorrowable: true,
+          borrower: null,
+          borrowDate: null,
+        },
+        data: {
+          borrower: result.data.borrower,
+          borrowDate: now,
+          dueDate: new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000),
+        },
+      });
+
+      if (resultUpdate.count === 0) {
+        return null;
+      }
+
+      const item = await tx.libraryItem.findUnique({
+        where: {
+          id: req.params.id,
+        },
+        include: {
+          category: true,
+        },
+      });
+
+      if (!item) {
+        throw new Error("Library item kunde inte hittas efter utlåning.");
+      }
+
+      await tx.libraryEvent.create({
+        data: {
+          type: "BORROWED",
+          itemId: item.id,
+          itemTitle: item.title,
+          categoryId: item.categoryId,
+          categoryName: item.category.name,
+        },
+      });
+
+      return item;
     });
 
-    if (resultUpdate.count === 0) {
+    if (!updatedLibraryItem) {
       return res.status(409).json({
         message: "Library item är redan utlånat eller kan inte lånas.",
       });
     }
-
-    const updatedLibraryItem = await prisma.libraryItem.findUnique({
-      where: {
-        id: req.params.id,
-      },
-      include: {
-        category: true,
-      },
-    });
 
     return res.json(updatedLibraryItem);
   } catch (error) {
@@ -252,21 +291,35 @@ router.post("/:id/return", async (req, res) => {
       });
     }
 
-    const returnedLibraryItem = await prisma.libraryItem.update({
-      where: {
-        id: req.params.id,
-      },
-      data: {
-        borrower: null,
-        borrowDate: null,
-        dueDate: null,
-      },
-      include: {
-        category: true,
-      },
+    const returnedLibraryItem = await prisma.$transaction(async (tx) => {
+      const item = await tx.libraryItem.update({
+        where: {
+          id: req.params.id,
+        },
+        data: {
+          borrower: null,
+          borrowDate: null,
+          dueDate: null,
+        },
+        include: {
+          category: true,
+        },
+      });
+
+      await tx.libraryEvent.create({
+        data: {
+          type: "RETURNED",
+          itemId: libraryItem.id,
+          itemTitle: libraryItem.title,
+          categoryId: libraryItem.categoryId,
+          categoryName: libraryItem.category.name,
+        },
+      });
+
+      return item;
     });
 
-    res.json(returnedLibraryItem);
+    return res.json(returnedLibraryItem);
   } catch (error) {
     console.error(error);
 
@@ -297,10 +350,21 @@ router.delete("/:id", async (req, res) => {
       });
     }
 
-    await prisma.libraryItem.delete({
-      where: {
-        id: req.params.id,
-      },
+    await prisma.$transaction(async (tx) => {
+      await tx.libraryEvent.create({
+        data: {
+          type: "ITEM_DELETED",
+          itemId: libraryItem.id,
+          itemTitle: libraryItem.title,
+          categoryId: libraryItem.categoryId,
+        },
+      });
+
+      await tx.libraryItem.delete({
+        where: {
+          id: req.params.id,
+        },
+      });
     });
 
     return res.status(204).send();
