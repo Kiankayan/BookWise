@@ -11,6 +11,10 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -42,6 +46,23 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
       name: "Tillgängliga",
       antal: availableItems,
     },
+  ];
+
+  const categoryData = categories.map((category) => ({
+    name: category.name,
+    antal: libraryItems.filter((item) => item.categoryId === category.id)
+      .length,
+  }));
+
+  const categoryColors = [
+    "#8b5cf6",
+    "#3b82f6",
+    "#ec4899",
+    "#f59e0b",
+    "#14b8a6",
+    "#a1a1aa",
+    "#6366f1",
+    "#f97316",
   ];
 
   const now = new Date();
@@ -179,74 +200,114 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
         })}
       </section>
 
-      <section className="dashboard-chart-card">
-        <div className="dashboard-chart-header">
-          <p className="eyebrow">BIBLIOTEKSSTATISTIK</p>
-          <h3>Utlånade kontra tillgängliga</h3>
-          <p>Fördelningen av bibliotekets material just nu.</p>
-        </div>
-
-        <div className="dashboard-chart-container">
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={availabilityData}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} />
-              <XAxis dataKey="name" />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Bar
-                dataKey="antal"
-                name="Antal material"
-                fill="#8b5cf6"
-                radius={[6, 6, 0, 0]}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </section>
-
-      <section className="dashboard-recent-loans">
-        <div className="dashboard-recent-loans-header">
-          <div>
-            <p className="eyebrow">UTLÅNINGSÖVERSIKT</p>
-            <h3>Senaste lån</h3>
-            <p>De fem senast utlånade posterna i biblioteket.</p>
+      <div className="dashboard-panels">
+        <section className="dashboard-chart-card">
+          <div className="dashboard-chart-header">
+            <p className="eyebrow">BIBLIOTEKSSTATISTIK</p>
+            <h3>Utlånade kontra tillgängliga</h3>
+            <p>Fördelningen av bibliotekets material just nu.</p>
           </div>
-        </div>
 
-        {recentLoans.length === 0 ? (
-          <p className="dashboard-recent-loans-empty">
-            Det finns inga aktiva lån att visa.
-          </p>
-        ) : (
-          <div className="dashboard-recent-loans-list">
-            {recentLoans.map((item) => {
-              const isOverdue =
-                item.dueDate !== null && new Date(item.dueDate) < now;
+          <div className="dashboard-chart-container">
+            <ResponsiveContainer width="100%" height={220}>
+              <BarChart data={availabilityData}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis dataKey="name" />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Bar
+                  dataKey="antal"
+                  name="Antal material"
+                  fill="#8b5cf6"
+                  radius={[6, 6, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
 
-              return (
-                <article className="dashboard-recent-loan" key={item.id}>
-                  <div className="dashboard-recent-loan-info">
-                    <h4>{item.title}</h4>
-                    <p>Låntagare: {item.borrower}</p>
-                    <p>
-                      Utlånad:{" "}
-                      {new Date(item.borrowDate!).toLocaleDateString("sv-SE")}
-                    </p>
-                  </div>
+        <section className="dashboard-category-card">
+          <div className="dashboard-chart-header">
+            <p className="eyebrow">KATEGORIÖVERSIKT</p>
+            <h3>Material per kategori</h3>
+            <p>Så fördelar sig bibliotekets material mellan kategorierna.</p>
+          </div>
 
-                  <span
-                    className={`dashboard-recent-loan-status ${
-                      isOverdue ? "is-overdue" : "is-borrowed"
-                    }`}
+          {categoryData.length === 0 ? (
+            <p>Det finns inga kategorier att visa.</p>
+          ) : (
+            <div className="dashboard-category-chart-container">
+              <ResponsiveContainer width="100%" height={220}>
+                <PieChart>
+                  <Pie
+                    data={categoryData}
+                    dataKey="antal"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={55}
+                    outerRadius={85}
+                    paddingAngle={3}
                   >
-                    {isOverdue ? "Försenad" : "Utlånad"}
-                  </span>
-                </article>
-              );
-            })}
+                    {categoryData.map((entry, index) => (
+                      <Cell
+                        key={entry.name}
+                        fill={categoryColors[index % categoryColors.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </section>
+
+        <section className="dashboard-recent-loans">
+          <div className="dashboard-recent-loans-header">
+            <div>
+              <p className="eyebrow">UTLÅNINGSÖVERSIKT</p>
+              <h3>Senaste lån</h3>
+              <p>De fem senast utlånade posterna i biblioteket.</p>
+            </div>
           </div>
-        )}
-      </section>
+
+          {recentLoans.length === 0 ? (
+            <p className="dashboard-recent-loans-empty">
+              Det finns inga aktiva lån att visa.
+            </p>
+          ) : (
+            <div className="dashboard-recent-loans-list">
+              {recentLoans.map((item) => {
+                const isOverdue =
+                  item.dueDate !== null && new Date(item.dueDate) < now;
+
+                return (
+                  <article className="dashboard-recent-loan" key={item.id}>
+                    <div className="dashboard-recent-loan-info">
+                      <h4>{item.title}</h4>
+                      <p>Låntagare: {item.borrower}</p>
+                      <p>
+                        Utlånad:{" "}
+                        {new Date(item.borrowDate!).toLocaleDateString("sv-SE")}
+                      </p>
+                    </div>
+
+                    <span
+                      className={`dashboard-recent-loan-status ${
+                        isOverdue ? "is-overdue" : "is-borrowed"
+                      }`}
+                    >
+                      {isOverdue ? "Försenad" : "Utlånad"}
+                    </span>
+                  </article>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      </div>
 
       <section className="dashboard-overview-card">
         <div className="dashboard-overview-content">

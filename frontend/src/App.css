@@ -1175,11 +1175,11 @@ button:active {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   min-width: 0;
-  padding: 16px 18px;
+  padding: 12px 14px;
   border: 1px solid #eeeaf7;
-  border-radius: 14px;
+  border-radius: 12px;
   background: #fcfbff;
   transition:
     border-color 0.2s ease,
@@ -2059,5 +2059,97 @@ button:active {
 
   .book-details-metadata {
     grid-template-columns: 1fr;
+  }
+}
+
+.dashboard-panels {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: 18px;
+  min-width: 0;
+}
+
+.dashboard-chart-card,
+.dashboard-category-card {
+  min-width: 0;
+  padding: 20px 18px;
+  border: 1px solid var(--bookwise-border, #eeeaf7);
+  border-radius: 18px;
+  background: var(--bookwise-surface, #ffffff);
+  box-shadow: 0 5px 20px rgba(55, 35, 91, 0.025);
+}
+
+.dashboard-chart-header {
+  min-width: 0;
+  margin-bottom: 16px;
+}
+
+.dashboard-chart-header h3 {
+  margin: 0;
+  color: var(--bookwise-text, #302642);
+  font-size: 16px;
+  font-weight: 750;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.dashboard-chart-header p:not(.eyebrow) {
+  margin: 8px 0 0;
+  color: var(--bookwise-muted, #807990);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.dashboard-chart-container,
+.dashboard-category-chart-container {
+  width: 100%;
+  min-width: 0;
+}
+
+.dashboard-category-card > p {
+  color: var(--bookwise-muted, #807990);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.dashboard-category-chart-container .recharts-legend-wrapper {
+  font-size: 12px;
+}
+
+.dashboard-recent-loans {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1250px) {
+  .dashboard-panels {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-recent-loans {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 850px) {
+  .dashboard-panels {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dashboard-recent-loans {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-chart-card,
+  .dashboard-category-card,
+  .dashboard-recent-loans {
+    padding: 20px 16px;
+  }
+
+  .dashboard-chart-header h3 {
+    font-size: 15px;
   }
 }
