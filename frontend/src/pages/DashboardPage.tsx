@@ -1,6 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import type { Category, LibraryItem } from "../types/library";
-import { BookOpen, Tags, ArrowUpRight, CircleCheck } from "lucide-react";
+import {
+  BookOpen,
+  Tags,
+  ArrowUpRight,
+  CircleCheck,
+  CircleAlert,
+} from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
 
 type DashboardPageProps = {
@@ -17,6 +23,23 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
   ).length;
 
   const availableItems = libraryItems.length - borrowedItems;
+
+  const now = new Date();
+
+  const overdueItems = libraryItems.filter(
+    (item) =>
+      item.borrower !== null &&
+      item.dueDate !== null &&
+      new Date(item.dueDate) < now,
+  ).length;
+
+  const recentLoans = libraryItems
+    .filter((item) => item.borrower !== null && item.borrowDate !== null)
+    .sort(
+      (a, b) =>
+        new Date(b.borrowDate!).getTime() - new Date(a.borrowDate!).getTime(),
+    )
+    .slice(0, 5);
 
   const stats = [
     {
@@ -42,6 +65,12 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
       value: availableItems,
       icon: CircleCheck,
       description: "Material som inte är utlånat",
+    },
+    {
+      label: "Försenade lån",
+      value: overdueItems,
+      icon: CircleAlert,
+      description: "Material med passerat återlämningsdatum",
     },
   ];
 
@@ -128,6 +157,50 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
             </article>
           );
         })}
+      </section>
+
+      <section className="dashboard-recent-loans">
+        <div className="dashboard-recent-loans-header">
+          <div>
+            <p className="eyebrow">UTLÅNINGSÖVERSIKT</p>
+            <h3>Senaste lån</h3>
+            <p>De fem senast utlånade posterna i biblioteket.</p>
+          </div>
+        </div>
+
+        {recentLoans.length === 0 ? (
+          <p className="dashboard-recent-loans-empty">
+            Det finns inga aktiva lån att visa.
+          </p>
+        ) : (
+          <div className="dashboard-recent-loans-list">
+            {recentLoans.map((item) => {
+              const isOverdue =
+                item.dueDate !== null && new Date(item.dueDate) < now;
+
+              return (
+                <article className="dashboard-recent-loan" key={item.id}>
+                  <div className="dashboard-recent-loan-info">
+                    <h4>{item.title}</h4>
+                    <p>Låntagare: {item.borrower}</p>
+                    <p>
+                      Utlånad:{" "}
+                      {new Date(item.borrowDate!).toLocaleDateString("sv-SE")}
+                    </p>
+                  </div>
+
+                  <span
+                    className={`dashboard-recent-loan-status ${
+                      isOverdue ? "is-overdue" : "is-borrowed"
+                    }`}
+                  >
+                    {isOverdue ? "Försenad" : "Utlånad"}
+                  </span>
+                </article>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       <section className="dashboard-overview-card">

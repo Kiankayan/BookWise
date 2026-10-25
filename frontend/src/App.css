@@ -1056,7 +1056,7 @@ button:active {
 
 .dashboard-stats {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 18px;
 }
 
@@ -1133,6 +1133,109 @@ button:active {
   border: 1px solid #eeeaf7;
   border-radius: 18px;
   background: #ffffff;
+}
+
+.dashboard-recent-loans {
+  min-width: 0;
+  padding: 26px;
+  border: 1px solid var(--bookwise-border, #eeeaf7);
+  border-radius: 18px;
+  background: var(--bookwise-surface, #ffffff);
+  box-shadow: 0 5px 20px rgba(55, 35, 91, 0.025);
+}
+
+.dashboard-recent-loans-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.dashboard-recent-loans-header h3 {
+  margin: 0;
+  color: var(--bookwise-text, #302642);
+  font-size: 18px;
+  font-weight: 750;
+}
+
+.dashboard-recent-loans-header p:not(.eyebrow) {
+  margin: 8px 0 0;
+  color: var(--bookwise-muted, #807990);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.dashboard-recent-loans-list {
+  display: grid;
+  gap: 12px;
+}
+
+.dashboard-recent-loan {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-width: 0;
+  padding: 16px 18px;
+  border: 1px solid #eeeaf7;
+  border-radius: 14px;
+  background: #fcfbff;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.dashboard-recent-loan:hover {
+  transform: translateY(-2px);
+  border-color: #d8ccff;
+}
+
+.dashboard-recent-loan-info {
+  min-width: 0;
+}
+
+.dashboard-recent-loan-info h4 {
+  margin: 0;
+  color: var(--bookwise-text, #302642);
+  font-size: 14px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.dashboard-recent-loan-info p {
+  margin: 7px 0 0;
+  color: var(--bookwise-muted, #807990);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.dashboard-recent-loan-status {
+  flex-shrink: 0;
+  padding: 7px 11px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.dashboard-recent-loan-status.is-overdue {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.dashboard-recent-loan-status.is-borrowed {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.dashboard-recent-loans-empty {
+  margin: 0;
+  padding: 22px;
+  border: 1px dashed #d8ccff;
+  border-radius: 12px;
+  color: var(--bookwise-muted, #807990);
+  font-size: 13px;
+  text-align: center;
 }
 
 .dashboard-overview-content {
