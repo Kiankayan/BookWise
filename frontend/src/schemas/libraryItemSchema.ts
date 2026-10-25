@@ -1,5 +1,44 @@
 import { z } from "zod";
 
+const isbnSchema = z
+  .string()
+  .trim()
+  .optional()
+  .transform((value) => value ?? "")
+  .refine(
+    (isbn) => {
+      isbn = isbn.replace(/[\s-]/g, "");
+      if (isbn === "") {
+        return true;
+      }
+
+      if (/^\d{9}[\dX]$/.test(isbn)) {
+        const total = [...isbn].reduce((sum, digit, index) => {
+          const value = digit === "X" ? 10 : Number(digit);
+          return sum + value * (10 - index);
+        }, 0);
+
+        return total % 11 === 0;
+      }
+
+      if (/^\d{13}$/.test(isbn)) {
+        const total = [...isbn].slice(0, 12).reduce((sum, digit, index) => {
+          return sum + Number(digit) * (index % 2 === 0 ? 1 : 3);
+        }, 0);
+
+        const checkDigit = (10 - (total % 10)) % 10;
+
+        return checkDigit === Number(isbn[12]);
+      }
+
+      return false;
+    },
+    {
+      message:
+        "Ange ett giltigt ISBN-10 eller ISBN-13. Du kan använda bindestreck och mellanslag.",
+    },
+  );
+
 const baseLibraryItemSchema = z.object({
   title: z
     .string()
@@ -17,7 +56,7 @@ const bookSchema = baseLibraryItemSchema.extend({
 
   author: z.string().trim().min(1, "Författare krävs."),
 
-  isbn: z.string().trim().optional(),
+  isbn: isbnSchema,
 
   nbrPages: z.number().int().positive("Antal sidor måste vara större än 0."),
 });
@@ -39,7 +78,7 @@ const referenceBookSchema = baseLibraryItemSchema.extend({
 
   author: z.string().trim().min(1, "Författare krävs."),
 
-  isbn: z.string().trim().optional(),
+  isbn: isbnSchema,
 
   nbrPages: z.number().int().positive("Antal sidor måste vara större än 0."),
 
