@@ -132,7 +132,7 @@ router.get("/stats", async (_req, res) => {
       },
     ].map((stat) => {
       const change =
-        !hasReliableComparison || stat.previous === null || stat.previous === 0
+        stat.previous === null || stat.previous === 0
           ? null
           : Math.round(((stat.current - stat.previous) / stat.previous) * 100);
 
