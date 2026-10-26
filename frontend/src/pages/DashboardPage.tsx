@@ -2,8 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Category, LibraryItem } from "../types/library";
 import { getLibraryItemImage } from "../utils/libraryItemImage";
-import { getDashboardStats } from "../services/dashboardService";
-import type { DashboardStatsResponse } from "../services/dashboardService";
 import {
   BookOpen,
   Tags,
@@ -34,30 +32,59 @@ type DashboardPageProps = {
   categories: Category[];
 };
 
+function AnimatedPercentage({
+  value,
+  shouldReduceMotion,
+}: {
+  value: number;
+  shouldReduceMotion: boolean | null;
+}) {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    if (shouldReduceMotion) {
+      setDisplayValue(value);
+      return;
+    }
+
+    const duration = 2000;
+    const startTime = performance.now();
+    let animationFrame = 0;
+
+    const animate = (currentTime: number) => {
+      const progress = Math.min((currentTime - startTime) / duration, 1);
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
+
+      setDisplayValue(Number((value * easedProgress).toFixed(1)));
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animate);
+      } else {
+        setDisplayValue(value);
+      }
+    };
+
+    setDisplayValue(0);
+    animationFrame = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(animationFrame);
+  }, [value, shouldReduceMotion]);
+
+  return (
+    <>
+      {displayValue > 0 ? "+" : ""}
+      {displayValue.toLocaleString("sv-SE", {
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      })}
+      %
+    </>
+  );
+}
+
 function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
   const navigate = useNavigate();
   const shouldReduceMotion = useReducedMotion();
-
-  const [dashboardStats, setDashboardStats] =
-    useState<DashboardStatsResponse | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    getDashboardStats()
-      .then((data) => {
-        if (isMounted) {
-          setDashboardStats(data);
-        }
-      })
-      .catch((error) => {
-        console.error("Kunde inte hämta dashboardstatistik.", error);
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   const borrowedItems = libraryItems.filter(
     (item) => item.borrower !== null,
@@ -66,14 +93,8 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
   const availableItems = libraryItems.length - borrowedItems;
 
   const availabilityData = [
-    {
-      name: "Utlånade",
-      antal: borrowedItems,
-    },
-    {
-      name: "Tillgängliga",
-      antal: availableItems,
-    },
+    { name: "Utlånade", antal: borrowedItems },
+    { name: "Tillgängliga", antal: availableItems },
   ];
 
   const categoryData = categories.map((category) => ({
@@ -148,6 +169,83 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
     },
   ];
 
+  const currentValues = {
+    totalItems: libraryItems.length,
+    categories: categories.length,
+    borrowed: borrowedItems,
+    available: availableItems,
+    overdue: overdueItems,
+  };
+
+  type StatKey = keyof typeof currentValues;
+
+  const [percentageChanges, setPercentageChanges] = useState<
+    Record<StatKey, number>
+  >({
+    totalItems: 0,
+    categories: 0,
+    borrowed: 0,
+    available: 0,
+    overdue: 0,
+  });
+
+  useEffect(() => {
+    const storageKey = "bookwise-dashboard-percentage";
+    const storedData = sessionStorage.getItem(storageKey);
+
+    type StoredData = {
+      values: typeof currentValues;
+      changes: Record<StatKey, number>;
+    };
+
+    const stored = storedData ? (JSON.parse(storedData) as StoredData) : null;
+
+    const keys = Object.keys(currentValues) as StatKey[];
+
+    const sameValues =
+      stored !== null &&
+      keys.every((key) => stored.values[key] === currentValues[key]);
+
+    if (sameValues && stored) {
+      setPercentageChanges(stored.changes);
+      return;
+    }
+
+    const changes = {} as Record<StatKey, number>;
+
+    keys.forEach((key) => {
+      const oldValue = stored?.values[key];
+      const newValue = currentValues[key];
+
+      if (oldValue === undefined || oldValue === newValue) {
+        changes[key] = 0;
+        return;
+      }
+
+      changes[key] =
+        oldValue === 0
+          ? newValue > 0
+            ? 100
+            : -100
+          : Number(
+              (((newValue - oldValue) / Math.abs(oldValue)) * 100).toFixed(1),
+            );
+    });
+
+    sessionStorage.setItem(
+      storageKey,
+      JSON.stringify({ values: currentValues, changes }),
+    );
+
+    setPercentageChanges(changes);
+  }, [
+    libraryItems.length,
+    categories.length,
+    borrowedItems,
+    availableItems,
+    overdueItems,
+  ]);
+
   const illustrationTransition = {
     duration: 5,
     repeat: Infinity,
@@ -206,10 +304,7 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
       <section className="dashboard-stats" aria-label="Biblioteksstatistik">
         {stats.map((stat, index) => {
           const Icon = stat.icon;
-          const comparison = dashboardStats?.stats.find(
-            (entry) => entry.key === stat.key,
-          );
-          const change = comparison?.change ?? 0;
+          const percentage = percentageChanges[stat.key as StatKey];
 
           return (
             <article className="dashboard-stat-card" key={stat.label}>
@@ -229,24 +324,27 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
 
                   <span
                     className={`dashboard-stat-change ${
-                      change > 0
+                      percentage > 0
                         ? "is-positive"
-                        : change < 0
+                        : percentage < 0
                           ? "is-negative"
                           : "is-neutral"
                     }`}
                   >
-                    {change > 0 ? (
+                    {percentage > 0 ? (
                       <TrendingUp size={14} strokeWidth={2.5} />
-                    ) : change < 0 ? (
+                    ) : percentage < 0 ? (
                       <TrendingDown size={14} strokeWidth={2.5} />
                     ) : (
                       <ChartNoAxesCombined size={14} strokeWidth={2.5} />
                     )}
 
                     <span>
-                      {change > 0 ? "+" : ""}
-                      {change}%
+                      <AnimatedPercentage
+                        key={stat.key}
+                        value={percentage}
+                        shouldReduceMotion={shouldReduceMotion}
+                      />
                     </span>
                   </span>
                 </div>

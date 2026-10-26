@@ -314,6 +314,7 @@ router.post("/:id/return", async (req, res) => {
           itemTitle: libraryItem.title,
           categoryId: libraryItem.categoryId,
           categoryName: libraryItem.category.name,
+          dueDate: libraryItem.dueDate,
         },
       });
 
