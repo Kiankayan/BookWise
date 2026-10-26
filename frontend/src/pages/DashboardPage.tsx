@@ -25,6 +25,10 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import {
+  getAvailabilityHistory,
+  type ChartPeriod,
+} from "../utils/dashboardChartData";
 import { motion, useReducedMotion } from "motion/react";
 
 type DashboardPageProps = {
@@ -92,10 +96,9 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
 
   const availableItems = libraryItems.length - borrowedItems;
 
-  const availabilityData = [
-    { name: "Utlånade", antal: borrowedItems },
-    { name: "Tillgängliga", antal: availableItems },
-  ];
+  const [chartPeriod, setChartPeriod] = useState<ChartPeriod>("week");
+
+  const availabilityData = getAvailabilityHistory(chartPeriod);
 
   const categoryData = categories.map((category) => ({
     name: category.name,
@@ -360,24 +363,82 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
 
       <div className="dashboard-panels">
         <section className="dashboard-chart-card">
-          <div className="dashboard-chart-header">
-            <p className="eyebrow">BIBLIOTEKSSTATISTIK</p>
-            <h3>Utlånade kontra tillgängliga</h3>
-            <p>Fördelningen av bibliotekets material just nu.</p>
+          <div className="dashboard-chart-heading">
+            <div className="dashboard-chart-icon" aria-hidden="true">
+              <ChartNoAxesCombined size={22} strokeWidth={1.8} />
+            </div>
+
+            <h3>Utlånade vs tillgängliga</h3>
+
+            <select
+              className="dashboard-chart-period"
+              value={chartPeriod}
+              onChange={(event) =>
+                setChartPeriod(event.target.value as ChartPeriod)
+              }
+              aria-label="Välj tidsperiod för biblioteksstatistik"
+            >
+              <option value="week">Senaste veckan</option>
+              <option value="month">Senaste månaden</option>
+              <option value="sixMonths">Senaste 6 månaderna</option>
+              <option value="year">Senaste året</option>
+            </select>
           </div>
 
           <div className="dashboard-chart-container">
-            <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={availabilityData}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="name" />
-                <YAxis allowDecimals={false} />
+            <ResponsiveContainer width="100%" height={280}>
+              <BarChart
+                data={availabilityData}
+                margin={{ top: 12, right: 8, left: 0, bottom: 0 }}
+                barCategoryGap="22%"
+                barGap={4}
+              >
+                <CartesianGrid
+                  stroke="#eeeaf7"
+                  strokeDasharray="3 3"
+                  vertical={false}
+                />
+
+                <XAxis
+                  dataKey="label"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: "#807990", fontSize: 12 }}
+                  dy={8}
+                />
+
+                <YAxis
+                  allowDecimals={false}
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fill: "#807990", fontSize: 12 }}
+                  width={34}
+                />
+
                 <Tooltip />
+
+                <Legend
+                  verticalAlign="bottom"
+                  align="center"
+                  iconType="circle"
+                  iconSize={10}
+                  wrapperStyle={{ paddingTop: 20, fontSize: 12 }}
+                />
+
                 <Bar
-                  dataKey="antal"
-                  name="Antal material"
-                  fill="#8b5cf6"
-                  radius={[6, 6, 0, 0]}
+                  dataKey="available"
+                  name="Tillgängliga"
+                  fill="#c9b8fa"
+                  radius={[4, 4, 0, 0]}
+                  maxBarSize={24}
+                />
+
+                <Bar
+                  dataKey="borrowed"
+                  name="Utlånade"
+                  fill="#7138df"
+                  radius={[4, 4, 0, 0]}
+                  maxBarSize={24}
                 />
               </BarChart>
             </ResponsiveContainer>
@@ -414,6 +475,7 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
                       />
                     ))}
                   </Pie>
+
                   <Tooltip />
                   <Legend />
                 </PieChart>
