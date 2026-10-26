@@ -1166,7 +1166,7 @@ button:active {
   overflow: hidden;
   border: 1px solid #eeeaf7;
   border-radius: 18px;
-  background: #ffffff;
+  background: linear-gradient(115deg, #f0eaff 0%, #faf7ff 58%, #eee5ff 100%);
 }
 
 .dashboard-recent-loans {
