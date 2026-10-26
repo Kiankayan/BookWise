@@ -2203,13 +2203,137 @@ button:active {
   line-height: 1.6;
 }
 
-.dashboard-category-chart-container .recharts-legend-wrapper {
+.dashboard-category-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.dashboard-category-heading h3 {
+  margin: 0;
+  color: var(--bookwise-text, #302642);
+  font-size: 16px;
+  font-weight: 750;
+  line-height: 1.4;
+}
+
+.dashboard-chart-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: #f0e9ff;
+  color: #7c3aed;
+}
+
+.dashboard-category-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  align-items: center;
+  gap: 12px;
+}
+
+.dashboard-category-chart-container {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.dashboard-category-total {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.dashboard-category-total strong {
+  color: var(--bookwise-text, #302642);
+  font-size: 24px;
+  font-weight: 750;
+  line-height: 1.2;
+}
+
+.dashboard-category-total span {
+  margin-top: 4px;
+  color: var(--bookwise-muted, #807990);
   font-size: 12px;
+}
+
+.dashboard-category-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.dashboard-category-legend-item {
+  display: grid;
+  grid-template-columns: 9px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  font-size: 12px;
+}
+
+.dashboard-category-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dashboard-category-legend-name {
+  overflow: hidden;
+  color: var(--bookwise-text, #302642);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-category-legend-value {
+  color: var(--bookwise-text, #302642);
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+
+.dashboard-category-legend-percentage {
+  color: var(--bookwise-muted, #807990);
+  font-variant-numeric: tabular-nums;
 }
 
 .dashboard-recent-loans {
   height: 100%;
   box-sizing: border-box;
+}
+
+@media (max-width: 1200px) {
+  .dashboard-category-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dashboard-category-chart-container {
+    max-width: 240px;
+    margin: 0 auto;
+  }
+
+  .dashboard-category-legend {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-category-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .dashboard-category-legend-item {
+    font-size: 12px;
+  }
 }
 
 @media (max-width: 1250px) {

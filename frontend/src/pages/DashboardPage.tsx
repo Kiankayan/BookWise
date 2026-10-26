@@ -86,6 +86,47 @@ function AnimatedPercentage({
   );
 }
 
+function AnimatedCount({
+  value,
+  shouldReduceMotion,
+}: {
+  value: number;
+  shouldReduceMotion: boolean | null;
+}) {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    if (shouldReduceMotion) {
+      setDisplayValue(value);
+      return;
+    }
+
+    const duration = 2400;
+    const startTime = performance.now();
+    let animationFrame = 0;
+
+    const animate = (currentTime: number) => {
+      const progress = Math.min((currentTime - startTime) / duration, 1);
+      const easedProgress = 1 - Math.pow(1 - progress, 4);
+
+      setDisplayValue(Math.round(value * easedProgress));
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animate);
+      } else {
+        setDisplayValue(value);
+      }
+    };
+
+    setDisplayValue(0);
+    animationFrame = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(animationFrame);
+  }, [value, shouldReduceMotion]);
+
+  return <>{displayValue.toLocaleString("sv-SE")}</>;
+}
+
 function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
   const navigate = useNavigate();
   const shouldReduceMotion = useReducedMotion();
@@ -446,40 +487,92 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
         </section>
 
         <section className="dashboard-category-card">
-          <div className="dashboard-chart-header">
-            <p className="eyebrow">KATEGORIÖVERSIKT</p>
+          <div className="dashboard-category-heading">
+            <div className="dashboard-chart-icon" aria-hidden="true">
+              <Tags size={20} strokeWidth={1.8} />
+            </div>
             <h3>Material per kategori</h3>
-            <p>Så fördelar sig bibliotekets material mellan kategorierna.</p>
           </div>
 
           {categoryData.length === 0 ? (
             <p>Det finns inga kategorier att visa.</p>
           ) : (
-            <div className="dashboard-category-chart-container">
-              <ResponsiveContainer width="100%" height={220}>
-                <PieChart>
-                  <Pie
-                    data={categoryData}
-                    dataKey="antal"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={55}
-                    outerRadius={85}
-                    paddingAngle={3}
-                  >
-                    {categoryData.map((entry, index) => (
-                      <Cell
-                        key={entry.name}
-                        fill={categoryColors[index % categoryColors.length]}
-                      />
-                    ))}
-                  </Pie>
+            <div className="dashboard-category-layout">
+              <div className="dashboard-category-chart-container">
+                <ResponsiveContainer width="100%" height={190}>
+                  <PieChart>
+                    <Pie
+                      data={categoryData}
+                      dataKey="antal"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={43}
+                      outerRadius={68}
+                      paddingAngle={2}
+                    >
+                      {categoryData.map((entry, index) => (
+                        <Cell
+                          key={entry.name}
+                          fill={categoryColors[index % categoryColors.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
 
-                  <Tooltip />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
+                <div className="dashboard-category-total">
+                  <strong>
+                    <AnimatedCount
+                      value={libraryItems.length}
+                      shouldReduceMotion={shouldReduceMotion}
+                    />
+                  </strong>
+                  <span>Totalt</span>
+                </div>
+              </div>
+
+              <div className="dashboard-category-legend">
+                {categoryData.map((category, index) => {
+                  const percentage =
+                    libraryItems.length > 0
+                      ? Math.round((category.antal / libraryItems.length) * 100)
+                      : 0;
+
+                  return (
+                    <div
+                      className="dashboard-category-legend-item"
+                      key={category.name}
+                    >
+                      <span
+                        className="dashboard-category-legend-dot"
+                        style={{
+                          backgroundColor:
+                            categoryColors[index % categoryColors.length],
+                        }}
+                      />
+                      <span className="dashboard-category-legend-name">
+                        {category.name}
+                      </span>
+                      <span className="dashboard-category-legend-value">
+                        <AnimatedCount
+                          value={category.antal}
+                          shouldReduceMotion={shouldReduceMotion}
+                        />
+                      </span>
+                      <span className="dashboard-category-legend-percentage">
+                        (
+                        <AnimatedCount
+                          value={percentage}
+                          shouldReduceMotion={shouldReduceMotion}
+                        />
+                        %)
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
         </section>
