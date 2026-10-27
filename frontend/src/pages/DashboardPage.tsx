@@ -11,6 +11,8 @@ import {
   ChartNoAxesCombined,
   TrendingUp,
   TrendingDown,
+  Clock3,
+  ArrowRight,
 } from "lucide-react";
 import {
   Bar,
@@ -579,11 +581,21 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
 
         <section className="dashboard-recent-loans">
           <div className="dashboard-recent-loans-header">
-            <div>
-              <p className="eyebrow">UTLÅNINGSÖVERSIKT</p>
-              <h3>Senaste lån</h3>
-              <p>De fem senast utlånade posterna i biblioteket.</p>
+            <div className="dashboard-recent-loans-title">
+              <div className="dashboard-chart-icon" aria-hidden="true">
+                <Clock3 size={20} strokeWidth={1.8} />
+              </div>
+              <h3>Senaste utlånen</h3>
             </div>
+
+            <button
+              className="dashboard-recent-loans-view-all"
+              type="button"
+              onClick={() => navigate("/library")}
+            >
+              Visa alla
+              <ArrowRight size={14} strokeWidth={2} />
+            </button>
           </div>
 
           {recentLoans.length === 0 ? (
