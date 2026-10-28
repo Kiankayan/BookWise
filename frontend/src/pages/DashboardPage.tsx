@@ -501,7 +501,7 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
           ) : (
             <div className="dashboard-category-layout">
               <div className="dashboard-category-chart-container">
-                <ResponsiveContainer width="100%" height={190}>
+                <ResponsiveContainer width="100%" height={280}>
                   <PieChart>
                     <Pie
                       data={categoryData}
@@ -509,8 +509,8 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
                       nameKey="name"
                       cx="50%"
                       cy="50%"
-                      innerRadius={43}
-                      outerRadius={68}
+                      innerRadius={60}
+                      outerRadius={90}
                       paddingAngle={2}
                     >
                       {categoryData.map((entry, index) => (
