@@ -73,6 +73,8 @@ function LibraryItemList({
 }: LibraryItemListProps) {
   const [showAbbreviations, setShowAbbreviations] = useState(false);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [selectedAvailability, setSelectedAvailability] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [itemToDelete, setItemToDelete] = useState<LibraryItem | null>(null);
   const [itemToBorrow, setItemToBorrow] = useState<LibraryItem | null>(null);
@@ -85,8 +87,25 @@ function LibraryItemList({
 
   const filteredItems = libraryItems
     .filter((item) => {
-      if (!normalizedSearchTerm) return true;
-      return item.title.toLowerCase().includes(normalizedSearchTerm);
+      const matchesCategory =
+        selectedCategory === "all" || item.categoryId === selectedCategory;
+
+      const matchesSearch =
+        !normalizedSearchTerm ||
+        item.title.toLowerCase().includes(normalizedSearchTerm) ||
+        (item.author?.toLowerCase().includes(normalizedSearchTerm) ?? false);
+
+      const matchesAvailability =
+        selectedAvailability === "all" ||
+        (selectedAvailability === "available" &&
+          item.isBorrowable &&
+          !item.borrower) ||
+        (selectedAvailability === "borrowed" &&
+          item.isBorrowable &&
+          Boolean(item.borrower)) ||
+        (selectedAvailability === "reference" && !item.isBorrowable);
+
+      return matchesCategory && matchesSearch && matchesAvailability;
     })
     .sort((a, b) => {
       const titleA = a.title.toLowerCase();
@@ -204,6 +223,36 @@ function LibraryItemList({
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
           />
+        </div>
+
+        <div className="sort-control">
+          <label htmlFor="category-filter">Filtrera kategori:</label>
+          <select
+            id="category-filter"
+            value={selectedCategory}
+            onChange={(event) => setSelectedCategory(event.target.value)}
+          >
+            <option value="all">Alla kategorier</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="sort-control">
+          <label htmlFor="availability-filter">Tillgänglighet:</label>
+          <select
+            id="availability-filter"
+            value={selectedAvailability}
+            onChange={(event) => setSelectedAvailability(event.target.value)}
+          >
+            <option value="all">Alla material</option>
+            <option value="available">Tillgängliga</option>
+            <option value="borrowed">Utlånade</option>
+            <option value="reference">Referensexemplar</option>
+          </select>
         </div>
 
         <div className="sort-control">
