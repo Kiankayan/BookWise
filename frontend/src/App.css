@@ -181,11 +181,11 @@
 
 .library-search {
   display: flex;
-  flex: 1;
+  flex: 2;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
   gap: 8px;
-  min-width: 220px;
+  min-width: 320px;
 }
 
 .library-search label {
@@ -202,8 +202,8 @@
 }
 
 .library-search input {
-  width: 196px;
-  min-width: 196px;
+  width: 320px;
+  min-width: 320px;
   height: 40px;
   box-sizing: border-box;
 }
