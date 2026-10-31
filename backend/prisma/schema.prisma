@@ -36,8 +36,8 @@ model LibraryItem {
   categoryId     String
   imageUrl       String?
 
-
   category       Category @relation(fields: [categoryId], references: [id])
+  loans          Loan[]
 }
 
 enum LibraryEventType {
@@ -73,4 +73,21 @@ model User {
   role         UserRole @default(USER)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  loans        Loan[]
+}
+
+model Loan {
+  id           String       @id @default(cuid())
+  userId       String?
+  itemId       String
+  borrowerName String
+  borrowDate   DateTime     @default(now())
+  dueDate      DateTime
+  returnedAt   DateTime?
+
+  user         User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  item         LibraryItem  @relation(fields: [itemId], references: [id], onDelete: Restrict)
+
+  @@index([userId])
+  @@index([itemId])
 }
