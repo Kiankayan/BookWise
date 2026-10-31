@@ -1,9 +1,16 @@
 import { Router } from "express";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { Prisma, prisma } from "../lib/prisma.js";
-import { registerUserSchema } from "../schemas/user.schema.js";
+import { loginUserSchema, registerUserSchema } from "../schemas/user.schema.js";
 
 const router = Router();
+
+const jwtSecret = process.env.JWT_SECRET;
+
+if (!jwtSecret) {
+  throw new Error("JWT_SECRET saknas i miljövariablerna.");
+}
 
 router.post("/register", async (req, res) => {
   const validation = registerUserSchema.safeParse(req.body);
@@ -51,6 +58,61 @@ router.post("/register", async (req, res) => {
 
     throw error;
   }
+});
+
+router.post("/login", async (req, res) => {
+  const validation = loginUserSchema.safeParse(req.body);
+
+  if (!validation.success) {
+    return res.status(400).json({
+      message: "Ogiltiga inloggningsuppgifter.",
+      errors: validation.error.flatten().fieldErrors,
+    });
+  }
+
+  const { email, password } = validation.data;
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email.toLowerCase(),
+    },
+  });
+
+  if (!user) {
+    return res.status(401).json({
+      message: "Felaktig e-postadress eller lösenord.",
+    });
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+
+  if (!isPasswordValid) {
+    return res.status(401).json({
+      message: "Felaktig e-postadress eller lösenord.",
+    });
+  }
+
+  const token = jwt.sign(
+    {
+      userId: user.id,
+      role: user.role,
+    },
+    jwtSecret,
+    {
+      expiresIn: "1h",
+    },
+  );
+
+  return res.status(200).json({
+    message: "Inloggningen lyckades.",
+    token,
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    },
+  });
 });
 
 export default router;
