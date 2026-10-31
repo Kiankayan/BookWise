@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
-
+import usersRouter from "./routes/users.routes.js";
 import categoriesRouter from "./routes/categories.routes.js";
 import libraryItemsRouter from "./routes/library-items.routes.js";
 import uploadRouter from "./routes/upload.routes.js";
@@ -17,6 +17,7 @@ app.use("/api/categories", categoriesRouter);
 app.use("/api/library-items", libraryItemsRouter);
 app.use("/api/upload", uploadRouter);
 app.use("/api/dashboard", dashboardRouter);
+app.use("/api/users", usersRouter);
 
 app.get("/", (_req, res) => {
   res.json({
