@@ -2,13 +2,14 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import { Bell, Moon, Sun, ShieldCheck } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import { useTheme } from "../context/ThemeContext";
 
 function SettingsPage() {
   const { user } = useAuth();
+  const { theme, setTheme } = useTheme();
 
   const [reminderNotifications, setReminderNotifications] = useState(true);
   const [overdueNotifications, setOverdueNotifications] = useState(true);
-  const [theme, setTheme] = useState<"light" | "dark">("light");
 
   const roleLabel = user?.role === "ADMIN" ? "Administratör" : "Användare";
 
