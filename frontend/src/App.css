@@ -1069,9 +1069,9 @@ button:active {
 .dashboard-stat-card {
   min-width: 0;
   padding: 24px 22px;
-  border: 1px solid var(--bookwise-border, #eeeaf7);
+  border: 1px solid var(--bookwise-border);
   border-radius: 18px;
-  background: var(--bookwise-surface, #ffffff);
+  background: var(--bookwise-surface);
   box-shadow: 0 5px 18px rgba(55, 35, 91, 0.04);
   transition:
     transform 0.2s ease,
@@ -1081,7 +1081,7 @@ button:active {
 
 .dashboard-stat-card:hover {
   transform: translateY(-3px);
-  border-color: #d8ccff;
+  border-color: var(--bookwise-primary);
   box-shadow: 0 12px 28px rgba(109, 40, 217, 0.09);
 }
 
@@ -1132,22 +1132,22 @@ button:active {
   width: 44px;
   height: 44px;
   border-radius: 14px;
-  background: #f0eaff;
-  color: #7c3aed;
+  background: var(--bookwise-bg);
+  color: var(--bookwise-primary);
   font-size: 23px;
   font-weight: 700;
 }
 
 .dashboard-stat-label {
   margin: 0 0 9px;
-  color: #807990;
+  color: var(--bookwise-muted);
   font-size: 12px;
   font-weight: 600;
 }
 
 .dashboard-stat-value {
   margin: 0;
-  color: #302642;
+  color: var(--bookwise-text);
   font-size: clamp(26px, 2.5vw, 34px);
   font-weight: 800;
   letter-spacing: -1px;
@@ -1157,7 +1157,7 @@ button:active {
 
 .dashboard-stat-description {
   margin: 10px 0 0;
-  color: #a19aad;
+  color: var(--bookwise-muted);
   font-size: 10px;
   line-height: 1.6;
 }
