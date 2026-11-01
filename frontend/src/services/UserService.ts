@@ -22,6 +22,12 @@ export async function updateUserRole(id: string, role: ManagedUser["role"]) {
   });
 }
 
+export async function updateUserStatus(id: string, isActive: boolean) {
+  return api.patch<ManagedUserResponse>(`${USERS_URL}/${id}/status`, {
+    isActive,
+  });
+}
+
 export async function deleteUser(id: string) {
   return api.delete<{ message: string }>(`${USERS_URL}/${id}`);
 }
