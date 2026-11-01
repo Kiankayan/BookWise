@@ -890,7 +890,7 @@ button:active {
 
 .topbar-eyebrow {
   margin: 0 0 7px;
-  color: #9b93ad;
+  color: var(--bookwise-muted);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.09em;
@@ -898,7 +898,7 @@ button:active {
 
 .topbar-heading h1 {
   margin: 0;
-  color: #29243a;
+  color: var(--bookwise-text);
   font-size: 21px;
   font-weight: 750;
   letter-spacing: -0.5px;
@@ -915,24 +915,24 @@ button:active {
   place-items: center;
   width: 42px;
   height: 42px;
-  border: 1px solid #e5dafa;
+  border: 1px solid var(--bookwise-border);
   border-radius: 14px;
-  background: #f0eaff;
-  color: #6d28d9;
+  background: var(--bookwise-bg);
+  color: var(--bookwise-primary);
   font-size: 16px;
   font-weight: 800;
 }
 
 .topbar-profile-name {
   margin: 0;
-  color: #393248;
+  color: var(--bookwise-text);
   font-size: 12px;
   font-weight: 700;
 }
 
 .topbar-profile-role {
   margin: 4px 0 0;
-  color: #9891a8;
+  color: var(--bookwise-muted);
   font-size: 11px;
 }
 
