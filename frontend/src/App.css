@@ -1170,9 +1170,14 @@ button:active {
   min-height: 220px;
   padding: 27px 30px;
   overflow: hidden;
-  border: 1px solid #eeeaf7;
+  border: 1px solid var(--bookwise-border);
   border-radius: 18px;
-  background: linear-gradient(115deg, #f0eaff 0%, #faf7ff 58%, #eee5ff 100%);
+  background: linear-gradient(
+    115deg,
+    var(--bookwise-surface) 0%,
+    var(--bookwise-bg) 58%,
+    var(--bookwise-surface) 100%
+  );
 }
 
 .dashboard-recent-loans {
