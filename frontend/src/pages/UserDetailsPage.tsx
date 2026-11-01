@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { motion } from "motion/react";
-import { getUserById, deleteUser } from "../services/UserService";
+import {
+  getUserById,
+  deleteUser,
+  updateUserStatus,
+} from "../services/UserService";
 import { useAuth } from "../context/AuthContext";
 import type { ManagedUser } from "../types/user";
 
@@ -16,6 +20,8 @@ function UserDetailsPage() {
   const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+  const [statusError, setStatusError] = useState("");
 
   useEffect(() => {
     async function loadUser() {
@@ -38,6 +44,37 @@ function UserDetailsPage() {
 
     void loadUser();
   }, [id]);
+
+  async function handleStatusChange() {
+    if (!user) {
+      return;
+    }
+
+    setIsUpdatingStatus(true);
+    setStatusError("");
+
+    try {
+      const response = await updateUserStatus(user.id, !user.isActive);
+      setUser(response.data.user);
+    } catch (error) {
+      console.error("Kunde inte ändra kontostatus.", error);
+
+      const responseError = error as {
+        response?: {
+          data?: {
+            message?: string;
+          };
+        };
+      };
+
+      setStatusError(
+        responseError.response?.data?.message ??
+          "Kunde inte ändra kontostatus. Försök igen.",
+      );
+    } finally {
+      setIsUpdatingStatus(false);
+    }
+  }
 
   async function handleDeleteUser() {
     if (!user) {
@@ -109,6 +146,10 @@ function UserDetailsPage() {
                 {user.role === "ADMIN" ? "Administratör" : "Användare"}
               </p>
               <p>
+                <strong>Kontostatus:</strong>{" "}
+                {user.isActive ? "Aktivt" : "Inaktivt"}
+              </p>
+              <p>
                 <strong>Användar-ID:</strong> {user.id}
               </p>
               <p>
@@ -116,6 +157,26 @@ function UserDetailsPage() {
                 {new Date(user.createdAt).toLocaleDateString("sv-SE")}
               </p>
             </div>
+
+            {user.id === currentUser?.id ? (
+              <p>Du kan inte inaktivera ditt eget konto.</p>
+            ) : (
+              <div>
+                <button
+                  type="button"
+                  disabled={isUpdatingStatus}
+                  onClick={() => void handleStatusChange()}
+                >
+                  {isUpdatingStatus
+                    ? "Uppdaterar..."
+                    : user.isActive
+                      ? "Inaktivera konto"
+                      : "Aktivera konto"}
+                </button>
+
+                {statusError && <p role="alert">{statusError}</p>}
+              </div>
+            )}
 
             {user.id === currentUser?.id ? (
               <p>Du kan inte ta bort ditt eget konto.</p>
