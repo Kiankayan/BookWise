@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
-import { getUsers, updateUserRole } from "../services/UserService";
+import {
+  getUsers,
+  updateUserRole,
+  updateUserStatus,
+} from "../services/UserService";
 import { useAuth } from "../context/AuthContext";
 import type { ManagedUser } from "../types/user";
 
@@ -13,7 +17,7 @@ function UsersPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
-  const [roleUpdateError, setRoleUpdateError] = useState("");
+  const [userUpdateError, setUserUpdateError] = useState("");
 
   useEffect(() => {
     async function loadUsers() {
@@ -34,7 +38,7 @@ function UsersPage() {
 
   async function handleRoleChange(userId: string, role: ManagedUser["role"]) {
     setUpdatingUserId(userId);
-    setRoleUpdateError("");
+    setUserUpdateError("");
 
     try {
       const response = await updateUserRole(userId, role);
@@ -46,7 +50,27 @@ function UsersPage() {
       );
     } catch (error) {
       console.error("Kunde inte ändra användarroll.", error);
-      setRoleUpdateError("Kunde inte ändra användarroll. Försök igen.");
+      setUserUpdateError("Kunde inte ändra användarroll. Försök igen.");
+    } finally {
+      setUpdatingUserId(null);
+    }
+  }
+
+  async function handleStatusChange(userId: string, isActive: boolean) {
+    setUpdatingUserId(userId);
+    setUserUpdateError("");
+
+    try {
+      const response = await updateUserStatus(userId, isActive);
+
+      setUsers((currentUsers) =>
+        currentUsers.map((user) =>
+          user.id === userId ? response.data.user : user,
+        ),
+      );
+    } catch (error) {
+      console.error("Kunde inte ändra kontostatus.", error);
+      setUserUpdateError("Kunde inte ändra kontostatus. Försök igen.");
     } finally {
       setUpdatingUserId(null);
     }
@@ -125,7 +149,7 @@ function UsersPage() {
               aria-label="Sök användare"
             />
 
-            {roleUpdateError && <p role="alert">{roleUpdateError}</p>}
+            {userUpdateError && <p role="alert">{userUpdateError}</p>}
 
             {filteredUsers.length === 0 ? (
               <p>Inga användare hittades.</p>
@@ -139,6 +163,33 @@ function UsersPage() {
                       </h4>
 
                       <p>{user.email}</p>
+
+                      <p>
+                        Kontostatus: {user.isActive ? "Aktivt" : "Inaktivt"}
+                      </p>
+
+                      <button
+                        type="button"
+                        disabled={
+                          user.id === currentUser?.id ||
+                          updatingUserId === user.id
+                        }
+                        onClick={() =>
+                          void handleStatusChange(user.id, !user.isActive)
+                        }
+                      >
+                        {updatingUserId === user.id
+                          ? "Uppdaterar..."
+                          : user.id === currentUser?.id
+                            ? "Eget konto"
+                            : user.isActive
+                              ? "Inaktivera konto"
+                              : "Aktivera konto"}
+                      </button>
+
+                      {user.id === currentUser?.id && (
+                        <p>Du kan inte inaktivera ditt eget konto.</p>
+                      )}
 
                       <label>
                         Användarroll:
@@ -164,7 +215,9 @@ function UsersPage() {
                         <p>Du kan inte ändra din egen roll.</p>
                       )}
 
-                      {updatingUserId === user.id && <p>Uppdaterar roll...</p>}
+                      {updatingUserId === user.id && (
+                        <p>Uppdaterar användare...</p>
+                      )}
 
                       <p>
                         Registrerad:{" "}
