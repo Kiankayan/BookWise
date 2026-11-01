@@ -1,15 +1,21 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { motion } from "motion/react";
-import { getUserById } from "../services/UserService";
+import { getUserById, deleteUser } from "../services/UserService";
+import { useAuth } from "../context/AuthContext";
 import type { ManagedUser } from "../types/user";
 
 function UserDetailsPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { user: currentUser } = useAuth();
 
   const [user, setUser] = useState<ManagedUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
   useEffect(() => {
     async function loadUser() {
@@ -32,6 +38,37 @@ function UserDetailsPage() {
 
     void loadUser();
   }, [id]);
+
+  async function handleDeleteUser() {
+    if (!user) {
+      return;
+    }
+
+    setIsDeleting(true);
+    setDeleteError("");
+
+    try {
+      await deleteUser(user.id);
+      navigate("/users");
+    } catch (error) {
+      console.error("Kunde inte ta bort användaren.", error);
+
+      const responseError = error as {
+        response?: {
+          data?: {
+            message?: string;
+          };
+        };
+      };
+
+      setDeleteError(
+        responseError.response?.data?.message ??
+          "Kunde inte ta bort användaren. Försök igen.",
+      );
+    } finally {
+      setIsDeleting(false);
+    }
+  }
 
   return (
     <motion.div
@@ -79,6 +116,50 @@ function UserDetailsPage() {
                 {new Date(user.createdAt).toLocaleDateString("sv-SE")}
               </p>
             </div>
+
+            {user.id === currentUser?.id ? (
+              <p>Du kan inte ta bort ditt eget konto.</p>
+            ) : (
+              <div>
+                {!isConfirmingDelete ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsConfirmingDelete(true);
+                      setDeleteError("");
+                    }}
+                  >
+                    Ta bort användare
+                  </button>
+                ) : (
+                  <div>
+                    <h4>Bekräfta borttagning</h4>
+                    <p>
+                      Är du säker på att du vill ta bort kontot för {user.name}?
+                    </p>
+                    <p>Användarens tidigare lånehistorik bevaras.</p>
+
+                    <button
+                      type="button"
+                      disabled={isDeleting}
+                      onClick={() => void handleDeleteUser()}
+                    >
+                      {isDeleting ? "Tar bort..." : "Ja, ta bort användaren"}
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={isDeleting}
+                      onClick={() => setIsConfirmingDelete(false)}
+                    >
+                      Avbryt
+                    </button>
+                  </div>
+                )}
+
+                {deleteError && <p role="alert">{deleteError}</p>}
+              </div>
+            )}
           </>
         ) : null}
 

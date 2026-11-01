@@ -135,6 +135,19 @@ router.delete("/:id", auth, admin, async (req: Request, res) => {
   }
 
   try {
+    const activeLoans = await prisma.loan.count({
+      where: {
+        userId: id,
+        returnedAt: null,
+      },
+    });
+
+    if (activeLoans > 0) {
+      return res.status(409).json({
+        message: "Användaren har aktiva lån och kan inte tas bort.",
+      });
+    }
+
     await prisma.user.delete({
       where: {
         id,
