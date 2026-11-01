@@ -6,6 +6,7 @@ import categoriesRouter from "./routes/categories.routes.js";
 import libraryItemsRouter from "./routes/library-items.routes.js";
 import uploadRouter from "./routes/upload.routes.js";
 import dashboardRouter from "./routes/dashboard.routes.js";
+import loansRouter from "./routes/loans.routes.js";
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -15,6 +16,7 @@ app.use(express.json());
 
 app.use("/api/categories", categoriesRouter);
 app.use("/api/library-items", libraryItemsRouter);
+app.use("/api/loans", loansRouter);
 app.use("/api/upload", uploadRouter);
 app.use("/api/dashboard", dashboardRouter);
 app.use("/api/users", usersRouter);
