@@ -1265,9 +1265,9 @@ button:active {
   gap: 6px;
   min-width: 0;
   padding: 3px 8px;
-  border: 1px solid #eeeaf7;
+  border: 1px solid var(--bookwise-border);
   border-radius: 10px;
-  background: #fcfbff;
+  background: var(--bookwise-bg);
   transition:
     border-color 0.2s ease,
     transform 0.2s ease;
@@ -1275,7 +1275,7 @@ button:active {
 
 .dashboard-recent-loan:hover {
   transform: translateY(-2px);
-  border-color: #d8ccff;
+  border-color: var(--bookwise-primary);
 }
 
 .dashboard-recent-loan-details {
