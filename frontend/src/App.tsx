@@ -16,6 +16,7 @@ import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import MyLoansPage from "./pages/MyLoansPage";
 import ProfilePage from "./pages/ProfilePage";
+import UsersPage from "./pages/UsersPage";
 import AdminRoute from "./components/AdminRoute";
 import "./App.css";
 
@@ -165,6 +166,8 @@ function App() {
                   />
                 }
               />
+
+              <Route path="/users" element={<UsersPage />} />
             </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />
