@@ -15,6 +15,7 @@ import AddItemPage from "./pages/AddItemPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import MyLoansPage from "./pages/MyLoansPage";
+import ProfilePage from "./pages/ProfilePage";
 import AdminRoute from "./components/AdminRoute";
 import "./App.css";
 
@@ -141,6 +142,8 @@ function App() {
             />
 
             <Route path="/my-loans" element={<MyLoansPage />} />
+
+            <Route path="/profile" element={<ProfilePage />} />
 
             <Route element={<AdminRoute />}>
               <Route
