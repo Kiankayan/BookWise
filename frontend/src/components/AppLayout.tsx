@@ -1,7 +1,12 @@
 import { Outlet } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import Sidebar from "./Sidebar";
 
 function AppLayout() {
+  const { user } = useAuth();
+
+  const roleLabel = user?.role === "ADMIN" ? "Administratör" : "Användare";
+
   return (
     <div className="app-layout">
       <Sidebar />
@@ -14,10 +19,12 @@ function AppLayout() {
           </div>
 
           <div className="topbar-profile">
-            <div className="topbar-avatar">B</div>
+            <div className="topbar-avatar">
+              {user?.name.charAt(0).toUpperCase()}
+            </div>
             <div>
-              <p className="topbar-profile-name">Bibliotekarie</p>
-              <p className="topbar-profile-role">Administratör</p>
+              <p className="topbar-profile-name">{user?.name}</p>
+              <p className="topbar-profile-role">{roleLabel}</p>
             </div>
           </div>
         </header>

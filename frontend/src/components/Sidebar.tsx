@@ -1,5 +1,13 @@
-import { NavLink } from "react-router-dom";
-import { LayoutDashboard, BookOpen, Tags, Plus, Sparkles } from "lucide-react";
+import { NavLink, useNavigate } from "react-router-dom";
+import {
+  LayoutDashboard,
+  BookOpen,
+  Tags,
+  Plus,
+  Sparkles,
+  LogOut,
+} from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 const navigationItems = [
   { label: "Dashboard", path: "/", icon: LayoutDashboard },
@@ -9,6 +17,14 @@ const navigationItems = [
 ];
 
 function Sidebar() {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login", { replace: true });
+  };
+
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
@@ -52,6 +68,18 @@ function Sidebar() {
           <p className="sidebar-footer-text">Ordning bland samlingarna</p>
         </div>
       </div>
+
+      <button
+        type="button"
+        className="sidebar-link"
+        onClick={handleLogout}
+        aria-label="Logga ut från BookWise"
+      >
+        <span className="sidebar-link-icon" aria-hidden="true">
+          <LogOut size={19} strokeWidth={1.8} />
+        </span>
+        <span>Logga ut</span>
+      </button>
     </aside>
   );
 }
