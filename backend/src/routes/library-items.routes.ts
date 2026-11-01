@@ -90,6 +90,14 @@ router.get("/", auth, async (req, res) => {
     const libraryItems = await prisma.libraryItem.findMany({
       include: {
         category: true,
+        loans: {
+          where: {
+            returnedAt: null,
+          },
+          select: {
+            userId: true,
+          },
+        },
       },
       orderBy,
     });
