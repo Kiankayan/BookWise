@@ -1,6 +1,8 @@
 import type { LibraryItem } from "../types/library";
 
-export function getLibraryItemImage(item: LibraryItem): string {
+export function getLibraryItemImage(
+  item: Pick<LibraryItem, "imageUrl" | "type">,
+): string {
   if (item.imageUrl) {
     return item.imageUrl;
   }
