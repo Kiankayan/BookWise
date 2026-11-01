@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import usersRouter from "./routes/users.routes.js";
+import authRouter from "./routes/auth.routes.js";
 import categoriesRouter from "./routes/categories.routes.js";
 import libraryItemsRouter from "./routes/library-items.routes.js";
 import uploadRouter from "./routes/upload.routes.js";
@@ -14,6 +15,7 @@ const PORT = process.env.PORT || 5001;
 app.use(cors());
 app.use(express.json());
 
+app.use("/api/auth", authRouter);
 app.use("/api/categories", categoriesRouter);
 app.use("/api/library-items", libraryItemsRouter);
 app.use("/api/loans", loansRouter);
