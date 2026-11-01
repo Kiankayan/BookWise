@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { prisma } from "../lib/prisma.js";
 
 export interface AuthRequest extends Request {
   user?: {
@@ -8,7 +9,11 @@ export interface AuthRequest extends Request {
   };
 }
 
-export default function auth(req: Request, res: Response, next: NextFunction) {
+export default async function auth(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -25,28 +30,52 @@ export default function auth(req: Request, res: Response, next: NextFunction) {
     });
   }
 
-  try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET!,
-    ) as AuthRequest["user"];
+  let decoded: AuthRequest["user"];
 
-    if (
-      !decoded ||
-      typeof decoded.userId !== "string" ||
-      (decoded.role !== "USER" && decoded.role !== "ADMIN")
-    ) {
+  try {
+    decoded = jwt.verify(token, process.env.JWT_SECRET!) as AuthRequest["user"];
+  } catch {
+    return res.status(401).json({
+      message: "Ogiltig eller utgången token.",
+    });
+  }
+
+  if (
+    !decoded ||
+    typeof decoded.userId !== "string" ||
+    (decoded.role !== "USER" && decoded.role !== "ADMIN")
+  ) {
+    return res.status(401).json({
+      message: "Ogiltig token.",
+    });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: decoded.userId,
+      },
+      select: {
+        isActive: true,
+      },
+    });
+
+    if (!user) {
       return res.status(401).json({
-        message: "Ogiltig token.",
+        message: "Användarkontot kunde inte hittas.",
+      });
+    }
+
+    if (!user.isActive) {
+      return res.status(403).json({
+        message: "Ditt konto är inaktiverat.",
       });
     }
 
     (req as AuthRequest).user = decoded;
 
-    next();
-  } catch {
-    return res.status(401).json({
-      message: "Ogiltig eller utgången token.",
-    });
+    return next();
+  } catch (error) {
+    return next(error);
   }
 }

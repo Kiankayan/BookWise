@@ -92,6 +92,12 @@ router.post("/login", async (req, res) => {
     });
   }
 
+  if (!user.isActive) {
+    return res.status(403).json({
+      message: "Ditt konto är inaktiverat. Kontakta administratören.",
+    });
+  }
+
   const token = jwt.sign(
     {
       userId: user.id,
