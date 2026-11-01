@@ -195,3 +195,21 @@ export async function returnLibraryItem(
     };
   });
 }
+
+export async function getUserLoans(userId: string) {
+  return prisma.loan.findMany({
+    where: {
+      userId,
+    },
+    include: {
+      item: {
+        include: {
+          category: true,
+        },
+      },
+    },
+    orderBy: {
+      borrowDate: "desc",
+    },
+  });
+}
