@@ -20,6 +20,7 @@ import UsersPage from "./pages/UsersPage";
 import UserDetailsPage from "./pages/UserDetailsPage";
 import AdminRoute from "./components/AdminRoute";
 import "./App.css";
+import SettingsPage from "./pages/SettingsPage";
 
 function App() {
   const { isAuthenticated, user } = useAuth();
@@ -145,6 +146,7 @@ function App() {
 
             <Route path="/my-loans" element={<MyLoansPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/settings" element={<SettingsPage />} />
 
             <Route element={<AdminRoute />}>
               <Route
