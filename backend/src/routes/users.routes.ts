@@ -1,5 +1,5 @@
 import { Router, Request } from "express";
-import { prisma } from "../lib/prisma.js";
+import { prisma, Prisma } from "../lib/prisma.js";
 import auth, { AuthRequest } from "../middleware/auth.js";
 import admin from "../middleware/admin.js";
 
@@ -55,6 +55,66 @@ router.get("/:id", auth, admin, async (req: Request, res) => {
   return res.status(200).json({
     user,
   });
+});
+
+router.patch("/:id/role", auth, admin, async (req: Request, res) => {
+  const id = req.params.id;
+
+  if (typeof id !== "string") {
+    return res.status(400).json({
+      message: "Ogiltigt användar-ID.",
+    });
+  }
+
+  const { role } = req.body;
+
+  if (role !== "USER" && role !== "ADMIN") {
+    return res.status(400).json({
+      message: "Ogiltig användarroll.",
+    });
+  }
+
+  const currentUserId = (req as AuthRequest).user?.userId;
+
+  if (id === currentUserId && role !== "ADMIN") {
+    return res.status(400).json({
+      message: "Du kan inte ta bort din egen administratörsbehörighet.",
+    });
+  }
+
+  try {
+    const user = await prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        role,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+      },
+    });
+
+    return res.status(200).json({
+      message: "Användarrollen har uppdaterats.",
+      user,
+    });
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2025"
+    ) {
+      return res.status(404).json({
+        message: "Användaren kunde inte hittas.",
+      });
+    }
+
+    throw error;
+  }
 });
 
 export default router;
