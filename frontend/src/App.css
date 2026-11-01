@@ -1342,14 +1342,14 @@ button:active {
   font-weight: 700;
 }
 
-.dashboard-recent-loan-status.is-overdue {
-  background: #fee2e2;
-  color: #b91c1c;
+:root[data-theme="dark"] .dashboard-recent-loan-status.is-overdue {
+  background: #542b35;
+  color: #fecaca;
 }
 
-.dashboard-recent-loan-status.is-borrowed {
-  background: #dcfce7;
-  color: #166534;
+:root[data-theme="dark"] .dashboard-recent-loan-status.is-borrowed {
+  background: #214536;
+  color: #bbf7d0;
 }
 
 .dashboard-recent-loans-empty {
