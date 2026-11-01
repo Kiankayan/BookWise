@@ -2,7 +2,7 @@ import api from "./axios";
 import API_BASE_URL from "../api";
 import type { AuthResponse, User } from "../types/auth";
 
-const API_URL = `${API_BASE_URL}/users`;
+const API_URL = `${API_BASE_URL}/auth`;
 
 interface RegisterData {
   name: string;
