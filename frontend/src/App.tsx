@@ -1,19 +1,23 @@
 import { useCallback, useEffect, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
+import { useAuth } from "./context/AuthContext";
 import { getLibraryItems } from "./services/LibraryItemService";
 import { getCategories } from "./services/CategoryService";
 import type { Category, LibraryItem, LibrarySort } from "./types/library";
 import AppLayout from "./components/AppLayout";
 import LoadingScreen from "./components/LoadingScreen";
+import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardPage from "./pages/DashboardPage";
 import LibraryPage from "./pages/LibraryPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import AddItemPage from "./pages/AddItemPage";
-import "./App.css";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import "./App.css";
 
 function App() {
+  const { isAuthenticated } = useAuth();
+
   const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [sort, setSort] = useState<LibrarySort>("title-asc");
@@ -48,8 +52,17 @@ function App() {
   };
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      setIsLoading(false);
+      setLibraryItems([]);
+      setCategories([]);
+      return;
+    }
+
     async function loadInitialData() {
       const startTime = Date.now();
+
+      setIsLoading(true);
 
       try {
         await Promise.all([loadCategories(), loadLibraryItems()]);
@@ -64,15 +77,15 @@ function App() {
     }
 
     void loadInitialData();
-  }, [loadCategories, loadLibraryItems]);
+  }, [isAuthenticated, loadCategories, loadLibraryItems]);
 
-  if (isLoading) {
+  if (isAuthenticated && isLoading) {
     return <LoadingScreen />;
   }
 
   return (
     <>
-      {libraryItemsError && (
+      {isAuthenticated && libraryItemsError && (
         <div
           role="alert"
           style={{
@@ -94,51 +107,54 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route element={<AppLayout />}>
-          <Route
-            path="/"
-            element={
-              <DashboardPage
-                libraryItems={libraryItems}
-                categories={categories}
-              />
-            }
-          />
 
-          <Route
-            path="/library"
-            element={
-              <LibraryPage
-                libraryItems={libraryItems}
-                categories={categories}
-                sort={sort}
-                setSort={setSort}
-                onLibraryItemUpdated={loadLibraryItems}
-              />
-            }
-          />
+        <Route element={<ProtectedRoute />}>
+          <Route element={<AppLayout />}>
+            <Route
+              path="/"
+              element={
+                <DashboardPage
+                  libraryItems={libraryItems}
+                  categories={categories}
+                />
+              }
+            />
 
-          <Route
-            path="/categories"
-            element={
-              <CategoriesPage
-                categories={categories}
-                onCategoriesChanged={handleCategoriesChanged}
-              />
-            }
-          />
+            <Route
+              path="/library"
+              element={
+                <LibraryPage
+                  libraryItems={libraryItems}
+                  categories={categories}
+                  sort={sort}
+                  setSort={setSort}
+                  onLibraryItemUpdated={loadLibraryItems}
+                />
+              }
+            />
 
-          <Route
-            path="/add-item"
-            element={
-              <AddItemPage
-                categories={categories}
-                onLibraryItemCreated={loadLibraryItems}
-              />
-            }
-          />
+            <Route
+              path="/categories"
+              element={
+                <CategoriesPage
+                  categories={categories}
+                  onCategoriesChanged={handleCategoriesChanged}
+                />
+              }
+            />
 
-          <Route path="*" element={<Navigate to="/" replace />} />
+            <Route
+              path="/add-item"
+              element={
+                <AddItemPage
+                  categories={categories}
+                  onLibraryItemCreated={loadLibraryItems}
+                />
+              }
+            />
+
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
         </Route>
       </Routes>
     </>
