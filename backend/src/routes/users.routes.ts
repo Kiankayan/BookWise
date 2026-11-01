@@ -117,4 +117,45 @@ router.patch("/:id/role", auth, admin, async (req: Request, res) => {
   }
 });
 
+router.delete("/:id", auth, admin, async (req: Request, res) => {
+  const id = req.params.id;
+
+  if (typeof id !== "string") {
+    return res.status(400).json({
+      message: "Ogiltigt användar-ID.",
+    });
+  }
+
+  const currentUserId = (req as AuthRequest).user?.userId;
+
+  if (id === currentUserId) {
+    return res.status(400).json({
+      message: "Du kan inte ta bort ditt eget konto.",
+    });
+  }
+
+  try {
+    await prisma.user.delete({
+      where: {
+        id,
+      },
+    });
+
+    return res.status(200).json({
+      message: "Användaren har tagits bort.",
+    });
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2025"
+    ) {
+      return res.status(404).json({
+        message: "Användaren kunde inte hittas.",
+      });
+    }
+
+    throw error;
+  }
+});
+
 export default router;
