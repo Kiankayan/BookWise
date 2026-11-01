@@ -1,13 +1,18 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
-import { getUsers } from "../services/UserService";
+import { getUsers, updateUserRole } from "../services/UserService";
+import { useAuth } from "../context/AuthContext";
 import type { ManagedUser } from "../types/user";
 
 function UsersPage() {
+  const { user: currentUser } = useAuth();
+
   const [users, setUsers] = useState<ManagedUser[]>([]);
   const [search, setSearch] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
+  const [roleUpdateError, setRoleUpdateError] = useState("");
 
   useEffect(() => {
     async function loadUsers() {
@@ -25,6 +30,26 @@ function UsersPage() {
 
     void loadUsers();
   }, []);
+
+  async function handleRoleChange(userId: string, role: ManagedUser["role"]) {
+    setUpdatingUserId(userId);
+    setRoleUpdateError("");
+
+    try {
+      const response = await updateUserRole(userId, role);
+
+      setUsers((currentUsers) =>
+        currentUsers.map((user) =>
+          user.id === userId ? response.data.user : user,
+        ),
+      );
+    } catch (error) {
+      console.error("Kunde inte ändra användarroll.", error);
+      setRoleUpdateError("Kunde inte ändra användarroll. Försök igen.");
+    } finally {
+      setUpdatingUserId(null);
+    }
+  }
 
   const filteredUsers = useMemo(() => {
     const searchValue = search.trim().toLowerCase();
@@ -99,6 +124,8 @@ function UsersPage() {
               aria-label="Sök användare"
             />
 
+            {roleUpdateError && <p role="alert">{roleUpdateError}</p>}
+
             {filteredUsers.length === 0 ? (
               <p>Inga användare hittades.</p>
             ) : (
@@ -108,10 +135,33 @@ function UsersPage() {
                     <div>
                       <h4>{user.name}</h4>
                       <p>{user.email}</p>
-                      <p>
-                        Roll:{" "}
-                        {user.role === "ADMIN" ? "Administratör" : "Användare"}
-                      </p>
+
+                      <label>
+                        Användarroll:
+                        <select
+                          value={user.role}
+                          disabled={
+                            user.id === currentUser?.id ||
+                            updatingUserId === user.id
+                          }
+                          onChange={(event) =>
+                            void handleRoleChange(
+                              user.id,
+                              event.target.value as ManagedUser["role"],
+                            )
+                          }
+                        >
+                          <option value="USER">Användare</option>
+                          <option value="ADMIN">Administratör</option>
+                        </select>
+                      </label>
+
+                      {user.id === currentUser?.id && (
+                        <p>Du kan inte ändra din egen roll.</p>
+                      )}
+
+                      {updatingUserId === user.id && <p>Uppdaterar roll...</p>}
+
                       <p>
                         Registrerad:{" "}
                         {new Date(user.createdAt).toLocaleDateString("sv-SE")}
