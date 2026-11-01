@@ -1378,14 +1378,14 @@ button:active {
 
 .dashboard-overview-card h3 {
   margin: 0;
-  color: #302642;
+  color: var(--bookwise-text);
   font-size: 18px;
   font-weight: 750;
 }
 
 .dashboard-overview-card p:not(.eyebrow) {
   margin: 10px 0 0;
-  color: #807990;
+  color: var(--bookwise-muted);
   font-size: 13px;
   line-height: 1.7;
 }
