@@ -7,6 +7,7 @@ import {
   LogOut,
   User,
   Users,
+  Settings,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -27,6 +28,7 @@ function Sidebar() {
       : []),
     { label: "Min profil", path: "/profile", icon: User },
     { label: "Mina lån", path: "/my-loans", icon: BookOpen },
+    { label: "Inställningar", path: "/settings", icon: Settings },
   ];
 
   const handleLogout = () => {
