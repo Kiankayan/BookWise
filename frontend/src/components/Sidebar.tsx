@@ -1,4 +1,3 @@
-import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   BookOpen,
@@ -6,19 +5,29 @@ import {
   Plus,
   Sparkles,
   LogOut,
+  User,
+  Users,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-
-const navigationItems = [
-  { label: "Dashboard", path: "/", icon: LayoutDashboard },
-  { label: "Bibliotek", path: "/library", icon: BookOpen },
-  { label: "Kategorier", path: "/categories", icon: Tags },
-  { label: "Lägg till material", path: "/add-item", icon: Plus },
-];
+import { NavLink, useNavigate } from "react-router-dom";
 
 function Sidebar() {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
+
+  const navigationItems = [
+    { label: "Dashboard", path: "/", icon: LayoutDashboard },
+    { label: "Bibliotek", path: "/library", icon: BookOpen },
+    ...(user?.role === "ADMIN"
+      ? [
+          { label: "Kategorier", path: "/categories", icon: Tags },
+          { label: "Lägg till material", path: "/add-item", icon: Plus },
+          { label: "Användare", path: "/users", icon: Users },
+        ]
+      : []),
+    { label: "Min profil", path: "/profile", icon: User },
+    { label: "Mina lån", path: "/my-loans", icon: BookOpen },
+  ];
 
   const handleLogout = () => {
     logout();
