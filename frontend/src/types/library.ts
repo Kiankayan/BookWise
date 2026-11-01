@@ -20,6 +20,9 @@ export interface LibraryItem {
   categoryId: string;
   category: Category;
   imageUrl: string | null;
+  loans: {
+    userId: string | null;
+  }[];
 }
 
 export interface LibraryItemInput {
