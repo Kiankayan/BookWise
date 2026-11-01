@@ -20,8 +20,21 @@ function LoginPage() {
     try {
       await login(email, password);
       navigate("/");
-    } catch {
-      setError("Fel e-postadress eller lösenord. Försök igen.");
+    } catch (error) {
+      console.error("Inloggningen misslyckades.", error);
+
+      const responseError = error as {
+        response?: {
+          data?: {
+            message?: string;
+          };
+        };
+      };
+
+      setError(
+        responseError.response?.data?.message ??
+          "Fel e-postadress eller lösenord. Försök igen.",
+      );
     } finally {
       setIsLoading(false);
     }
