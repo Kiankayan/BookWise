@@ -11,6 +11,7 @@ import CategoriesPage from "./pages/CategoriesPage";
 import AddItemPage from "./pages/AddItemPage";
 import "./App.css";
 import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
 
 function App() {
   const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([]);
@@ -92,7 +93,7 @@ function App() {
 
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-
+        <Route path="/register" element={<RegisterPage />} />
         <Route element={<AppLayout />}>
           <Route
             path="/"
