@@ -696,7 +696,8 @@ button:active {
   display: grid;
   grid-template-columns: 250px minmax(0, 1fr);
   min-height: 100vh;
-  background: #f7f6fc;
+  background: var(--bookwise-bg);
+  color: var(--bookwise-text);
 }
 
 .sidebar {
@@ -883,8 +884,8 @@ button:active {
   gap: 20px;
   min-height: 94px;
   padding: 20px 38px;
-  background: #ffffff;
-  border-bottom: 1px solid #ece8f5;
+  background: var(--bookwise-surface);
+  border-bottom: 1px solid var(--bookwise-border);
 }
 
 .topbar-eyebrow {
@@ -1385,14 +1386,14 @@ button:active {
 
 .page-intro h2 {
   margin: 0;
-  color: #302642;
+  color: var(--bookwise-text);
   font-size: clamp(26px, 3vw, 32px);
   letter-spacing: -0.7px;
 }
 
 .page-intro > p:last-child {
   margin: 10px 0 0;
-  color: #807990;
+  color: var(--bookwise-muted);
   font-size: 13px;
   line-height: 1.8;
 }
@@ -1400,9 +1401,9 @@ button:active {
 .page-panel {
   min-width: 0;
   padding: 26px;
-  border: 1px solid #eeeaf7;
+  border: 1px solid var(--bookwise-border);
   border-radius: 20px;
-  background: #ffffff;
+  background: var(--bookwise-surface);
   box-shadow: 0 5px 20px rgba(55, 35, 91, 0.025);
 }
 
@@ -1416,14 +1417,14 @@ button:active {
 
 .page-panel-heading h3 {
   margin: 0;
-  color: #302642;
+  color: var(--bookwise-text);
   font-size: 17px;
   font-weight: 750;
 }
 
 .page-panel-heading p {
   margin: 7px 0 0;
-  color: #91899f;
+  color: var(--bookwise-muted);
   font-size: 12px;
   line-height: 1.6;
 }
