@@ -8,6 +8,7 @@ import AppLayout from "./components/AppLayout";
 import LoadingScreen from "./components/LoadingScreen";
 import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardPage from "./pages/DashboardPage";
+import UserDashboardPage from "./pages/UserDashboardPage";
 import LibraryPage from "./pages/LibraryPage";
 import CategoriesPage from "./pages/CategoriesPage";
 import AddItemPage from "./pages/AddItemPage";
@@ -18,7 +19,7 @@ import AdminRoute from "./components/AdminRoute";
 import "./App.css";
 
 function App() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -115,10 +116,14 @@ function App() {
             <Route
               path="/"
               element={
-                <DashboardPage
-                  libraryItems={libraryItems}
-                  categories={categories}
-                />
+                user?.role === "ADMIN" ? (
+                  <DashboardPage
+                    libraryItems={libraryItems}
+                    categories={categories}
+                  />
+                ) : (
+                  <UserDashboardPage />
+                )
               }
             />
 
