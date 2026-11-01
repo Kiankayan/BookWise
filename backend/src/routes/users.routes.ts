@@ -12,6 +12,7 @@ router.get("/", auth, admin, async (_req, res) => {
       name: true,
       email: true,
       role: true,
+      isActive: true,
       createdAt: true,
     },
     orderBy: {
@@ -42,6 +43,7 @@ router.get("/:id", auth, admin, async (req: Request, res) => {
       name: true,
       email: true,
       role: true,
+      isActive: true,
       createdAt: true,
     },
   });
@@ -95,12 +97,76 @@ router.patch("/:id/role", auth, admin, async (req: Request, res) => {
         name: true,
         email: true,
         role: true,
+        isActive: true,
         createdAt: true,
       },
     });
 
     return res.status(200).json({
       message: "Användarrollen har uppdaterats.",
+      user,
+    });
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2025"
+    ) {
+      return res.status(404).json({
+        message: "Användaren kunde inte hittas.",
+      });
+    }
+
+    throw error;
+  }
+});
+
+router.patch("/:id/status", auth, admin, async (req: Request, res) => {
+  const id = req.params.id;
+
+  if (typeof id !== "string") {
+    return res.status(400).json({
+      message: "Ogiltigt användar-ID.",
+    });
+  }
+
+  const { isActive } = req.body;
+
+  if (typeof isActive !== "boolean") {
+    return res.status(400).json({
+      message: "Ogiltig kontostatus.",
+    });
+  }
+
+  const currentUserId = (req as AuthRequest).user?.userId;
+
+  if (id === currentUserId && !isActive) {
+    return res.status(400).json({
+      message: "Du kan inte inaktivera ditt eget konto.",
+    });
+  }
+
+  try {
+    const user = await prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        isActive,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        isActive: true,
+        createdAt: true,
+      },
+    });
+
+    return res.status(200).json({
+      message: isActive
+        ? "Användarkontot har aktiverats."
+        : "Användarkontot har inaktiverats.",
       user,
     });
   } catch (error) {
