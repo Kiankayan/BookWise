@@ -13,6 +13,7 @@ import CategoriesPage from "./pages/CategoriesPage";
 import AddItemPage from "./pages/AddItemPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import AdminRoute from "./components/AdminRoute";
 import "./App.css";
 
 function App() {
@@ -133,25 +134,27 @@ function App() {
               }
             />
 
-            <Route
-              path="/categories"
-              element={
-                <CategoriesPage
-                  categories={categories}
-                  onCategoriesChanged={handleCategoriesChanged}
-                />
-              }
-            />
+            <Route element={<AdminRoute />}>
+              <Route
+                path="/categories"
+                element={
+                  <CategoriesPage
+                    categories={categories}
+                    onCategoriesChanged={handleCategoriesChanged}
+                  />
+                }
+              />
 
-            <Route
-              path="/add-item"
-              element={
-                <AddItemPage
-                  categories={categories}
-                  onLibraryItemCreated={loadLibraryItems}
-                />
-              }
-            />
+              <Route
+                path="/add-item"
+                element={
+                  <AddItemPage
+                    categories={categories}
+                    onLibraryItemCreated={loadLibraryItems}
+                  />
+                }
+              />
+            </Route>
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
