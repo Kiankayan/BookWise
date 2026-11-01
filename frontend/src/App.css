@@ -1752,6 +1752,17 @@ button:active {
   --bookwise-border: #eeeaf7;
 }
 
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bookwise-bg: #171321;
+  --bookwise-surface: #241e32;
+  --bookwise-primary: #a78bfa;
+  --bookwise-primary-hover: #c4b5fd;
+  --bookwise-text: #f1edf8;
+  --bookwise-muted: #b0a7c0;
+  --bookwise-border: #3a314b;
+}
+
 .app-layout {
   background-color: var(--bookwise-bg);
   color: var(--bookwise-text);
