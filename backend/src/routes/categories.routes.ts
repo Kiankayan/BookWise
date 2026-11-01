@@ -1,10 +1,12 @@
 import { Router } from "express";
 import { prisma, Prisma } from "../lib/prisma.js";
+import auth from "../middleware/auth.js";
+import admin from "../middleware/admin.js";
 import { createCategorySchema } from "../schemas/category.schema.js";
 
 const router = Router();
 
-router.get("/", async (_req, res) => {
+router.get("/", auth, async (_req, res) => {
   try {
     const categories = await prisma.category.findMany({
       orderBy: {
@@ -22,7 +24,7 @@ router.get("/", async (_req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, admin, async (req, res) => {
   try {
     const result = createCategorySchema.safeParse(req.body);
 
@@ -70,7 +72,15 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, admin, async (req, res) => {
+  const id = req.params.id;
+
+  if (typeof id !== "string") {
+    return res.status(400).json({
+      message: "Ogiltigt kategori-ID.",
+    });
+  }
+
   try {
     const result = createCategorySchema.safeParse(req.body);
 
@@ -83,7 +93,7 @@ router.put("/:id", async (req, res) => {
 
     const category = await prisma.category.update({
       where: {
-        id: req.params.id,
+        id,
       },
       data: {
         name: result.data.name,
@@ -114,11 +124,19 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, admin, async (req, res) => {
+  const id = req.params.id;
+
+  if (typeof id !== "string") {
+    return res.status(400).json({
+      message: "Ogiltigt kategori-ID.",
+    });
+  }
+
   try {
     const category = await prisma.category.findUnique({
       where: {
-        id: req.params.id,
+        id,
       },
       include: {
         libraryItems: true,
@@ -149,7 +167,7 @@ router.delete("/:id", async (req, res) => {
 
       await tx.category.delete({
         where: {
-          id: req.params.id,
+          id,
         },
       });
     });

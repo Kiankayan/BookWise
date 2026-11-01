@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { prisma, Prisma } from "../lib/prisma.js";
+import auth from "../middleware/auth.js";
+import admin from "../middleware/admin.js";
 import {
   createLibraryItemSchema,
   updateLibraryItemSchema,
@@ -7,7 +9,7 @@ import {
 
 const router = Router();
 
-router.post("/", async (req, res) => {
+router.post("/", auth, admin, async (req, res) => {
   try {
     const result = createLibraryItemSchema.safeParse(req.body);
 
@@ -58,7 +60,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
   try {
     const sort = req.query.sort;
 
@@ -102,11 +104,19 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", auth, async (req, res) => {
+  const id = req.params.id;
+
+  if (typeof id !== "string") {
+    return res.status(400).json({
+      message: "Ogiltigt bok-ID.",
+    });
+  }
+
   try {
     const libraryItem = await prisma.libraryItem.findUnique({
       where: {
-        id: req.params.id,
+        id,
       },
       include: {
         category: true,
@@ -129,7 +139,15 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", auth, admin, async (req, res) => {
+  const id = req.params.id;
+
+  if (typeof id !== "string") {
+    return res.status(400).json({
+      message: "Ogiltigt bok-ID.",
+    });
+  }
+
   try {
     const result = updateLibraryItemSchema.safeParse(req.body);
 
@@ -142,7 +160,7 @@ router.put("/:id", async (req, res) => {
 
     const libraryItem = await prisma.libraryItem.update({
       where: {
-        id: req.params.id,
+        id,
       },
       data: result.data,
     });
@@ -175,11 +193,19 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", auth, admin, async (req, res) => {
+  const id = req.params.id;
+
+  if (typeof id !== "string") {
+    return res.status(400).json({
+      message: "Ogiltigt bok-ID.",
+    });
+  }
+
   try {
     const libraryItem = await prisma.libraryItem.findUnique({
       where: {
-        id: req.params.id,
+        id,
       },
     });
 
@@ -208,7 +234,7 @@ router.delete("/:id", async (req, res) => {
 
       await tx.libraryItem.delete({
         where: {
-          id: req.params.id,
+          id,
         },
       });
     });
