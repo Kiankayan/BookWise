@@ -2230,10 +2230,10 @@ button:active {
 .dashboard-chart-period {
   max-width: 180px;
   padding: 8px 12px;
-  border: 1px solid var(--bookwise-border, #eeeaf7);
+  border: 1px solid var(--bookwise-border);
   border-radius: 12px;
-  background: #ffffff;
-  color: var(--bookwise-text, #302642);
+  background: var(--bookwise-surface);
+  color: var(--bookwise-text);
   font: inherit;
   font-size: 12px;
   cursor: pointer;
