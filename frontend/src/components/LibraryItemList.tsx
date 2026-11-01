@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import { motion } from "motion/react";
 import { toast } from "react-toastify";
 import {
@@ -8,7 +9,6 @@ import {
   DialogContentText,
   DialogActions,
   Button as MuiButton,
-  TextField,
 } from "@mui/material";
 import { AlertTriangle, Trash2 } from "lucide-react";
 import {
@@ -71,6 +71,9 @@ function LibraryItemList({
   setSort,
   onLibraryItemUpdated,
 }: LibraryItemListProps) {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "ADMIN";
+
   const [showAbbreviations, setShowAbbreviations] = useState(false);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -78,8 +81,6 @@ function LibraryItemList({
   const [searchTerm, setSearchTerm] = useState("");
   const [itemToDelete, setItemToDelete] = useState<LibraryItem | null>(null);
   const [itemToBorrow, setItemToBorrow] = useState<LibraryItem | null>(null);
-  const [borrower, setBorrower] = useState("");
-  const [borrowError, setBorrowError] = useState("");
   const [itemToReturn, setItemToReturn] = useState<LibraryItem | null>(null);
   const [selectedItem, setSelectedItem] = useState<LibraryItem | null>(null);
 
@@ -111,7 +112,6 @@ function LibraryItemList({
       const titleA = a.title.toLowerCase();
       const titleB = b.title.toLowerCase();
 
-      // Sökresultat som börjar med sökordet visas först.
       if (normalizedSearchTerm) {
         const aStartsWithSearch = titleA.startsWith(normalizedSearchTerm);
         const bStartsWithSearch = titleB.startsWith(normalizedSearchTerm);
@@ -143,26 +143,17 @@ function LibraryItemList({
 
   function handleBorrow(item: LibraryItem) {
     setItemToBorrow(item);
-    setBorrower("");
-    setBorrowError("");
   }
 
   function closeBorrowDialog() {
     setItemToBorrow(null);
-    setBorrower("");
-    setBorrowError("");
   }
 
   async function confirmBorrow() {
     if (!itemToBorrow) return;
 
-    if (borrower.trim() === "") {
-      setBorrowError("Du måste ange låntagarens namn.");
-      return;
-    }
-
     try {
-      await borrowLibraryItem(itemToBorrow.id, borrower.trim());
+      await borrowLibraryItem(itemToBorrow.id);
       closeBorrowDialog();
       await onLibraryItemUpdated();
       toast.success("Biblioteksposten har lånats ut!");
@@ -379,29 +370,35 @@ function LibraryItemList({
                       )}
 
                       <div className="library-item-actions">
-                        <button
-                          type="button"
-                          className="library-action-button"
-                          onClick={() => handleReturn(item)}
-                        >
-                          Returnera
-                        </button>
+                        {(isAdmin || item.loans[0]?.userId === user?.id) && (
+                          <button
+                            type="button"
+                            className="library-action-button"
+                            onClick={() => handleReturn(item)}
+                          >
+                            Returnera
+                          </button>
+                        )}
 
-                        <button
-                          type="button"
-                          className="library-action-button"
-                          onClick={() => setEditingItemId(item.id)}
-                        >
-                          Ändra
-                        </button>
+                        {isAdmin && (
+                          <>
+                            <button
+                              type="button"
+                              className="library-action-button"
+                              onClick={() => setEditingItemId(item.id)}
+                            >
+                              Ändra
+                            </button>
 
-                        <button
-                          type="button"
-                          className="library-action-button"
-                          onClick={() => setItemToDelete(item)}
-                        >
-                          Ta bort
-                        </button>
+                            <button
+                              type="button"
+                              className="library-action-button"
+                              onClick={() => setItemToDelete(item)}
+                            >
+                              Ta bort
+                            </button>
+                          </>
+                        )}
                       </div>
                     </>
                   ) : (
@@ -419,6 +416,34 @@ function LibraryItemList({
                           Låna
                         </button>
 
+                        {isAdmin && (
+                          <>
+                            <button
+                              type="button"
+                              className="library-action-button"
+                              onClick={() => setEditingItemId(item.id)}
+                            >
+                              Ändra
+                            </button>
+
+                            <button
+                              type="button"
+                              className="library-action-button"
+                              onClick={() => setItemToDelete(item)}
+                            >
+                              Ta bort
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </>
+                  )
+                ) : (
+                  <>
+                    <p>Referensexemplar – kan inte lånas</p>
+
+                    {isAdmin && (
+                      <div className="library-item-actions">
                         <button
                           type="button"
                           className="library-action-button"
@@ -435,29 +460,7 @@ function LibraryItemList({
                           Ta bort
                         </button>
                       </div>
-                    </>
-                  )
-                ) : (
-                  <>
-                    <p>Referensexemplar – kan inte lånas</p>
-
-                    <div className="library-item-actions">
-                      <button
-                        type="button"
-                        className="library-action-button"
-                        onClick={() => setEditingItemId(item.id)}
-                      >
-                        Ändra
-                      </button>
-
-                      <button
-                        type="button"
-                        className="library-action-button"
-                        onClick={() => setItemToDelete(item)}
-                      >
-                        Ta bort
-                      </button>
-                    </div>
+                    )}
                   </>
                 )}
               </>
@@ -492,29 +495,10 @@ function LibraryItemList({
         </DialogTitle>
 
         <DialogContent>
-          <DialogContentText sx={{ mb: 2 }}>
-            Ange vem som ska låna <strong>{itemToBorrow?.title}</strong>.
+          <DialogContentText>
+            Du kommer att låna <strong>{itemToBorrow?.title}</strong> som{" "}
+            <strong>{user?.name}</strong>.
           </DialogContentText>
-
-          <TextField
-            autoFocus
-            fullWidth
-            margin="dense"
-            id="borrower-name"
-            label="Låntagarens namn"
-            value={borrower}
-            onChange={(event) => {
-              setBorrower(event.target.value);
-              setBorrowError("");
-            }}
-            error={borrowError !== ""}
-            helperText={borrowError}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") {
-                void confirmBorrow();
-              }
-            }}
-          />
         </DialogContent>
 
         <DialogActions sx={{ padding: "16px 24px" }}>
