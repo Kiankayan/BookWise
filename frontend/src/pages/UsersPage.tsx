@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { getUsers, updateUserRole } from "../services/UserService";
 import { useAuth } from "../context/AuthContext";
@@ -133,7 +134,10 @@ function UsersPage() {
                 {filteredUsers.map((user) => (
                   <article key={user.id}>
                     <div>
-                      <h4>{user.name}</h4>
+                      <h4>
+                        <Link to={`/users/${user.id}`}>{user.name}</Link>
+                      </h4>
+
                       <p>{user.email}</p>
 
                       <label>
