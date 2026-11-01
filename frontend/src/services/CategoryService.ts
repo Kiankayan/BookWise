@@ -1,25 +1,25 @@
-import axios from "axios";
 import type { Category } from "../types/library";
+import api from "./axios";
 import API_BASE_URL from "../api";
 
-const API_BASEURL = `${API_BASE_URL}/categories`;
+const API_URL = `${API_BASE_URL}/categories`;
 
 export async function getCategories() {
-  return axios.get<Category[]>(API_BASEURL);
+  return api.get<Category[]>(API_URL);
 }
 
 export async function createCategory(name: string) {
-  return axios.post<Category>(API_BASEURL, {
+  return api.post<Category>(API_URL, {
     name,
   });
 }
 
 export async function updateCategory(id: string, name: string) {
-  return axios.put<Category>(`${API_BASEURL}/${id}`, {
+  return api.put<Category>(`${API_URL}/${id}`, {
     name,
   });
 }
 
 export async function deleteCategory(id: string) {
-  return axios.delete(`${API_BASEURL}/${id}`);
+  return api.delete(`${API_URL}/${id}`);
 }

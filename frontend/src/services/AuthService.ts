@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "./axios";
 import API_BASE_URL from "../api";
 import type { AuthResponse, User } from "../types/auth";
 
@@ -16,11 +16,11 @@ interface RegisterResponse {
 }
 
 export async function registerUser(data: RegisterData) {
-  return axios.post<RegisterResponse>(`${API_URL}/register`, data);
+  return api.post<RegisterResponse>(`${API_URL}/register`, data);
 }
 
 export async function loginUser(email: string, password: string) {
-  return axios.post<AuthResponse>(`${API_URL}/login`, {
+  return api.post<AuthResponse>(`${API_URL}/login`, {
     email,
     password,
   });

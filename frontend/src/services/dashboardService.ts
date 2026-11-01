@@ -1,6 +1,7 @@
-import axios from "axios";
+import api from "./axios";
+import API_BASE_URL from "../api";
 
-const API_URL = "http://localhost:5001/api/dashboard";
+const API_URL = `${API_BASE_URL}/dashboard`;
 
 export type DashboardStat = {
   key: string;
@@ -15,7 +16,7 @@ export type DashboardStatsResponse = {
 };
 
 export async function getDashboardStats(): Promise<DashboardStatsResponse> {
-  const response = await axios.get<DashboardStatsResponse>(`${API_URL}/stats`);
+  const response = await api.get<DashboardStatsResponse>(`${API_URL}/stats`);
 
   return response.data;
 }

@@ -3,23 +3,22 @@ import type {
   LibraryItemInput,
   LibrarySort,
 } from "../types/library";
-import axios from "axios";
+import api from "./axios";
 import API_BASE_URL from "../api";
 
-const API_BASEURL = `${API_BASE_URL}/library-items`;
+const LIBRARY_ITEMS_URL = `${API_BASE_URL}/library-items`;
+const LOANS_URL = `${API_BASE_URL}/loans`;
 
-export async function borrowLibraryItem(id: string, borrower: string) {
-  return axios.post<LibraryItem>(`${API_BASEURL}/${id}/borrow`, {
-    borrower,
-  });
+export async function borrowLibraryItem(id: string, _borrower?: string) {
+  return api.post<LibraryItem>(`${LOANS_URL}/${id}/borrow`);
 }
 
 export async function returnLibraryItem(id: string) {
-  return axios.post<LibraryItem>(`${API_BASEURL}/${id}/return`);
+  return api.post<LibraryItem>(`${LOANS_URL}/${id}/return`);
 }
 
 export async function getLibraryItems(sort: LibrarySort = "title-asc") {
-  return axios.get<LibraryItem[]>(API_BASEURL, {
+  return api.get<LibraryItem[]>(LIBRARY_ITEMS_URL, {
     params: {
       sort,
     },
@@ -27,17 +26,17 @@ export async function getLibraryItems(sort: LibrarySort = "title-asc") {
 }
 
 export async function getLibraryItem(id: string) {
-  return axios.get<LibraryItem>(`${API_BASEURL}/${id}`);
+  return api.get<LibraryItem>(`${LIBRARY_ITEMS_URL}/${id}`);
 }
 
 export async function createLibraryItem(data: LibraryItemInput) {
-  return axios.post<LibraryItem>(API_BASEURL, data);
+  return api.post<LibraryItem>(LIBRARY_ITEMS_URL, data);
 }
 
 export async function updateLibraryItem(id: string, data: LibraryItemInput) {
-  return axios.put<LibraryItem>(`${API_BASEURL}/${id}`, data);
+  return api.put<LibraryItem>(`${LIBRARY_ITEMS_URL}/${id}`, data);
 }
 
 export async function deleteLibraryItem(id: string) {
-  return axios.delete(`${API_BASEURL}/${id}`);
+  return api.delete(`${LIBRARY_ITEMS_URL}/${id}`);
 }
