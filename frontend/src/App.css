@@ -416,7 +416,7 @@
 }
 
 .form-group label {
-  color: #374151;
+  color: var(--bookwise-text);
   font-size: 14px;
   font-weight: 600;
 }
@@ -430,10 +430,10 @@ input,
 select {
   min-height: 40px;
   padding: 8px 12px;
-  border: 1px solid #d8d1eb;
+  border: 1px solid var(--bookwise-border);
   border-radius: 10px;
-  background: #ffffff;
-  color: #1f2937;
+  background: var(--bookwise-surface);
+  color: var(--bookwise-text);
   outline: none;
 }
 
