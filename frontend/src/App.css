@@ -209,11 +209,10 @@
 }
 
 .sort-control label {
-  color: #6b7280;
+  color: var(--bookwise-muted);
   font-size: 14px;
   font-weight: 600;
 }
-
 .library-toolbar select {
   min-width: 120px;
 }
