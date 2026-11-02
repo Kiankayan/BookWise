@@ -2143,8 +2143,8 @@ button:active {
 .book-details-metadata > div {
   min-width: 0;
   padding: 14px;
-  background: #faf8ff;
-  border: 1px solid #eee8fb;
+  background: var(--bookwise-bg);
+  border: 1px solid var(--bookwise-border);
   border-radius: 12px;
 }
 
