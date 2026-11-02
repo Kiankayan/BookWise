@@ -1126,6 +1126,23 @@ button:active {
   color: #dc2626;
 }
 
+:root[data-theme="dark"] .dashboard-stat-change,
+:root[data-theme="dark"] .dashboard-stat-change.is-no-history,
+:root[data-theme="dark"] .dashboard-stat-change.is-positive {
+  background: #163b2a;
+  color: #86efac;
+}
+
+:root[data-theme="dark"] .dashboard-stat-change.is-neutral {
+  background: #1e3552;
+  color: #93c5fd;
+}
+
+:root[data-theme="dark"] .dashboard-stat-change.is-negative {
+  background: #4a2428;
+  color: #fca5a5;
+}
+
 .dashboard-stat-icon {
   display: grid;
   place-items: center;
