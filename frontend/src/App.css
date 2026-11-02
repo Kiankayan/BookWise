@@ -1927,7 +1927,7 @@ button:active {
   height: 150px;
   object-fit: contain;
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--bookwise-surface);
 }
 
 .image-preview-container span {
