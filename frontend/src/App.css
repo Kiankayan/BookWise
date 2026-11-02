@@ -1304,15 +1304,15 @@ button:active {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #8b5cf6;
-  background: #f3effa;
+  color: var(--bookwise-primary);
+  background: var(--bookwise-bg);
 }
 
 .dashboard-recent-loan-cover.is-default-image {
   object-fit: contain;
   padding: 0px;
   box-sizing: border-box;
-  background: #ffffff;
+  background: var(--bookwise-surface);
 }
 
 .dashboard-recent-loan-info {
