@@ -283,7 +283,7 @@
 
 .library-item p {
   margin: 5px 0;
-  color: #6b7280;
+  color: var(--bookwise-muted);
   font-size: 13px;
   line-height: 1.6;
   overflow-wrap: anywhere;
