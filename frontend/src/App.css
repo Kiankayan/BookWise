@@ -2128,7 +2128,7 @@ button:active {
 
 .book-details-author {
   margin: 0 0 28px;
-  color: #716681;
+  color: var(--bookwise-muted);
   font-size: 16px;
   line-height: 1.5;
 }
