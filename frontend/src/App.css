@@ -492,7 +492,7 @@ button:disabled:hover {
 .checkbox-group input {
   width: 18px;
   height: 18px;
-  accent-color: #7c3aed;
+  accent-color: var(--bookwise-primary);
 }
 
 .reference-notice {
