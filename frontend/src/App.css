@@ -189,7 +189,7 @@
 }
 
 .library-search label {
-  color: #514663;
+  color: var(--bookwise-text);
   font-size: 12px;
   font-weight: 700;
 }
