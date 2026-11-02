@@ -2098,7 +2098,7 @@ button:active {
   object-fit: contain;
   object-position: center;
   border-radius: 14px;
-  background: #faf8ff;
+  background: var(--bookwise-bg);
 }
 
 .book-details-cover-placeholder {
