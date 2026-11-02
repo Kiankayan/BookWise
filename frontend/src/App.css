@@ -349,8 +349,9 @@
   border-color: #d8ccff;
   box-shadow: 0 12px 26px rgba(109, 40, 217, 0.09);
 }
+
 .category-name {
-  color: #302642;
+  color: var(--bookwise-text);
   font-size: 15px;
   font-weight: 700;
   overflow-wrap: anywhere;
