@@ -230,8 +230,8 @@
   flex-direction: column;
   min-width: 0;
   padding: 24px;
-  background: #ffffff;
-  border: 1px solid #ece7f5;
+  background: var(--bookwise-surface);
+  border: 1px solid var(--bookwise-border);
   border-radius: 20px;
   box-shadow: 0 3px 12px rgba(48, 38, 66, 0.025);
   transition:
