@@ -447,7 +447,7 @@ button {
   padding: 8px 14px;
   border: 0;
   border-radius: 10px;
-  background: #7c3aed;
+  background: var(--bookwise-primary);
   color: #ffffff;
   font-weight: 600;
   cursor: pointer;
@@ -455,7 +455,7 @@ button {
 }
 
 button:hover {
-  background: #6d28d9;
+  background: var(--bookwise-primary-hover);
   transform: translateY(-1px);
 }
 
@@ -466,7 +466,7 @@ button:disabled {
 }
 
 button:disabled:hover {
-  background: #7c3aed;
+  background: var(--bookwise-primary);
   transform: none;
 }
 
