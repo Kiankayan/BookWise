@@ -2173,7 +2173,7 @@ button:active {
 }
 
 .library-item:focus-visible {
-  outline: 3px solid #a78bfa;
+  outline: 3px solid var(--bookwise-primary);
   outline-offset: 3px;
 }
 
