@@ -1900,8 +1900,8 @@ button:active {
   width: 60px;
   height: 60px;
   border-radius: 18px;
-  background: #ede9fe;
-  color: #7c3aed;
+  background: var(--bookwise-border);
+  color: var(--bookwise-primary);
   box-shadow: 0 4px 12px rgba(124, 58, 237, 0.08);
   transition:
     transform 0.2s ease,
@@ -1910,16 +1910,16 @@ button:active {
 
 .image-dropzone:hover .image-upload-icon {
   transform: translateY(-3px);
-  background: #ddd6fe;
+  background: var(--bookwise-surface);
 }
 
 .image-dropzone-content strong {
-  color: #29213f;
+  color: var(--bookwise-text);
 }
 
 .image-dropzone-content span,
 .image-dropzone-content small {
-  color: #77718b;
+  color: var(--bookwise-muted);
 }
 
 .image-preview {
