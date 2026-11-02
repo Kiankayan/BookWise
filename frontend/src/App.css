@@ -483,7 +483,7 @@ button:disabled:hover {
   align-items: center;
   gap: 10px;
   width: fit-content;
-  color: #374151;
+  color: var(--bookwise-text);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
