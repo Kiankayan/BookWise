@@ -265,7 +265,7 @@
   object-fit: contain;
   object-position: center;
   border-radius: 12px;
-  background: #ffffff;
+  background: var(--bookwise-surface);
 }
 
 .edit-library-item-form .edit-form-image {
