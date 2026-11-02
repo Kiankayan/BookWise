@@ -1868,9 +1868,9 @@ button:active {
   min-height: 150px;
   padding: 20px;
   margin-bottom: 20px;
-  border: 2px dashed #c4b5fd;
+  border: 2px dashed var(--bookwise-border);
   border-radius: 16px;
-  background: #faf8ff;
+  background: var(--bookwise-bg);
   cursor: pointer;
   transition:
     border-color 0.2s ease,
@@ -1879,8 +1879,8 @@ button:active {
 
 .image-dropzone:hover,
 .image-dropzone-active {
-  border-color: #7c3aed;
-  background: #f1ebff;
+  border-color: var(--bookwise-primary);
+  background: var(--bookwise-surface);
   box-shadow: 0 4px 16px rgba(124, 58, 237, 0.08);
 }
 
