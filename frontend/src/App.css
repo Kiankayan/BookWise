@@ -361,7 +361,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #7c3aed;
+  color: var(--bookwise-primary);
   min-width: 0;
 }
 
