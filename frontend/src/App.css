@@ -454,6 +454,10 @@ button {
   transition: 0.2s ease;
 }
 
+:root[data-theme="dark"] button {
+  color: #241e32;
+}
+
 button:hover {
   background: var(--bookwise-primary-hover);
   transform: translateY(-1px);
