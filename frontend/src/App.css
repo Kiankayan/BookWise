@@ -1376,9 +1376,9 @@ button:active {
 .dashboard-recent-loans-empty {
   margin: 0;
   padding: 22px;
-  border: 1px dashed #d8ccff;
+  border: 1px dashed var(--bookwise-border);
   border-radius: 12px;
-  color: var(--bookwise-muted, #807990);
+  color: var(--bookwise-muted);
   font-size: 13px;
   text-align: center;
 }
