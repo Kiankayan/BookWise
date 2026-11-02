@@ -146,16 +146,16 @@
 
 .content-card {
   padding: 24px;
-  background: #ffffff;
-  border: 1px solid #eeeaf7;
+  background: var(--bookwise-surface);
+  border: 1px solid var(--bookwise-border);
   border-radius: 20px;
   box-shadow: 0 8px 24px rgba(76, 29, 149, 0.05);
 }
 
 .library-content {
   padding: 24px;
-  background: #ffffff;
-  border: 1px solid #eeeaf7;
+  background: var(--bookwise-surface);
+  border: 1px solid var(--bookwise-border);
   border-radius: 20px;
   box-shadow: 0 8px 24px rgba(76, 29, 149, 0.05);
 }
