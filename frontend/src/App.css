@@ -521,13 +521,13 @@ button:disabled:hover {
 .stat-card:hover,
 .content-card:hover,
 .library-content:hover {
-  border-color: #ddd6fe;
+  border-color: var(--bookwise-primary);
   box-shadow: 0 12px 28px rgba(76, 29, 149, 0.09);
 }
 
 .category-row:hover {
-  border-color: #ddd6fe;
-  background: #f7f5ff;
+  border-color: var(--bookwise-primary);
+  background: var(--bookwise-bg);
 }
 
 button:focus-visible {
