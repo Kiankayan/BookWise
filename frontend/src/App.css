@@ -2120,7 +2120,7 @@ button:active {
 
 .book-details-info h2 {
   margin: 0 0 10px;
-  color: #241b35;
+  color: var(--bookwise-text);
   font-size: clamp(24px, 3vw, 34px);
   line-height: 1.2;
   overflow-wrap: anywhere;
