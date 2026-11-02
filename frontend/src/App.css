@@ -2074,13 +2074,13 @@ button:active {
   width: 42px;
   min-height: 42px;
   padding: 0;
-  background: #f3effb;
-  color: #6d28d9;
+  background: var(--bookwise-bg);
+  color: var(--bookwise-primary);
   border-radius: 12px;
 }
 
 .book-details-close:hover {
-  background: #e9ddff;
+  background: var(--bookwise-border);
 }
 
 .book-details-content {
