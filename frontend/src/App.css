@@ -167,8 +167,8 @@
   gap: 18px;
   margin-bottom: 22px;
   padding: 18px;
-  background: #faf8ff;
-  border: 1px solid #eee8fb;
+  background: var(--bookwise-bg);
+  border: 1px solid var(--bookwise-border);
   border-radius: 16px;
 }
 
