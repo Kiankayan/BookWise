@@ -252,7 +252,7 @@
 
 .library-item:hover {
   transform: translateY(-4px);
-  border-color: #cbb8fa;
+  border-color: var(--bookwise-primary);
   box-shadow: 0 14px 30px rgba(109, 40, 217, 0.1);
 }
 
