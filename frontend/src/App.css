@@ -196,7 +196,7 @@
 
 .library-results-count {
   margin: 0 0 12px;
-  color: #6b7280;
+  color: var(--bookwise-muted);
   font-size: 13px;
   font-weight: 500;
 }
