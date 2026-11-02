@@ -2106,10 +2106,10 @@ button:active {
   place-items: center;
   min-height: 260px;
   padding: 20px;
-  background: #f5f0ff;
-  border: 1px dashed #d8c8f8;
+  background: var(--bookwise-bg);
+  border: 1px dashed var(--bookwise-border);
   border-radius: 14px;
-  color: #78668f;
+  color: var(--bookwise-muted);
   text-align: center;
 }
 
