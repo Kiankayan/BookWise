@@ -2150,7 +2150,7 @@ button:active {
 
 .book-details-metadata dt {
   margin-bottom: 6px;
-  color: #8b7d9e;
+  color: var(--bookwise-muted);
   font-size: 12px;
   font-weight: 600;
 }
