@@ -1937,10 +1937,10 @@ button:active {
 
 .image-remove-button {
   padding: 8px 14px;
-  border: 1px solid #ddd6fe;
+  border: 1px solid var(--bookwise-border);
   border-radius: 8px;
-  background: #ffffff;
-  color: #6d28d9;
+  background: var(--bookwise-surface);
+  color: var(--bookwise-primary);
   cursor: pointer;
   transition:
     background 0.2s ease,
@@ -1948,9 +1948,9 @@ button:active {
 }
 
 .image-remove-button:hover {
-  background: #f5f0ff;
-  border-color: #7c3aed;
-  color: #6d28d9;
+  background: var(--bookwise-bg);
+  border-color: var(--bookwise-primary);
+  color: var(--bookwise-primary);
 }
 
 .edit-form-actions {
