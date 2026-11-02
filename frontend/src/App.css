@@ -2518,12 +2518,12 @@ button:active {
 }
 
 .dashboard-chart-container .recharts-cartesian-grid-horizontal line {
-  stroke: #eeeaf7;
+  stroke: var(--bookwise-border);
 }
 
 .dashboard-chart-container .recharts-x-axis text,
 .dashboard-chart-container .recharts-y-axis text {
-  fill: #807990;
+  fill: var(--bookwise-muted);
   font-size: 12px;
 }
 
@@ -2532,7 +2532,7 @@ button:active {
 }
 
 .dashboard-chart-container .recharts-legend-item-text {
-  color: #807990;
+  color: var(--bookwise-muted);
 }
 
 @media (max-width: 600px) {
