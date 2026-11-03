@@ -6,6 +6,9 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
+  Pie,
+  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -79,6 +82,35 @@ function UserDashboardPage() {
       total,
     };
   });
+
+  const categoryLoans = Object.values(
+    loans.reduce<Record<string, { name: string; value: number }>>(
+      (categories, loan) => {
+        const categoryName = loan.item.category.name;
+
+        if (!categories[categoryName]) {
+          categories[categoryName] = {
+            name: categoryName,
+            value: 0,
+          };
+        }
+
+        categories[categoryName].value += 1;
+
+        return categories;
+      },
+      {},
+    ),
+  );
+
+  const categoryColors = [
+    "#7656c9",
+    "#9b7de0",
+    "#b8a2ed",
+    "#d1c3f5",
+    "#6040ad",
+    "#e0d7f8",
+  ];
 
   const stats = [
     {
@@ -161,6 +193,45 @@ function UserDashboardPage() {
                 </BarChart>
               </ResponsiveContainer>
             </div>
+          </section>
+
+          <section className="dashboard-chart-card">
+            <div className="dashboard-chart-heading">
+              <div>
+                <h3>Mina lån per kategori</h3>
+                <p>Fördelning av alla dina lån</p>
+              </div>
+            </div>
+
+            {categoryLoans.length === 0 ? (
+              <p>Du har inga lån att visa ännu.</p>
+            ) : (
+              <div className="dashboard-chart-container">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={categoryLoans}
+                      dataKey="value"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={100}
+                      label={({ name, percent }) =>
+                        `${name} (${((percent ?? 0) * 100).toFixed(0)}%)`
+                      }
+                    >
+                      {categoryLoans.map((category, index) => (
+                        <Cell
+                          key={category.name}
+                          fill={categoryColors[index % categoryColors.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+            )}
           </section>
 
           <section className="page-panel">
