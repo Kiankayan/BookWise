@@ -2,6 +2,15 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "motion/react";
 import { BookOpen, CircleAlert, CircleCheck, ArrowRight } from "lucide-react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { useAuth } from "../context/AuthContext";
 import { getMyLoans } from "../services/LoanService";
 import type { Loan } from "../types/loan";
@@ -44,6 +53,32 @@ function UserDashboardPage() {
 
   const recentActiveLoans = activeLoans.slice(0, 3);
   const recentReturnedLoans = returnedLoans.slice(0, 3);
+
+  const monthlyLoans = Array.from({ length: 6 }, (_, index) => {
+    const monthDate = new Date(
+      now.getFullYear(),
+      now.getMonth() - (5 - index),
+      1,
+    );
+
+    const monthKey = `${monthDate.getFullYear()}-${String(
+      monthDate.getMonth() + 1,
+    ).padStart(2, "0")}`;
+
+    const total = loans.filter((loan) => {
+      const borrowDate = new Date(loan.borrowDate);
+      const loanMonthKey = `${borrowDate.getFullYear()}-${String(
+        borrowDate.getMonth() + 1,
+      ).padStart(2, "0")}`;
+
+      return loanMonthKey === monthKey;
+    }).length;
+
+    return {
+      month: monthDate.toLocaleDateString("sv-SE", { month: "short" }),
+      total,
+    };
+  });
 
   const stats = [
     {
@@ -100,6 +135,32 @@ function UserDashboardPage() {
                 </article>
               );
             })}
+          </section>
+
+          <section className="dashboard-chart-card">
+            <div className="dashboard-chart-heading">
+              <div>
+                <h3>Mina lån över tid</h3>
+                <p>Antal lån under de senaste sex månaderna</p>
+              </div>
+            </div>
+
+            <div className="dashboard-chart-container">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={monthlyLoans}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                  <XAxis dataKey="month" />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip />
+                  <Bar
+                    dataKey="total"
+                    name="Antal lån"
+                    fill="#7656c9"
+                    radius={[5, 5, 0, 0]}
+                  />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </section>
 
           <section className="page-panel">
