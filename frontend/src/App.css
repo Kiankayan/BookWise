@@ -1386,6 +1386,16 @@ button:active {
   color: #bbf7d0;
 }
 
+.dashboard-recent-loan-status.is-returned {
+  background: #e8efff;
+  color: #315bb5;
+}
+
+:root[data-theme="dark"] .dashboard-recent-loan-status.is-returned {
+  background: #263b60;
+  color: #bfdbfe;
+}
+
 .dashboard-recent-loans-empty {
   margin: 0;
   padding: 22px;

@@ -181,7 +181,7 @@ function MyLoansPage() {
                       </div>
                     </div>
 
-                    <span className="dashboard-recent-loan-status is-borrowed">
+                    <span className="dashboard-recent-loan-status is-returned">
                       Återlämnad
                     </span>
                   </article>
