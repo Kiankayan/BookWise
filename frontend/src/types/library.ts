@@ -22,6 +22,9 @@ export interface LibraryItem {
   imageUrl: string | null;
   loans: {
     userId: string | null;
+    borrowerName: string;
+    borrowDate: string;
+    dueDate: string;
   }[];
 }
 

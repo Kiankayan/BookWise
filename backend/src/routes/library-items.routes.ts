@@ -96,7 +96,14 @@ router.get("/", auth, async (req, res) => {
           },
           select: {
             userId: true,
+            borrowerName: true,
+            borrowDate: true,
+            dueDate: true,
           },
+          orderBy: {
+            borrowDate: "desc",
+          },
+          take: 1,
         },
       },
       orderBy,

@@ -50,18 +50,18 @@ function getLibraryItemTypeLabel(type: LibraryItem["type"]) {
   }
 }
 
-function isOverdue(item: LibraryItem) {
-  if (!item.borrower || !item.dueDate) {
+function isOverdue(dueDate: string | null) {
+  if (!dueDate) {
     return false;
   }
 
-  const dueDate = new Date(item.dueDate);
+  const date = new Date(dueDate);
   const today = new Date();
 
-  dueDate.setHours(0, 0, 0, 0);
+  date.setHours(0, 0, 0, 0);
   today.setHours(0, 0, 0, 0);
 
-  return dueDate < today;
+  return date < today;
 }
 
 function LibraryItemList({
@@ -100,10 +100,10 @@ function LibraryItemList({
         selectedAvailability === "all" ||
         (selectedAvailability === "available" &&
           item.isBorrowable &&
-          !item.borrower) ||
+          item.loans.length === 0) ||
         (selectedAvailability === "borrowed" &&
           item.isBorrowable &&
-          Boolean(item.borrower)) ||
+          item.loans.length > 0) ||
         (selectedAvailability === "reference" && !item.isBorrowable);
 
       return matchesCategory && matchesSearch && matchesAvailability;
@@ -184,7 +184,7 @@ function LibraryItemList({
   async function handleDelete() {
     if (!itemToDelete) return;
 
-    if (itemToDelete.borrower) {
+    if (itemToDelete.loans.length > 0) {
       toast.error(
         "Boken kan inte tas bort eftersom den är utlånad. Registrera återlämningen först.",
       );
@@ -277,196 +277,202 @@ function LibraryItemList({
       </p>
 
       <div className="library-items">
-        {filteredItems.map((item, index) => (
-          <motion.div
-            className="library-item"
-            key={item.id}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            whileHover={{ y: -5, scale: 1.015 }}
-            transition={{
-              duration: 0.25,
-              delay: Math.min(index * 0.08, 0.48),
-              ease: "easeOut",
-            }}
-            onClick={(event) => {
-              if (
-                event.target instanceof Element &&
-                event.target.closest("button, input, select, textarea, a")
-              ) {
-                return;
-              }
+        {filteredItems.map((item, index) => {
+          const activeLoan = item.loans[0];
 
-              if (editingItemId !== item.id) {
-                setSelectedItem(item);
-              }
-            }}
-            role="button"
-            tabIndex={0}
-            aria-label={`Visa detaljer för ${item.title}`}
-            onKeyDown={(event) => {
-              if (event.target !== event.currentTarget) return;
+          return (
+            <motion.div
+              className="library-item"
+              key={item.id}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              whileHover={{ y: -5, scale: 1.015 }}
+              transition={{
+                duration: 0.25,
+                delay: Math.min(index * 0.08, 0.48),
+                ease: "easeOut",
+              }}
+              onClick={(event) => {
+                if (
+                  event.target instanceof Element &&
+                  event.target.closest("button, input, select, textarea, a")
+                ) {
+                  return;
+                }
 
-              if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                setSelectedItem(item);
-              }
-            }}
-          >
-            {editingItemId === item.id ? (
-              <EditLibraryItemForm
-                item={item}
-                categories={categories}
-                onLibraryItemUpdated={onLibraryItemUpdated}
-                onCancel={() => setEditingItemId(null)}
-              />
-            ) : (
-              <>
-                <img
-                  className="library-item-image"
-                  src={getLibraryItemImage(item)}
-                  alt={`Omslag till ${item.title}`}
-                  loading="lazy"
+                if (editingItemId !== item.id) {
+                  setSelectedItem(item);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-label={`Visa detaljer för ${item.title}`}
+              onKeyDown={(event) => {
+                if (event.target !== event.currentTarget) return;
+
+                if (event.key === "Enter" || event.key === " ") {
+                  event.preventDefault();
+                  setSelectedItem(item);
+                }
+              }}
+            >
+              {editingItemId === item.id ? (
+                <EditLibraryItemForm
+                  item={item}
+                  categories={categories}
+                  onLibraryItemUpdated={onLibraryItemUpdated}
+                  onCancel={() => setEditingItemId(null)}
                 />
+              ) : (
+                <>
+                  <img
+                    className="library-item-image"
+                    src={getLibraryItemImage(item)}
+                    alt={`Omslag till ${item.title}`}
+                    loading="lazy"
+                  />
 
-                <h2>
-                  {showAbbreviations
-                    ? `${item.title} (${getTitleAbbreviation(item.title)})`
-                    : item.title}
-                </h2>
+                  <h2>
+                    {showAbbreviations
+                      ? `${item.title} (${getTitleAbbreviation(item.title)})`
+                      : item.title}
+                  </h2>
 
-                <p>Typ: {getLibraryItemTypeLabel(item.type)}</p>
-                <p>Kategori: {item.category.name}</p>
+                  <p>Typ: {getLibraryItemTypeLabel(item.type)}</p>
+                  <p>Kategori: {item.category.name}</p>
 
-                {item.isBorrowable ? (
-                  item.borrower ? (
-                    <>
-                      <p>Utlånad till: {item.borrower}</p>
+                  {item.isBorrowable ? (
+                    activeLoan ? (
+                      <>
+                        <p>Utlånad till: {activeLoan?.borrowerName ?? "-"}</p>
 
-                      <p>
-                        Utlånad datum:{" "}
-                        {item.borrowDate
-                          ? new Date(item.borrowDate).toLocaleDateString(
-                              "sv-SE",
-                            )
-                          : "-"}
-                      </p>
-
-                      <p>
-                        Förfallodatum:{" "}
-                        {item.dueDate
-                          ? new Date(item.dueDate).toLocaleDateString("sv-SE")
-                          : "-"}
-                      </p>
-
-                      {isOverdue(item) ? (
-                        <p className="overdue-label" role="status">
-                          Försenad
+                        <p>
+                          Utlånad datum:{" "}
+                          {activeLoan?.borrowDate
+                            ? new Date(
+                                activeLoan.borrowDate,
+                              ).toLocaleDateString("sv-SE")
+                            : "-"}
                         </p>
-                      ) : (
-                        <p className="borrowed-label" role="status">
-                          Utlånad
-                        </p>
-                      )}
 
-                      <div className="library-item-actions">
-                        {(isAdmin || item.loans[0]?.userId === user?.id) && (
+                        <p>
+                          Förfallodatum:{" "}
+                          {activeLoan?.dueDate
+                            ? new Date(activeLoan.dueDate).toLocaleDateString(
+                                "sv-SE",
+                              )
+                            : "-"}
+                        </p>
+
+                        {isOverdue(activeLoan?.dueDate ?? null) ? (
+                          <p className="overdue-label" role="status">
+                            Försenad
+                          </p>
+                        ) : (
+                          <p className="borrowed-label" role="status">
+                            Utlånad
+                          </p>
+                        )}
+
+                        <div className="library-item-actions">
+                          {(isAdmin || item.loans[0]?.userId === user?.id) && (
+                            <button
+                              type="button"
+                              className="library-action-button"
+                              onClick={() => handleReturn(item)}
+                            >
+                              Returnera
+                            </button>
+                          )}
+
+                          {isAdmin && (
+                            <>
+                              <button
+                                type="button"
+                                className="library-action-button"
+                                onClick={() => setEditingItemId(item.id)}
+                              >
+                                Ändra
+                              </button>
+
+                              <button
+                                type="button"
+                                className="library-action-button"
+                                onClick={() => setItemToDelete(item)}
+                              >
+                                Ta bort
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <p className="available-label" role="status">
+                          Ej utlånad
+                        </p>
+
+                        <div className="library-item-actions">
                           <button
                             type="button"
                             className="library-action-button"
-                            onClick={() => handleReturn(item)}
+                            onClick={() => handleBorrow(item)}
                           >
-                            Returnera
+                            Låna
                           </button>
-                        )}
 
-                        {isAdmin && (
-                          <>
-                            <button
-                              type="button"
-                              className="library-action-button"
-                              onClick={() => setEditingItemId(item.id)}
-                            >
-                              Ändra
-                            </button>
+                          {isAdmin && (
+                            <>
+                              <button
+                                type="button"
+                                className="library-action-button"
+                                onClick={() => setEditingItemId(item.id)}
+                              >
+                                Ändra
+                              </button>
 
-                            <button
-                              type="button"
-                              className="library-action-button"
-                              onClick={() => setItemToDelete(item)}
-                            >
-                              Ta bort
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </>
+                              <button
+                                type="button"
+                                className="library-action-button"
+                                onClick={() => setItemToDelete(item)}
+                              >
+                                Ta bort
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </>
+                    )
                   ) : (
                     <>
-                      <p className="available-label" role="status">
-                        Ej utlånad
-                      </p>
+                      <p>Referensexemplar – kan inte lånas</p>
 
-                      <div className="library-item-actions">
-                        <button
-                          type="button"
-                          className="library-action-button"
-                          onClick={() => handleBorrow(item)}
-                        >
-                          Låna
-                        </button>
+                      {isAdmin && (
+                        <div className="library-item-actions">
+                          <button
+                            type="button"
+                            className="library-action-button"
+                            onClick={() => setEditingItemId(item.id)}
+                          >
+                            Ändra
+                          </button>
 
-                        {isAdmin && (
-                          <>
-                            <button
-                              type="button"
-                              className="library-action-button"
-                              onClick={() => setEditingItemId(item.id)}
-                            >
-                              Ändra
-                            </button>
-
-                            <button
-                              type="button"
-                              className="library-action-button"
-                              onClick={() => setItemToDelete(item)}
-                            >
-                              Ta bort
-                            </button>
-                          </>
-                        )}
-                      </div>
+                          <button
+                            type="button"
+                            className="library-action-button"
+                            onClick={() => setItemToDelete(item)}
+                          >
+                            Ta bort
+                          </button>
+                        </div>
+                      )}
                     </>
-                  )
-                ) : (
-                  <>
-                    <p>Referensexemplar – kan inte lånas</p>
-
-                    {isAdmin && (
-                      <div className="library-item-actions">
-                        <button
-                          type="button"
-                          className="library-action-button"
-                          onClick={() => setEditingItemId(item.id)}
-                        >
-                          Ändra
-                        </button>
-
-                        <button
-                          type="button"
-                          className="library-action-button"
-                          onClick={() => setItemToDelete(item)}
-                        >
-                          Ta bort
-                        </button>
-                      </div>
-                    )}
-                  </>
-                )}
-              </>
-            )}
-          </motion.div>
-        ))}
+                  )}
+                </>
+              )}
+            </motion.div>
+          );
+        })}
       </div>
 
       {filteredItems.length === 0 && (
