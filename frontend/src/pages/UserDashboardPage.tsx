@@ -54,8 +54,27 @@ function UserDashboardPage() {
 
   const returnedLoans = loans.filter((loan) => loan.returnedAt !== null);
 
-  const recentActiveLoans = activeLoans.slice(0, 3);
-  const recentReturnedLoans = returnedLoans.slice(0, 3);
+  const recentActivities = loans
+    .flatMap((loan) => [
+      {
+        id: `${loan.id}-borrowed`,
+        loan,
+        type: "borrowed" as const,
+        date: loan.borrowDate,
+      },
+      ...(loan.returnedAt
+        ? [
+            {
+              id: `${loan.id}-returned`,
+              loan,
+              type: "returned" as const,
+              date: loan.returnedAt,
+            },
+          ]
+        : []),
+    ])
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 5);
 
   const monthlyLoans = Array.from({ length: 6 }, (_, index) => {
     const monthDate = new Date(
@@ -237,8 +256,8 @@ function UserDashboardPage() {
           <section className="page-panel">
             <div className="page-panel-heading">
               <div>
-                <h3>Mina aktiva lån</h3>
-                <p>{activeLoans.length} aktiva lån</p>
+                <h3>Senaste aktivitet</h3>
+                <p>Dina fem senaste lånehändelser</p>
               </div>
 
               <button
@@ -251,95 +270,62 @@ function UserDashboardPage() {
               </button>
             </div>
 
-            {recentActiveLoans.length === 0 ? (
-              <p>Du har inga aktiva lån just nu.</p>
+            {recentActivities.length === 0 ? (
+              <p>Du har ingen låneaktivitet ännu.</p>
             ) : (
               <div className="dashboard-recent-loans-list">
-                {recentActiveLoans.map((loan) => {
-                  const isOverdue = new Date(loan.dueDate) < now;
+                {recentActivities.map((activity) => {
+                  const isReturned = activity.type === "returned";
+                  const isOverdue =
+                    !isReturned && new Date(activity.loan.dueDate) < now;
+
+                  const status = isReturned
+                    ? "Återlämnad"
+                    : isOverdue
+                      ? "Försenad"
+                      : "Utlånad";
+
+                  const statusClass = isReturned
+                    ? "is-returned"
+                    : isOverdue
+                      ? "is-overdue"
+                      : "is-borrowed";
 
                   return (
-                    <article className="dashboard-recent-loan" key={loan.id}>
+                    <article
+                      className="dashboard-recent-loan"
+                      key={activity.id}
+                    >
                       <div className="dashboard-recent-loan-details">
                         <img
                           className={`dashboard-recent-loan-cover ${
-                            loan.item.imageUrl ? "" : "is-default-image"
+                            activity.loan.item.imageUrl
+                              ? ""
+                              : "is-default-image"
                           }`}
-                          src={getLibraryItemImage(loan.item)}
-                          alt={`Omslag till ${loan.item.title}`}
+                          src={getLibraryItemImage(activity.loan.item)}
+                          alt={`Omslag till ${activity.loan.item.title}`}
                         />
 
                         <div className="dashboard-recent-loan-info">
-                          <h4>{loan.item.title}</h4>
+                          <h4>{activity.loan.item.title}</h4>
                           <p>
-                            Återlämnas:{" "}
-                            {new Date(loan.dueDate).toLocaleDateString("sv-SE")}
+                            {isReturned ? "Återlämnad:" : "Utlånad:"}{" "}
+                            {new Date(activity.date).toLocaleDateString(
+                              "sv-SE",
+                            )}
                           </p>
                         </div>
                       </div>
 
                       <span
-                        className={`dashboard-recent-loan-status ${
-                          isOverdue ? "is-overdue" : "is-borrowed"
-                        }`}
+                        className={`dashboard-recent-loan-status ${statusClass}`}
                       >
-                        {isOverdue ? "Försenad" : "Aktiv"}
+                        {status}
                       </span>
                     </article>
                   );
                 })}
-              </div>
-            )}
-          </section>
-
-          <section className="page-panel">
-            <div className="page-panel-heading">
-              <div>
-                <h3>Senaste återlämnade</h3>
-                <p>{returnedLoans.length} återlämnade lån totalt</p>
-              </div>
-
-              <button
-                className="dashboard-recent-loans-view-all"
-                type="button"
-                onClick={() => navigate("/my-loans")}
-              >
-                Visa alla
-                <ArrowRight size={14} />
-              </button>
-            </div>
-
-            {recentReturnedLoans.length === 0 ? (
-              <p>Du har inga återlämnade lån ännu.</p>
-            ) : (
-              <div className="dashboard-recent-loans-list">
-                {recentReturnedLoans.map((loan) => (
-                  <article className="dashboard-recent-loan" key={loan.id}>
-                    <div className="dashboard-recent-loan-details">
-                      <img
-                        className={`dashboard-recent-loan-cover ${
-                          loan.item.imageUrl ? "" : "is-default-image"
-                        }`}
-                        src={getLibraryItemImage(loan.item)}
-                        alt={`Omslag till ${loan.item.title}`}
-                      />
-
-                      <div className="dashboard-recent-loan-info">
-                        <h4>{loan.item.title}</h4>
-                        <p>
-                          Återlämnad:{" "}
-                          {new Date(loan.returnedAt!).toLocaleDateString(
-                            "sv-SE",
-                          )}
-                        </p>
-                      </div>
-                    </div>
-
-                    <span className="dashboard-recent-loan-status is-borrowed">
-                      Återlämnad
-                    </span>
-                  </article>
-                ))}
               </div>
             )}
           </section>
