@@ -1,12 +1,44 @@
 import { Router } from "express";
 import auth, { type AuthRequest } from "../middleware/auth.js";
+import admin from "../middleware/admin.js";
 import {
   borrowLibraryItem,
   returnLibraryItem,
   getUserLoans,
+  getAvailabilityHistory,
+  type AvailabilityChartPeriod,
 } from "../services/loan.service.js";
 
 const router = Router();
+
+router.get("/availability-history", auth, admin, async (req, res) => {
+  try {
+    const period = req.query.period;
+
+    if (
+      period !== "week" &&
+      period !== "month" &&
+      period !== "sixMonths" &&
+      period !== "year"
+    ) {
+      return res.status(400).json({
+        message: "Ogiltig tidsperiod.",
+      });
+    }
+
+    const history = await getAvailabilityHistory(
+      period as AvailabilityChartPeriod,
+    );
+
+    return res.json(history);
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Kunde inte hämta bibliotekets utlåningshistorik.",
+    });
+  }
+});
 
 router.get("/my-loans", auth, async (req, res) => {
   try {

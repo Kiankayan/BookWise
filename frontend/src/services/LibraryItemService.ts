@@ -3,6 +3,10 @@ import type {
   LibraryItemInput,
   LibrarySort,
 } from "../types/library";
+import type {
+  AvailabilityHistoryPoint,
+  ChartPeriod,
+} from "../utils/dashboardChartData";
 import api from "./axios";
 import API_BASE_URL from "../api";
 
@@ -39,4 +43,15 @@ export async function updateLibraryItem(id: string, data: LibraryItemInput) {
 
 export async function deleteLibraryItem(id: string) {
   return api.delete(`${LIBRARY_ITEMS_URL}/${id}`);
+}
+
+export async function getAvailabilityHistory(period: ChartPeriod) {
+  return api.get<AvailabilityHistoryPoint[]>(
+    `${LOANS_URL}/availability-history`,
+    {
+      params: {
+        period,
+      },
+    },
+  );
 }

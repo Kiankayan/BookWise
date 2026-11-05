@@ -27,10 +27,11 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import {
-  getAvailabilityHistory,
-  type ChartPeriod,
+import type {
+  AvailabilityHistoryPoint,
+  ChartPeriod,
 } from "../utils/dashboardChartData";
+import { getAvailabilityHistory } from "../services/LibraryItemService";
 import { motion, useReducedMotion } from "motion/react";
 
 type DashboardPageProps = {
@@ -141,7 +142,31 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
 
   const [chartPeriod, setChartPeriod] = useState<ChartPeriod>("week");
 
-  const availabilityData = getAvailabilityHistory(chartPeriod);
+  const [availabilityData, setAvailabilityData] = useState<
+    AvailabilityHistoryPoint[]
+  >([]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    getAvailabilityHistory(chartPeriod)
+      .then((response) => {
+        if (isMounted) {
+          setAvailabilityData(response.data);
+        }
+      })
+      .catch((error) => {
+        console.error("Kunde inte hämta diagramdata:", error);
+
+        if (isMounted) {
+          setAvailabilityData([]);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [chartPeriod]);
 
   const categoryData = categories.map((category) => ({
     name: category.name,
