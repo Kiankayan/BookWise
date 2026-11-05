@@ -2414,6 +2414,10 @@ button:active {
   font-variant-numeric: tabular-nums;
 }
 
+.dashboard-category-legend-item:first-child .dashboard-category-legend-value {
+  transform: translateX(-6px);
+}
+
 .dashboard-category-legend-percentage {
   color: var(--bookwise-muted, #807990);
   font-variant-numeric: tabular-nums;
