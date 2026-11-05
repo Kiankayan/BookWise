@@ -2375,19 +2375,16 @@ button:active {
 }
 
 .dashboard-category-legend {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+  display: grid;
+  grid-template-columns: 9px minmax(0, 1fr) auto auto;
+  column-gap: 8px;
+  row-gap: 14px;
   min-width: 0;
+  font-size: 12px;
 }
 
 .dashboard-category-legend-item {
-  display: grid;
-  grid-template-columns: 9px minmax(0, 1fr) auto auto;
-  align-items: center;
-  column-gap: 8px;
-  min-width: 0;
-  font-size: 12px;
+  display: contents;
 }
 
 .dashboard-category-legend-name {
@@ -2412,10 +2409,6 @@ button:active {
   color: var(--bookwise-text, #302642);
   font-weight: 650;
   font-variant-numeric: tabular-nums;
-}
-
-.dashboard-category-legend-item:first-child .dashboard-category-legend-value {
-  transform: translateX(-6px);
 }
 
 .dashboard-category-legend-percentage {
