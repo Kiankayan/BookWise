@@ -25,3 +25,7 @@ export async function loginUser(email: string, password: string) {
     password,
   });
 }
+
+export async function logoutUser() {
+  return api.post(`${API_URL}/logout`);
+}

@@ -7,16 +7,15 @@ import {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import type { User } from "../types/auth";
-import { loginUser } from "../services/AuthService";
+import { loginUser, logoutUser } from "../services/AuthService";
 
 interface AuthContextType {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
-
 interface AuthProviderProps {
   children: ReactNode;
 }
@@ -54,9 +53,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setUser(response.data.user);
   };
 
-  const logout = () => {
-    setUser(null);
-    setToken(null);
+  const logout = async () => {
+    try {
+      await logoutUser();
+    } finally {
+      setUser(null);
+      setToken(null);
+      localStorage.removeItem(LAST_ACTIVITY_KEY);
+      navigate("/login", { replace: true });
+    }
   };
 
   useEffect(() => {
@@ -73,8 +78,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const inactiveTime = Date.now() - lastActivity;
 
       if (!lastActivity || inactiveTime >= INACTIVITY_LIMIT) {
-        logout();
-        navigate("/login", { replace: true });
+        void logout();
         return;
       }
 
