@@ -1,4 +1,13 @@
 import { useState, type FormEvent } from "react";
+import {
+  BookOpen,
+  Eye,
+  EyeOff,
+  LockKeyhole,
+  Mail,
+  Tag,
+  UserRound,
+} from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../services/AuthService";
 
@@ -12,7 +21,6 @@ function RegisterPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -49,15 +57,19 @@ function RegisterPage() {
         <div className="auth-brand-panel">
           <div className="auth-brand">
             <div className="auth-brand-logo">B</div>
-            <span>BookWise</span>
+            <div className="auth-brand-text">
+              <span>BookWise</span>
+            </div>
           </div>
 
           <div className="auth-brand-content">
-            <span className="auth-eyebrow">LIBRARY MANAGEMENT</span>
-            <h1>Discover a world of knowledge.</h1>
+            <p className="auth-brand-description">Bibliotekshantering</p>
+
+            <h1>Upptäck en värld av kunskap.</h1>
+
             <p>
-              Organize your library, manage your books and keep track of
-              everything in one place.
+              Organisera ditt bibliotek, hantera dina böcker och håll koll på
+              allt på ett och samma ställe.
             </p>
 
             <img
@@ -68,18 +80,24 @@ function RegisterPage() {
 
             <div className="auth-features">
               <div className="auth-feature">
-                <span className="auth-feature-icon">✓</span>
-                <span>Manage your library materials</span>
+                <span className="auth-feature-icon">
+                  <BookOpen size={13} />
+                </span>
+                <span>Hantera bibliotekets material</span>
               </div>
 
               <div className="auth-feature">
-                <span className="auth-feature-icon">✓</span>
-                <span>Borrow and return books</span>
+                <span className="auth-feature-icon">
+                  <Tag size={13} />
+                </span>
+                <span>Låna och returnera</span>
               </div>
 
               <div className="auth-feature">
-                <span className="auth-feature-icon">✓</span>
-                <span>Keep track of your loans</span>
+                <span className="auth-feature-icon">
+                  <UserRound size={13} />
+                </span>
+                <span>Håll koll på dina lån</span>
               </div>
             </div>
           </div>
@@ -88,46 +106,53 @@ function RegisterPage() {
         <div className="auth-form-panel">
           <div className="auth-form-content">
             <div className="auth-form-heading">
-              <span className="auth-eyebrow">GET STARTED</span>
-              <h2>Create your account</h2>
-              <p>Create a BookWise account to get started.</p>
+              <h2>Skapa konto</h2>
+              <p>Skapa ett konto för att börja använda BookWise.</p>
             </div>
 
             <form className="auth-form" onSubmit={handleSubmit}>
               <div className="auth-form-group">
-                <label htmlFor="name">Full name</label>
-                <input
-                  id="name"
-                  type="text"
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
-                  placeholder="Enter your name"
-                  required
-                />
+                <label htmlFor="name">Namn</label>
+                <div className="auth-input-wrapper">
+                  <UserRound size={18} />
+                  <input
+                    id="name"
+                    type="text"
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
+                    placeholder="Ange ditt namn"
+                    required
+                  />
+                </div>
               </div>
 
               <div className="auth-form-group">
-                <label htmlFor="email">Email address</label>
-                <input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                  placeholder="Enter your email address"
-                  required
-                />
+                <label htmlFor="email">E-post</label>
+                <div className="auth-input-wrapper">
+                  <Mail size={18} />
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(event) => setEmail(event.target.value)}
+                    placeholder="Ange din e-postadress"
+                    required
+                  />
+                </div>
               </div>
 
               <div className="auth-form-group">
-                <label htmlFor="password">Password</label>
+                <label htmlFor="password">Lösenord</label>
 
-                <div className="auth-password-wrapper">
+                <div className="auth-input-wrapper auth-password-wrapper">
+                  <LockKeyhole size={18} />
+
                   <input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
-                    placeholder="At least 8 characters"
+                    placeholder="Minst 8 tecken"
                     minLength={8}
                     maxLength={72}
                     required
@@ -138,41 +163,30 @@ function RegisterPage() {
                     type="button"
                     onClick={() => setShowPassword((current) => !current)}
                     aria-label={
-                      showPassword ? "Hide password" : "Show password"
+                      showPassword ? "Dölj lösenord" : "Visa lösenord"
                     }
                   >
-                    {showPassword ? "Hide" : "Show"}
+                    {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
                   </button>
                 </div>
               </div>
 
               <div className="auth-form-group">
-                <label htmlFor="confirmPassword">Confirm password</label>
+                <label htmlFor="confirmPassword">Bekräfta lösenord</label>
 
-                <div className="auth-password-wrapper">
+                <div className="auth-input-wrapper auth-password-wrapper">
+                  <LockKeyhole size={18} />
+
                   <input
                     id="confirmPassword"
-                    type={showConfirmPassword ? "text" : "password"}
+                    type={showPassword ? "text" : "password"}
                     value={confirmPassword}
                     onChange={(event) => setConfirmPassword(event.target.value)}
-                    placeholder="Enter your password again"
+                    placeholder="Ange ditt lösenord igen"
                     minLength={8}
                     maxLength={72}
                     required
                   />
-
-                  <button
-                    className="auth-password-toggle"
-                    type="button"
-                    onClick={() =>
-                      setShowConfirmPassword((current) => !current)
-                    }
-                    aria-label={
-                      showConfirmPassword ? "Hide password" : "Show password"
-                    }
-                  >
-                    {showConfirmPassword ? "Hide" : "Show"}
-                  </button>
                 </div>
               </div>
 
@@ -187,12 +201,12 @@ function RegisterPage() {
                 type="submit"
                 disabled={isLoading}
               >
-                {isLoading ? "Creating account..." : "Create account"}
+                {isLoading ? "Skapar konto..." : "Registrera konto"}
               </button>
             </form>
 
             <p className="auth-switch-link">
-              Already have an account? <Link to="/login">Log in</Link>
+              Har du inget konto? <Link to="/login">Logga in</Link>
             </p>
           </div>
         </div>
