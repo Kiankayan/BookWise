@@ -46,6 +46,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [user, token]);
 
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      setUser(null);
+      setToken(null);
+      localStorage.removeItem(LAST_ACTIVITY_KEY);
+      navigate("/login", { replace: true });
+    };
+
+    window.addEventListener("auth:session-expired", handleSessionExpired);
+
+    return () => {
+      window.removeEventListener("auth:session-expired", handleSessionExpired);
+    };
+  }, [navigate]);
+
   const login = async (email: string, password: string) => {
     const response = await loginUser(email, password);
 
