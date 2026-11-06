@@ -10,11 +10,10 @@ import {
   Settings,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 function Sidebar() {
   const { user, logout } = useAuth();
-  const navigate = useNavigate();
 
   const navigationItems = [
     { label: "Dashboard", path: "/", icon: LayoutDashboard },
@@ -31,9 +30,8 @@ function Sidebar() {
     { label: "Inställningar", path: "/settings", icon: Settings },
   ];
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login", { replace: true });
+  const handleLogout = async () => {
+    await logout();
   };
 
   return (
