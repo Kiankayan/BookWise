@@ -23,4 +23,6 @@ export const loginUserSchema = z.object({
   email: z.string().trim().email("Ange en giltig e-postadress."),
 
   password: z.string().min(1, "Lösenord krävs."),
+
+  rememberMe: z.boolean().default(false),
 });

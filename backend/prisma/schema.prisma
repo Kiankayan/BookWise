@@ -79,14 +79,15 @@ model User {
 }
 
 model Session {
-  id        String    @id @default(cuid())
-  userId    String
-  tokenHash String    @unique
-  expiresAt DateTime
-  createdAt DateTime  @default(now())
-  revokedAt DateTime?
+  id         String    @id @default(cuid())
+  userId     String
+  tokenHash  String    @unique
+  rememberMe Boolean   @default(false)
+  expiresAt  DateTime
+  createdAt  DateTime  @default(now())
+  revokedAt  DateTime?
 
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
 }

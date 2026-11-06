@@ -13,7 +13,11 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (
+    email: string,
+    password: string,
+    rememberMe: boolean,
+  ) => Promise<void>;
   logout: () => Promise<void>;
 }
 interface AuthProviderProps {
@@ -60,9 +64,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       window.removeEventListener("auth:session-expired", handleSessionExpired);
     };
   }, [navigate]);
-
-  const login = async (email: string, password: string) => {
-    const response = await loginUser(email, password);
+  const login = async (
+    email: string,
+    password: string,
+    rememberMe: boolean,
+  ) => {
+    const response = await loginUser(email, password, rememberMe);
 
     setToken(response.data.token);
     setUser(response.data.user);

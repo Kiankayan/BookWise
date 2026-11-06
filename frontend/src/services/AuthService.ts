@@ -19,10 +19,15 @@ export async function registerUser(data: RegisterData) {
   return api.post<RegisterResponse>(`${API_URL}/register`, data);
 }
 
-export async function loginUser(email: string, password: string) {
+export async function loginUser(
+  email: string,
+  password: string,
+  rememberMe: boolean,
+) {
   return api.post<AuthResponse>(`${API_URL}/login`, {
     email,
     password,
+    rememberMe,
   });
 }
 

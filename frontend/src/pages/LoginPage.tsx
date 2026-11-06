@@ -11,6 +11,7 @@ function LoginPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -19,7 +20,7 @@ function LoginPage() {
     setIsLoading(true);
 
     try {
-      await login(email, password);
+      await login(email, password, rememberMe);
       navigate("/");
     } catch (error) {
       console.error("Inloggningen misslyckades.", error);
@@ -127,6 +128,17 @@ function LoginPage() {
                   >
                     {showPassword ? "Hide" : "Show"}
                   </button>
+                </div>
+
+                <div className="auth-remember-me">
+                  <label>
+                    <input
+                      type="checkbox"
+                      checked={rememberMe}
+                      onChange={(event) => setRememberMe(event.target.checked)}
+                    />
+                    Remember me
+                  </label>
                 </div>
               </div>
 

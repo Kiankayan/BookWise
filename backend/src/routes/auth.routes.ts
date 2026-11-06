@@ -75,7 +75,7 @@ router.post("/login", async (req, res) => {
     });
   }
 
-  const { email, password } = validation.data;
+  const { email, password, rememberMe } = validation.data;
 
   const user = await prisma.user.findUnique({
     where: {
@@ -114,14 +114,14 @@ router.post("/login", async (req, res) => {
     },
   );
 
-  const { refreshToken } = await createSession(user.id, 30);
+  const { refreshToken, session } = await createSession(user.id, rememberMe);
 
   res.cookie("refreshToken", refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/api/auth",
-    maxAge: 30 * 24 * 60 * 60 * 1000,
+    maxAge: session.expiresAt.getTime() - Date.now(),
   });
 
   return res.status(200).json({
@@ -145,7 +145,7 @@ router.post("/refresh", async (req, res) => {
     });
   }
 
-  const rotatedSession = await rotateSession(refreshToken, 30);
+  const rotatedSession = await rotateSession(refreshToken);
 
   if (!rotatedSession) {
     res.clearCookie("refreshToken", {
@@ -204,7 +204,7 @@ router.post("/refresh", async (req, res) => {
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/api/auth",
-    maxAge: 30 * 24 * 60 * 60 * 1000,
+    maxAge: rotatedSession.session.expiresAt.getTime() - Date.now(),
   });
 
   return res.status(200).json({

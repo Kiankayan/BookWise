@@ -9,9 +9,19 @@ function hashRefreshToken(token: string) {
   return createHash("sha256").update(token).digest("hex");
 }
 
-export async function createSession(userId: string, expiresInDays: number) {
+const SESSION_DURATIONS = {
+  standard: 1,
+  rememberMe: 30,
+};
+
+function getSessionDuration(rememberMe: boolean) {
+  return rememberMe ? SESSION_DURATIONS.rememberMe : SESSION_DURATIONS.standard;
+}
+
+export async function createSession(userId: string, rememberMe: boolean) {
   const refreshToken = generateRefreshToken();
   const tokenHash = hashRefreshToken(refreshToken);
+  const expiresInDays = getSessionDuration(rememberMe);
 
   const expiresAt = new Date(Date.now() + expiresInDays * 24 * 60 * 60 * 1000);
 
@@ -19,11 +29,14 @@ export async function createSession(userId: string, expiresInDays: number) {
     data: {
       userId,
       tokenHash,
+      rememberMe,
       expiresAt,
     },
+
     select: {
       id: true,
       userId: true,
+      rememberMe: true,
       expiresAt: true,
       createdAt: true,
       revokedAt: true,
@@ -36,10 +49,7 @@ export async function createSession(userId: string, expiresInDays: number) {
   };
 }
 
-export async function rotateSession(
-  refreshToken: string,
-  expiresInDays: number,
-) {
+export async function rotateSession(refreshToken: string) {
   const tokenHash = hashRefreshToken(refreshToken);
 
   const session = await prisma.session.findUnique({
@@ -66,6 +76,7 @@ export async function rotateSession(
 
   const newRefreshToken = generateRefreshToken();
   const newTokenHash = hashRefreshToken(newRefreshToken);
+  const expiresInDays = getSessionDuration(session.rememberMe);
 
   const expiresAt = new Date(Date.now() + expiresInDays * 24 * 60 * 60 * 1000);
 
@@ -91,11 +102,13 @@ export async function rotateSession(
       data: {
         userId: session.userId,
         tokenHash: newTokenHash,
+        rememberMe: session.rememberMe,
         expiresAt,
       },
       select: {
         id: true,
         userId: true,
+        rememberMe: true,
         expiresAt: true,
         createdAt: true,
         revokedAt: true,
