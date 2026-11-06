@@ -11,6 +11,8 @@ function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -42,76 +44,158 @@ function RegisterPage() {
   };
 
   return (
-    <main className="page-intro">
-      <section className="page-panel">
-        <div className="page-panel-heading">
-          <h2>Skapa konto</h2>
-          <p>Registrera ett nytt BookWise-konto.</p>
+    <main className="auth-page">
+      <section className="auth-container">
+        <div className="auth-brand-panel">
+          <div className="auth-brand">
+            <div className="auth-brand-logo">B</div>
+            <span>BookWise</span>
+          </div>
+
+          <div className="auth-brand-content">
+            <span className="auth-eyebrow">LIBRARY MANAGEMENT</span>
+            <h1>Discover a world of knowledge.</h1>
+            <p>
+              Organize your library, manage your books and keep track of
+              everything in one place.
+            </p>
+
+            <img
+              className="auth-illustration"
+              src="/images/bookwise-auth-illustration.png"
+              alt="Illustration of books representing BookWise"
+            />
+
+            <div className="auth-features">
+              <div className="auth-feature">
+                <span className="auth-feature-icon">✓</span>
+                <span>Manage your library materials</span>
+              </div>
+
+              <div className="auth-feature">
+                <span className="auth-feature-icon">✓</span>
+                <span>Borrow and return books</span>
+              </div>
+
+              <div className="auth-feature">
+                <span className="auth-feature-icon">✓</span>
+                <span>Keep track of your loans</span>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="name">Namn</label>
-            <input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              placeholder="Ange ditt namn"
-              required
-            />
+        <div className="auth-form-panel">
+          <div className="auth-form-content">
+            <div className="auth-form-heading">
+              <span className="auth-eyebrow">GET STARTED</span>
+              <h2>Create your account</h2>
+              <p>Create a BookWise account to get started.</p>
+            </div>
+
+            <form className="auth-form" onSubmit={handleSubmit}>
+              <div className="auth-form-group">
+                <label htmlFor="name">Full name</label>
+                <input
+                  id="name"
+                  type="text"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  placeholder="Enter your name"
+                  required
+                />
+              </div>
+
+              <div className="auth-form-group">
+                <label htmlFor="email">Email address</label>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="Enter your email address"
+                  required
+                />
+              </div>
+
+              <div className="auth-form-group">
+                <label htmlFor="password">Password</label>
+
+                <div className="auth-password-wrapper">
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    placeholder="At least 8 characters"
+                    minLength={8}
+                    maxLength={72}
+                    required
+                  />
+
+                  <button
+                    className="auth-password-toggle"
+                    type="button"
+                    onClick={() => setShowPassword((current) => !current)}
+                    aria-label={
+                      showPassword ? "Hide password" : "Show password"
+                    }
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
+              </div>
+
+              <div className="auth-form-group">
+                <label htmlFor="confirmPassword">Confirm password</label>
+
+                <div className="auth-password-wrapper">
+                  <input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(event) => setConfirmPassword(event.target.value)}
+                    placeholder="Enter your password again"
+                    minLength={8}
+                    maxLength={72}
+                    required
+                  />
+
+                  <button
+                    className="auth-password-toggle"
+                    type="button"
+                    onClick={() =>
+                      setShowConfirmPassword((current) => !current)
+                    }
+                    aria-label={
+                      showConfirmPassword ? "Hide password" : "Show password"
+                    }
+                  >
+                    {showConfirmPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
+              </div>
+
+              {error && (
+                <p className="auth-error" role="alert">
+                  {error}
+                </p>
+              )}
+
+              <button
+                className="auth-submit-button"
+                type="submit"
+                disabled={isLoading}
+              >
+                {isLoading ? "Creating account..." : "Create account"}
+              </button>
+            </form>
+
+            <p className="auth-switch-link">
+              Already have an account? <Link to="/login">Log in</Link>
+            </p>
           </div>
-
-          <div className="form-group">
-            <label htmlFor="email">E-postadress</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="Ange din e-postadress"
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password">Lösenord</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="Skapa ett lösenord"
-              minLength={8}
-              maxLength={72}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="confirmPassword">Bekräfta lösenord</label>
-            <input
-              id="confirmPassword"
-              type="password"
-              value={confirmPassword}
-              onChange={(event) => setConfirmPassword(event.target.value)}
-              placeholder="Ange lösenordet igen"
-              minLength={8}
-              maxLength={72}
-              required
-            />
-          </div>
-
-          {error && <p role="alert">{error}</p>}
-
-          <button type="submit" disabled={isLoading}>
-            {isLoading ? "Skapar konto..." : "Registrera"}
-          </button>
-        </form>
-
-        <p>
-          Har du redan ett konto? <Link to="/login">Logga in</Link>
-        </p>
+        </div>
       </section>
     </main>
   );
