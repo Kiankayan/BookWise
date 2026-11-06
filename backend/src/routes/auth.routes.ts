@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Prisma, prisma } from "../lib/prisma.js";
 import { loginUserSchema, registerUserSchema } from "../schemas/user.schema.js";
+import { createSession } from "../services/session.service.js";
 
 const router = Router();
 
@@ -105,9 +106,19 @@ router.post("/login", async (req, res) => {
     },
     jwtSecret,
     {
-      expiresIn: "1h",
+      expiresIn: "15m",
     },
   );
+
+  const { refreshToken } = await createSession(user.id, 30);
+
+  res.cookie("refreshToken", refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/api/auth",
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  });
 
   return res.status(200).json({
     message: "Inloggningen lyckades.",
