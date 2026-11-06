@@ -219,4 +219,23 @@ router.post("/refresh", async (req, res) => {
   });
 });
 
+router.post("/logout", async (req, res) => {
+  const refreshToken = req.cookies?.refreshToken;
+
+  if (refreshToken) {
+    await revokeSession(refreshToken);
+  }
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/api/auth",
+  });
+
+  return res.status(200).json({
+    message: "Du har loggats ut.",
+  });
+});
+
 export default router;
