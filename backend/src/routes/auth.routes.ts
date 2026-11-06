@@ -3,7 +3,11 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Prisma, prisma } from "../lib/prisma.js";
 import { loginUserSchema, registerUserSchema } from "../schemas/user.schema.js";
-import { createSession } from "../services/session.service.js";
+import {
+  createSession,
+  rotateSession,
+  revokeSession,
+} from "../services/session.service.js";
 
 const router = Router();
 
@@ -122,6 +126,89 @@ router.post("/login", async (req, res) => {
 
   return res.status(200).json({
     message: "Inloggningen lyckades.",
+    token,
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    },
+  });
+});
+
+router.post("/refresh", async (req, res) => {
+  const refreshToken = req.cookies?.refreshToken;
+
+  if (!refreshToken) {
+    return res.status(401).json({
+      message: "Ingen aktiv session hittades.",
+    });
+  }
+
+  const rotatedSession = await rotateSession(refreshToken, 30);
+
+  if (!rotatedSession) {
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/api/auth",
+    });
+
+    return res.status(401).json({
+      message: "Sessionen har gått ut eller är ogiltig.",
+    });
+  }
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: rotatedSession.session.userId,
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      role: true,
+      isActive: true,
+    },
+  });
+
+  if (!user || !user.isActive) {
+    await revokeSession(rotatedSession.refreshToken);
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/api/auth",
+    });
+
+    return res.status(401).json({
+      message: "Kontot är inte längre aktivt.",
+    });
+  }
+
+  const token = jwt.sign(
+    {
+      userId: user.id,
+      role: user.role,
+    },
+    jwtSecret,
+    {
+      expiresIn: "15m",
+    },
+  );
+
+  res.cookie("refreshToken", rotatedSession.refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/api/auth",
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+  });
+
+  return res.status(200).json({
+    message: "Sessionen har förnyats.",
     token,
     user: {
       id: user.id,
