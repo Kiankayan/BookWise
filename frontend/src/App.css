@@ -2710,13 +2710,13 @@ button:active {
 }
 
 .auth-brand-text span {
-  font-size: 16px;
-  font-weight: 700;
+  font-size: 23px;
+  font-weight: 750;
   line-height: 1.2;
 }
 
 .auth-brand-text small {
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 400;
   opacity: 0.85;
 }
@@ -2725,12 +2725,12 @@ button:active {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
+  width: 56px;
+  height: 56px;
   border: 1px solid rgba(255, 255, 255, 0.35);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.15);
-  font-size: 23px;
+  font-size: 30px;
   font-weight: 800;
 }
 
@@ -2774,9 +2774,9 @@ button:active {
 .auth-illustration {
   display: block;
   width: 100%;
-  max-width: 190px;
-  max-height: 130px;
-  margin: 12px auto 18px;
+  max-width: 480px;
+  max-height: 360px;
+  margin: 0 auto 18px;
   object-fit: contain;
 }
 
@@ -2789,20 +2789,21 @@ button:active {
 .auth-feature {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   color: rgba(255, 255, 255, 0.9);
-  font-size: 13px;
+  font-size: 16px;
 }
 
 .auth-feature-icon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.18);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
 }
 
