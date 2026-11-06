@@ -59,11 +59,19 @@ function LoginPage() {
             <div className="auth-brand-logo">B</div>
             <div className="auth-brand-text">
               <span>BookWise</span>
-              <small>Library Management</small>
             </div>
           </div>
 
           <div className="auth-brand-content">
+            <p className="auth-brand-description">Bibliotekshantering</p>
+
+            <h1>Upptäck en värld av kunskap.</h1>
+
+            <p>
+              Organisera ditt bibliotek, hantera dina böcker och håll koll på
+              allt på ett och samma ställe.
+            </p>
+
             <img
               className="auth-illustration"
               src="/images/bookwise-auth-illustration.png"
