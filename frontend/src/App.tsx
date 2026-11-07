@@ -23,7 +23,7 @@ import "./App.css";
 import SettingsPage from "./pages/SettingsPage";
 
 function App() {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, isLoggingOut, user } = useAuth();
 
   const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -101,6 +101,10 @@ function App() {
 
     void loadInitialData();
   }, [isAuthenticated, loadCategories, loadLibraryItems]);
+
+  if (isLoggingOut) {
+    return <LoadingScreen message="Loggar ut..." />;
+  }
 
   if (isInitialLoading || (isAuthenticated && isLoading)) {
     return <LoadingScreen />;

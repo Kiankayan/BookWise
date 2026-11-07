@@ -13,6 +13,7 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
+  isLoggingOut: boolean;
   login: (
     email: string,
     password: string,
@@ -20,6 +21,7 @@ interface AuthContextType {
   ) => Promise<void>;
   logout: () => Promise<void>;
 }
+
 interface AuthProviderProps {
   children: ReactNode;
 }
@@ -39,6 +41,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [token, setToken] = useState<string | null>(() => {
     return localStorage.getItem("bookwise-token");
   });
+
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     if (user && token) {
@@ -64,6 +68,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       window.removeEventListener("auth:session-expired", handleSessionExpired);
     };
   }, [navigate]);
+
   const login = async (
     email: string,
     password: string,
@@ -76,6 +81,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const logout = async () => {
+    setIsLoggingOut(true);
+
     try {
       await logoutUser();
     } finally {
@@ -83,6 +90,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setToken(null);
       localStorage.removeItem(LAST_ACTIVITY_KEY);
       navigate("/login", { replace: true });
+
+      setTimeout(() => {
+        setIsLoggingOut(false);
+      }, 1500);
     }
   };
 
@@ -96,7 +107,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     const checkInactivity = () => {
       const lastActivity = Number(localStorage.getItem(LAST_ACTIVITY_KEY));
-
       const inactiveTime = Date.now() - lastActivity;
 
       if (!lastActivity || inactiveTime >= INACTIVITY_LIMIT) {
@@ -159,6 +169,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         user,
         token,
         isAuthenticated: Boolean(user && token),
+        isLoggingOut,
         login,
         logout,
       }}

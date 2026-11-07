@@ -1,7 +1,11 @@
 import { motion } from "motion/react";
 import "./LoadingScreen.css";
 
-function LoadingScreen() {
+interface LoadingScreenProps {
+  message?: string;
+}
+
+function LoadingScreen({ message = "Library management" }: LoadingScreenProps) {
   return (
     <motion.div
       className="loading-screen"
@@ -34,7 +38,7 @@ function LoadingScreen() {
         Bookwise
       </motion.h1>
 
-      <p className="loading-subtitle">Library management</p>
+      <p className="loading-subtitle">{message}</p>
 
       <div className="loading-dots" aria-label="Laddar" role="status">
         {[0, 1, 2].map((dot) => (
