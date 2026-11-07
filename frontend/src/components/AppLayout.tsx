@@ -20,7 +20,13 @@ function AppLayout() {
 
           <div className="topbar-profile">
             <div className="topbar-avatar">
-              {user?.name.charAt(0).toUpperCase()}
+              {user?.gender === "MAN" ? (
+                <img src="/images/avatar-man.png" alt="Profilbild" />
+              ) : user?.gender === "WOMAN" ? (
+                <img src="/images/avatar-woman.png" alt="Profilbild" />
+              ) : (
+                user?.name.charAt(0).toUpperCase()
+              )}
             </div>
             <div>
               <p className="topbar-profile-name">{user?.name}</p>

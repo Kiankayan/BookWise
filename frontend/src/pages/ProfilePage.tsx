@@ -4,8 +4,16 @@ import { useAuth } from "../context/AuthContext";
 
 function ProfilePage() {
   const { user } = useAuth();
+  console.log("Inloggad användare:", user);
 
   const roleLabel = user?.role === "ADMIN" ? "Administratör" : "Användare";
+
+  const avatar =
+    user?.gender === "MAN"
+      ? "/images/avatar-man.png"
+      : user?.gender === "WOMAN"
+        ? "/images/avatar-woman.png"
+        : null;
 
   const profileDetails = [
     {
@@ -49,6 +57,14 @@ function ProfilePage() {
             <h3>Profilinformation</h3>
             <p>Dina registrerade kontouppgifter.</p>
           </div>
+
+          {avatar && (
+            <img
+              className="profile-avatar"
+              src={avatar}
+              alt={`Profilbild för ${user?.name}`}
+            />
+          )}
         </div>
 
         <div className="profile-details">
