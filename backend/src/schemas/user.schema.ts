@@ -17,6 +17,8 @@ export const registerUserSchema = z.object({
     .string()
     .min(8, "Lösenordet måste innehålla minst 8 tecken.")
     .max(72, "Lösenordet får vara högst 72 tecken."),
+
+  gender: z.enum(["MAN", "WOMAN"]),
 });
 
 export const loginUserSchema = z.object({

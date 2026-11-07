@@ -27,7 +27,7 @@ router.post("/register", async (req, res) => {
     });
   }
 
-  const { name, email, password } = validation.data;
+  const { name, email, password, gender } = validation.data;
 
   try {
     const passwordHash = await bcrypt.hash(password, 12);
@@ -37,12 +37,14 @@ router.post("/register", async (req, res) => {
         name,
         email: email.toLowerCase(),
         passwordHash,
+        gender,
       },
       select: {
         id: true,
         name: true,
         email: true,
         role: true,
+        gender: true,
         createdAt: true,
       },
     });
@@ -132,6 +134,7 @@ router.post("/login", async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
+      gender: user.gender,
     },
   });
 });
@@ -169,6 +172,7 @@ router.post("/refresh", async (req, res) => {
       name: true,
       email: true,
       role: true,
+      gender: true,
       isActive: true,
     },
   });
@@ -215,6 +219,7 @@ router.post("/refresh", async (req, res) => {
       name: user.name,
       email: user.email,
       role: user.role,
+      gender: user.gender,
     },
   });
 });
