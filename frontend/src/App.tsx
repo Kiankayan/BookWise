@@ -29,6 +29,7 @@ function App() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [sort, setSort] = useState<LibrarySort>("title-asc");
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [libraryItemsError, setLibraryItemsError] = useState("");
 
   const loadLibraryItems = useCallback(async () => {
@@ -59,6 +60,21 @@ function App() {
   };
 
   useEffect(() => {
+    const startTime = Date.now();
+
+    const timeoutId = setTimeout(() => {
+      const elapsedTime = Date.now() - startTime;
+      const remainingTime = Math.max(0, 1500 - elapsedTime);
+
+      setTimeout(() => {
+        setIsInitialLoading(false);
+      }, remainingTime);
+    }, 1500);
+
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  useEffect(() => {
     if (!isAuthenticated) {
       setIsLoading(false);
       setLibraryItems([]);
@@ -86,7 +102,7 @@ function App() {
     void loadInitialData();
   }, [isAuthenticated, loadCategories, loadLibraryItems]);
 
-  if (isAuthenticated && isLoading) {
+  if (isInitialLoading || (isAuthenticated && isLoading)) {
     return <LoadingScreen />;
   }
 
