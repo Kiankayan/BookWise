@@ -2873,6 +2873,47 @@ button:active {
   font-weight: 650;
 }
 
+.auth-gender-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.auth-gender-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid #e5e1ee;
+  border-radius: 11px;
+  background: #ffffff;
+  color: #383449;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.auth-gender-option:has(input:checked) {
+  border-color: #7652c8;
+  background: #f5f1ff;
+  color: #7652c8;
+}
+
+.auth-gender-option input[type="radio"] {
+  width: 16px;
+  height: 16px;
+  min-height: 16px;
+  margin: 0;
+  padding: 0;
+  accent-color: #7652c8;
+  cursor: pointer;
+}
+
+.auth-gender-option span {
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .auth-input-wrapper {
   position: relative;
   display: flex;

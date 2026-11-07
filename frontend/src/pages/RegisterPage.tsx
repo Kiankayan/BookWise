@@ -17,7 +17,7 @@ function RegisterPage() {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [gender, setGender] = useState<"MAN" | "WOMAN">("MAN");
+  const [gender, setGender] = useState<"MAN" | "WOMAN" | "">("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -28,6 +28,11 @@ function RegisterPage() {
     event.preventDefault();
 
     setError("");
+
+    if (gender === "") {
+      setError("Välj kön innan du fortsätter.");
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError("Lösenorden matchar inte.");
