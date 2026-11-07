@@ -17,6 +17,7 @@ function RegisterPage() {
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [gender, setGender] = useState<"MAN" | "WOMAN">("MAN");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -40,6 +41,7 @@ function RegisterPage() {
         name,
         email,
         password,
+        gender,
       });
 
       navigate("/login");
@@ -149,6 +151,33 @@ function RegisterPage() {
                     placeholder="Ange din e-postadress"
                     required
                   />
+                </div>
+              </div>
+
+              <div className="auth-form-group">
+                <label>Kön</label>
+                <div className="auth-gender-options">
+                  <label className="auth-gender-option">
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="MAN"
+                      checked={gender === "MAN"}
+                      onChange={() => setGender("MAN")}
+                    />
+                    <span>Man</span>
+                  </label>
+
+                  <label className="auth-gender-option">
+                    <input
+                      type="radio"
+                      name="gender"
+                      value="WOMAN"
+                      checked={gender === "WOMAN"}
+                      onChange={() => setGender("WOMAN")}
+                    />
+                    <span>Kvinna</span>
+                  </label>
                 </div>
               </div>
 
