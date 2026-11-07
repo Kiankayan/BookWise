@@ -5,7 +5,9 @@ interface LoadingScreenProps {
   message?: string;
 }
 
-function LoadingScreen({ message = "Library management" }: LoadingScreenProps) {
+function LoadingScreen({
+  message = "Bibliotekshantering",
+}: LoadingScreenProps) {
   return (
     <motion.div
       className="loading-screen"
