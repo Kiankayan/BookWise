@@ -3086,3 +3086,37 @@ button:active {
     font-size: 26px;
   }
 }
+
+@keyframes auth-slide-from-left {
+  from {
+    opacity: 0;
+    transform: translateX(-70px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes auth-slide-from-right {
+  from {
+    opacity: 0;
+    transform: translateX(70px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (min-width: 681px) {
+  .auth-brand-panel {
+    animation: auth-slide-from-left 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .auth-form-panel {
+    animation: auth-slide-from-right 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
