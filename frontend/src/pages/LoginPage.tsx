@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { motion } from "motion/react";
 import {
   BookOpen,
   Eye,
@@ -72,10 +73,20 @@ function LoginPage() {
               allt på ett och samma ställe.
             </p>
 
-            <img
+            <motion.img
               className="auth-illustration"
               src="/images/bookwise-auth-illustration.png"
               alt="Illustration of books representing BookWise"
+              animate={{
+                y: [0, -12, 0],
+                rotate: [0, -1.5, 1.5, 0],
+                scale: [1, 1.025, 1],
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
             />
 
             <div className="auth-features">
