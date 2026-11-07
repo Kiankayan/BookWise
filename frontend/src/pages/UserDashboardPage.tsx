@@ -156,10 +156,44 @@ function UserDashboardPage() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: "easeOut" }}
     >
-      <section className="page-intro">
-        <p className="eyebrow">DIN PERSONLIGA ÖVERSIKT</p>
-        <h2>Välkommen tillbaka, {user?.name}!</h2>
-        <p>Här kan du följa dina lån och hålla koll på dina böcker.</p>
+      <section className="dashboard-welcome">
+        <div className="dashboard-welcome-content">
+          <p className="eyebrow">DIN PERSONLIGA ÖVERSIKT</p>
+          <h2>Välkommen tillbaka, {user?.name}!</h2>
+          <p>Här kan du följa dina lån och hålla koll på dina böcker.</p>
+        </div>
+
+        <div className="dashboard-book-illustration">
+          <motion.img
+            className="dashboard-welcome-illustration"
+            src="/images/dashboard-open-book.png"
+            alt=""
+            aria-hidden="true"
+            animate={{
+              y: [0, -6, 0],
+              rotate: [0, 0.5, 0],
+            }}
+            transition={{
+              duration: 5,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+
+          <motion.img
+            className="dashboard-book-page-test"
+            src="/images/book-page-test.png"
+            alt=""
+            aria-hidden="true"
+            style={{ transformOrigin: "bottom center" }}
+            animate={{ rotate: [0, -12, 0] }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          />
+        </div>
       </section>
 
       {isLoading ? (
