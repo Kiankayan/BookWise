@@ -215,8 +215,7 @@ export async function getUserLoans(userId: string) {
 }
 
 export async function getRecentLoans() {
-  return prisma.loan.findMany({
-    take: 5,
+  const loans = await prisma.loan.findMany({
     include: {
       item: {
         include: {
@@ -224,10 +223,16 @@ export async function getRecentLoans() {
         },
       },
     },
-    orderBy: {
-      borrowDate: "desc",
-    },
   });
+
+  return loans
+    .sort((a, b) => {
+      const dateA = new Date(a.returnedAt ?? a.borrowDate).getTime();
+      const dateB = new Date(b.returnedAt ?? b.borrowDate).getTime();
+
+      return dateB - dateA;
+    })
+    .slice(0, 5);
 }
 
 export type AvailabilityChartPeriod = "week" | "month" | "sixMonths" | "year";
