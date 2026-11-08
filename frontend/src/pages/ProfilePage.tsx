@@ -4,7 +4,6 @@ import { useAuth } from "../context/AuthContext";
 
 function ProfilePage() {
   const { user } = useAuth();
-  console.log("Inloggad användare:", user);
 
   const roleLabel = user?.role === "ADMIN" ? "Administratör" : "Användare";
 
@@ -15,7 +14,7 @@ function ProfilePage() {
         ? "/images/avatar-woman.png"
         : null;
 
-  const profileDetails = [
+  const personalDetails = [
     {
       label: "Fullständigt namn",
       value: user?.name ?? "Inte tillgängligt",
@@ -26,6 +25,9 @@ function ProfilePage() {
       value: user?.email ?? "Inte tillgängligt",
       icon: Mail,
     },
+  ];
+
+  const accountDetails = [
     {
       label: "Kontotyp",
       value: roleLabel,
@@ -51,41 +53,80 @@ function ProfilePage() {
         <p>Här hittar du information om ditt BookWise-konto.</p>
       </section>
 
-      <section className="page-panel">
-        <div className="page-panel-heading">
-          <div>
-            <h3>Profilinformation</h3>
-            <p>Dina registrerade kontouppgifter.</p>
-          </div>
-
-          {avatar && (
-            <img
-              className="profile-avatar"
-              src={avatar}
-              alt={`Profilbild för ${user?.name}`}
-            />
+      <section className="profile-hero-card">
+        <div className="profile-hero-avatar">
+          {avatar ? (
+            <img src={avatar} alt={`Profilbild för ${user?.name}`} />
+          ) : (
+            <UserRound size={42} />
           )}
         </div>
 
-        <div className="profile-details">
-          {profileDetails.map((detail) => {
-            const Icon = detail.icon;
-
-            return (
-              <div className="profile-detail" key={detail.label}>
-                <div className="dashboard-stat-icon">
-                  <Icon size={20} />
-                </div>
-
-                <div>
-                  <p className="dashboard-stat-label">{detail.label}</p>
-                  <p>{detail.value}</p>
-                </div>
-              </div>
-            );
-          })}
+        <div className="profile-hero-info">
+          <p className="eyebrow">DIN PROFIL</p>
+          <h3>{user?.name ?? "Användare"}</h3>
+          <span className="profile-role-badge">
+            <ShieldCheck size={15} />
+            {roleLabel}
+          </span>
         </div>
       </section>
+
+      <div className="profile-information-grid">
+        <section className="page-panel profile-info-card">
+          <div className="profile-section-heading">
+            <div>
+              <h3>Personuppgifter</h3>
+              <p>Dina registrerade kontaktuppgifter.</p>
+            </div>
+          </div>
+
+          <div className="profile-details">
+            {personalDetails.map((detail) => {
+              const Icon = detail.icon;
+
+              return (
+                <div className="profile-detail" key={detail.label}>
+                  <div className="profile-detail-icon">
+                    <Icon size={20} />
+                  </div>
+                  <div className="profile-detail-content">
+                    <p>{detail.label}</p>
+                    <strong>{detail.value}</strong>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="page-panel profile-info-card">
+          <div className="profile-section-heading">
+            <div>
+              <h3>Kontoinformation</h3>
+              <p>Information om ditt BookWise-konto.</p>
+            </div>
+          </div>
+
+          <div className="profile-details">
+            {accountDetails.map((detail) => {
+              const Icon = detail.icon;
+
+              return (
+                <div className="profile-detail" key={detail.label}>
+                  <div className="profile-detail-icon">
+                    <Icon size={20} />
+                  </div>
+                  <div className="profile-detail-content">
+                    <p>{detail.label}</p>
+                    <strong>{detail.value}</strong>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      </div>
     </motion.div>
   );
 }
