@@ -4175,3 +4175,96 @@ button:active {
     transform: none;
   }
 }
+
+.auth-avatar-upload {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.auth-avatar-placeholder,
+.auth-avatar-preview {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 76px;
+  height: 76px;
+  flex-shrink: 0;
+  overflow: visible;
+  border: 1px solid #e5e1ee;
+  border-radius: 50%;
+  background: #f5f1ff;
+  color: #7652c8;
+}
+
+.auth-avatar-preview {
+  border: 2px solid #7652c8;
+}
+
+.auth-avatar-preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.auth-avatar-preview button {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  display: grid;
+  place-items: center;
+  width: 25px;
+  height: 25px;
+  min-height: 25px;
+  padding: 0;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  background: #dc3545;
+  color: #ffffff;
+}
+
+.auth-avatar-preview button:hover {
+  background: #b42335;
+}
+
+.auth-avatar-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 7px;
+  min-width: 0;
+  transform: translateY(9px);
+}
+
+.auth-avatar-select-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 36px;
+  padding: 0 13px;
+  border-radius: 9px;
+  background: #7652c8;
+  color: #ffffff;
+  font-size: 12px;
+}
+
+.auth-avatar-select-button:hover {
+  background: #5b39a7;
+}
+
+.auth-avatar-actions span {
+  color: #88849a;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+@media (max-width: 480px) {
+  .auth-avatar-upload {
+    align-items: flex-start;
+  }
+}

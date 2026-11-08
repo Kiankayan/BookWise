@@ -1,28 +1,69 @@
-import { useState, type FormEvent } from "react";
+import { useRef, useState, type FormEvent } from "react";
 import { motion } from "motion/react";
 import {
   BookOpen,
   Eye,
   EyeOff,
+  ImagePlus,
   LockKeyhole,
   Mail,
   Tag,
   UserRound,
+  X,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../services/AuthService";
+import { uploadAvatarImage } from "../services/ImageUploadService";
 
 function RegisterPage() {
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [gender, setGender] = useState<"MAN" | "WOMAN" | "">("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
+
+    if (!allowedTypes.includes(file.type)) {
+      setError("Välj en JPG-, PNG- eller WebP-bild.");
+      event.target.value = "";
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      setError("Profilbilden får vara högst 5 MB.");
+      event.target.value = "";
+      return;
+    }
+
+    setError("");
+    setAvatarFile(file);
+    setAvatarPreview(URL.createObjectURL(file));
+  };
+
+  const handleRemoveAvatar = () => {
+    setAvatarFile(null);
+    setAvatarPreview("");
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -42,11 +83,18 @@ function RegisterPage() {
     setIsLoading(true);
 
     try {
+      let avatarUrl: string | null = null;
+
+      if (avatarFile) {
+        avatarUrl = await uploadAvatarImage(avatarFile);
+      }
+
       await registerUser({
         name,
         email,
         password,
         gender,
+        avatarUrl,
       });
 
       navigate("/login");
@@ -129,6 +177,54 @@ function RegisterPage() {
             </div>
 
             <form className="auth-form" onSubmit={handleSubmit}>
+              <div className="auth-form-group">
+                <label>Profilbild (valfritt)</label>
+
+                <div className="auth-avatar-upload">
+                  {avatarPreview ? (
+                    <div className="auth-avatar-preview">
+                      <img
+                        src={avatarPreview}
+                        alt="Förhandsvisning av profilbild"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={handleRemoveAvatar}
+                        aria-label="Ta bort profilbild"
+                      >
+                        <X size={16} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="auth-avatar-placeholder">
+                      <UserRound size={28} />
+                    </div>
+                  )}
+
+                  <div className="auth-avatar-actions">
+                    <button
+                      type="button"
+                      className="auth-avatar-select-button"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <ImagePlus size={16} />
+                      Välj bild
+                    </button>
+
+                    <span>JPG, PNG eller WebP · Max 5 MB</span>
+                  </div>
+
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={handleAvatarChange}
+                    hidden
+                  />
+                </div>
+              </div>
+
               <div className="auth-form-group">
                 <label htmlFor="name">Namn</label>
                 <div className="auth-input-wrapper">
