@@ -219,7 +219,12 @@ function UsersPage() {
                     >
                       <div className="users-item-main">
                         <div className="users-avatar">
-                          {user.gender === "MAN" ? (
+                          {user.avatarUrl ? (
+                            <img
+                              src={user.avatarUrl}
+                              alt={`Profilbild för ${user.name}`}
+                            />
+                          ) : user.gender === "MAN" ? (
                             <img
                               src="/images/avatar-man.png"
                               alt={`Profilbild för ${user.name}`}

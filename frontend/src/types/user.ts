@@ -4,6 +4,7 @@ export type ManagedUser = {
   email: string;
   role: "USER" | "ADMIN";
   gender: "MAN" | "WOMAN" | null;
+  avatarUrl: string | null;
   isActive: boolean;
   createdAt: string;
 };
