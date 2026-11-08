@@ -12,4 +12,6 @@ export const updateProfileSchema = z.object({
     .trim()
     .email("Ange en giltig e-postadress.")
     .max(255, "E-postadressen får vara högst 255 tecken."),
+
+  avatarUrl: z.string().url("Ogiltig bildadress.").nullable().optional(),
 });

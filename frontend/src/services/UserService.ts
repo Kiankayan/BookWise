@@ -1,5 +1,6 @@
 import api from "./axios";
 import API_BASE_URL from "../api";
+import type { User } from "../types/auth";
 import type {
   ManagedUser,
   ManagedUsersResponse,
@@ -30,4 +31,15 @@ export async function updateUserStatus(id: string, isActive: boolean) {
 
 export async function deleteUser(id: string) {
   return api.delete<{ message: string }>(`${USERS_URL}/${id}`);
+}
+
+export async function updateMyProfile(data: {
+  name: string;
+  email: string;
+  avatarUrl?: string | null;
+}) {
+  return api.put<{ message: string; user: User }>(
+    `${API_BASE_URL}/profile/me`,
+    data,
+  );
 }

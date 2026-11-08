@@ -20,6 +20,7 @@ interface AuthContextType {
     rememberMe: boolean,
   ) => Promise<void>;
   logout: () => Promise<void>;
+  updateUser: (updatedUser: User) => void;
 }
 
 interface AuthProviderProps {
@@ -43,6 +44,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   });
 
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const updateUser = (updatedUser: User) => {
+    setUser(updatedUser);
+  };
 
   useEffect(() => {
     if (user && token) {
@@ -172,6 +177,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         isLoggingOut,
         login,
         logout,
+        updateUser,
       }}
     >
       {children}

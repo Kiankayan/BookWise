@@ -3666,6 +3666,115 @@ button:active {
   color: var(--bookwise-primary);
 }
 
+.settings-avatar-section {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.settings-avatar-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 88px;
+  height: 88px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 2px solid var(--bookwise-primary);
+  border-radius: 50%;
+  background: var(--bookwise-bg);
+  color: var(--bookwise-muted);
+}
+
+.settings-avatar-preview img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.settings-avatar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.settings-avatar-actions p {
+  width: 100%;
+  margin: 0;
+  color: var(--bookwise-muted);
+  font-size: 11px;
+}
+
+.settings-avatar-select-button,
+.settings-avatar-remove-button,
+.settings-avatar-save-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--bookwise-border);
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.settings-avatar-select-button,
+.settings-avatar-save-button {
+  border-color: var(--bookwise-primary);
+  background: var(--bookwise-primary);
+  color: #ffffff;
+}
+
+.settings-avatar-select-button:hover,
+.settings-avatar-save-button:hover {
+  opacity: 0.88;
+}
+
+.settings-avatar-remove-button {
+  background: var(--bookwise-primary);
+  color: #ffffff;
+}
+
+.settings-avatar-remove-button:hover {
+  border-color: var(--bookwise-primary);
+  background: var(--bookwise-primary);
+  color: #ffffff;
+}
+
+.settings-avatar-save-button {
+  margin-top: 20px;
+}
+
+.settings-avatar-select-button:disabled,
+.settings-avatar-remove-button:disabled,
+.settings-avatar-save-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.settings-avatar-message {
+  margin: 14px 0 0;
+  font-size: 12px;
+}
+
+.settings-avatar-message.error {
+  color: #dc3545;
+}
+
+.settings-avatar-message.success {
+  color: #198754;
+}
+
 .settings-options {
   display: flex;
   flex-wrap: wrap;
@@ -3723,6 +3832,25 @@ button:active {
 @media (max-width: 600px) {
   .settings-panel {
     padding: 20px 17px;
+  }
+
+  .settings-avatar-section {
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .settings-avatar-preview {
+    width: 72px;
+    height: 72px;
+  }
+
+  .settings-avatar-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .settings-avatar-actions p {
+    margin-top: 2px;
   }
 
   .settings-options {

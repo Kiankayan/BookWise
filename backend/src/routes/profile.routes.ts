@@ -21,6 +21,8 @@ router.get("/me", auth, async (req: Request, res) => {
       name: true,
       email: true,
       role: true,
+      gender: true,
+      avatarUrl: true,
       createdAt: true,
     },
   });
@@ -52,7 +54,7 @@ router.put("/me", auth, async (req: Request, res) => {
     });
   }
 
-  const { name, email } = validation.data;
+  const { name, email, avatarUrl } = validation.data;
 
   try {
     const user = await prisma.user.update({
@@ -60,12 +62,15 @@ router.put("/me", auth, async (req: Request, res) => {
       data: {
         name,
         email: email.toLowerCase(),
+        avatarUrl,
       },
       select: {
         id: true,
         name: true,
         email: true,
         role: true,
+        gender: true,
+        avatarUrl: true,
         createdAt: true,
       },
     });
