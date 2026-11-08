@@ -3200,3 +3200,11 @@ button:active {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.user-dashboard-charts .dashboard-category-chart-container {
+  transform: translateY(-12px);
+}
+
+.user-dashboard-charts .dashboard-category-legend {
+  transform: translateY(-12px);
+}

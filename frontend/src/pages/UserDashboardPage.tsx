@@ -9,12 +9,14 @@ import {
   TrendingUp,
   TrendingDown,
   ChartNoAxesCombined,
+  Tags,
 } from "lucide-react";
 import {
   Bar,
   BarChart,
   CartesianGrid,
   Cell,
+  Legend,
   Pie,
   PieChart,
   ResponsiveContainer,
@@ -26,6 +28,8 @@ import { useAuth } from "../context/AuthContext";
 import { getMyLoans } from "../services/LoanService";
 import type { Loan } from "../types/loan";
 import { getLibraryItemImage } from "../utils/libraryItemImage";
+
+type ChartPeriod = "week" | "month" | "sixMonths" | "year";
 
 function AnimatedPercentage({
   value,
@@ -77,6 +81,47 @@ function AnimatedPercentage({
   );
 }
 
+function AnimatedCount({
+  value,
+  shouldReduceMotion,
+}: {
+  value: number;
+  shouldReduceMotion: boolean | null;
+}) {
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    if (shouldReduceMotion) {
+      setDisplayValue(value);
+      return;
+    }
+
+    const duration = 2400;
+    const startTime = performance.now();
+    let animationFrame = 0;
+
+    const animate = (currentTime: number) => {
+      const progress = Math.min((currentTime - startTime) / duration, 1);
+      const easedProgress = 1 - Math.pow(1 - progress, 4);
+
+      setDisplayValue(Math.round(value * easedProgress));
+
+      if (progress < 1) {
+        animationFrame = requestAnimationFrame(animate);
+      } else {
+        setDisplayValue(value);
+      }
+    };
+
+    setDisplayValue(0);
+    animationFrame = requestAnimationFrame(animate);
+
+    return () => cancelAnimationFrame(animationFrame);
+  }, [value, shouldReduceMotion]);
+
+  return <>{displayValue.toLocaleString("sv-SE")}</>;
+}
+
 function UserDashboardPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -85,6 +130,7 @@ function UserDashboardPage() {
   const [loans, setLoans] = useState<Loan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [chartPeriod, setChartPeriod] = useState<ChartPeriod>("week");
 
   useEffect(() => {
     async function loadMyLoans() {
@@ -135,31 +181,85 @@ function UserDashboardPage() {
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5);
 
-  const monthlyLoans = Array.from({ length: 6 }, (_, index) => {
-    const monthDate = new Date(
-      now.getFullYear(),
-      now.getMonth() - (5 - index),
-      1,
-    );
+  const loanChartData = (() => {
+    if (chartPeriod === "week") {
+      return Array.from({ length: 7 }, (_, index) => {
+        const date = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate() - 6 + index,
+        );
 
-    const monthKey = `${monthDate.getFullYear()}-${String(
-      monthDate.getMonth() + 1,
-    ).padStart(2, "0")}`;
+        const nextDate = new Date(
+          date.getFullYear(),
+          date.getMonth(),
+          date.getDate() + 1,
+        );
 
-    const total = loans.filter((loan) => {
-      const borrowDate = new Date(loan.borrowDate);
-      const loanMonthKey = `${borrowDate.getFullYear()}-${String(
-        borrowDate.getMonth() + 1,
-      ).padStart(2, "0")}`;
+        const total = loans.filter((loan) => {
+          const borrowDate = new Date(loan.borrowDate);
+          return borrowDate >= date && borrowDate < nextDate;
+        }).length;
 
-      return loanMonthKey === monthKey;
-    }).length;
+        return {
+          label: date.toLocaleDateString("sv-SE", { weekday: "short" }),
+          total,
+        };
+      });
+    }
 
-    return {
-      month: monthDate.toLocaleDateString("sv-SE", { month: "short" }),
-      total,
-    };
-  });
+    if (chartPeriod === "month") {
+      return Array.from({ length: 4 }, (_, index) => {
+        const startDate = new Date(
+          now.getFullYear(),
+          now.getMonth(),
+          now.getDate() - 27 + index * 7,
+        );
+
+        const endDate = new Date(
+          startDate.getFullYear(),
+          startDate.getMonth(),
+          startDate.getDate() + 7,
+        );
+
+        const total = loans.filter((loan) => {
+          const borrowDate = new Date(loan.borrowDate);
+          return borrowDate >= startDate && borrowDate < endDate;
+        }).length;
+
+        return {
+          label: `${startDate.getDate()} ${startDate.toLocaleDateString("sv-SE", { month: "short" })}`,
+          total,
+        };
+      });
+    }
+
+    const numberOfMonths = chartPeriod === "sixMonths" ? 6 : 12;
+
+    return Array.from({ length: numberOfMonths }, (_, index) => {
+      const monthDate = new Date(
+        now.getFullYear(),
+        now.getMonth() - (numberOfMonths - 1 - index),
+        1,
+      );
+
+      const nextMonth = new Date(
+        monthDate.getFullYear(),
+        monthDate.getMonth() + 1,
+        1,
+      );
+
+      const total = loans.filter((loan) => {
+        const borrowDate = new Date(loan.borrowDate);
+        return borrowDate >= monthDate && borrowDate < nextMonth;
+      }).length;
+
+      return {
+        label: monthDate.toLocaleDateString("sv-SE", { month: "short" }),
+        total,
+      };
+    });
+  })();
 
   const categoryLoans = Object.values(
     loans.reduce<Record<string, { name: string; value: number }>>(
@@ -182,12 +282,14 @@ function UserDashboardPage() {
   );
 
   const categoryColors = [
-    "#7656c9",
-    "#9b7de0",
-    "#b8a2ed",
-    "#d1c3f5",
-    "#6040ad",
-    "#e0d7f8",
+    "#8b5cf6",
+    "#3b82f6",
+    "#ec4899",
+    "#f59e0b",
+    "#14b8a6",
+    "#a1a1aa",
+    "#6366f1",
+    "#f97316",
   ];
 
   const currentValues = {
@@ -297,7 +399,7 @@ function UserDashboardPage() {
   return (
     <motion.div
       className="dashboard-page"
-      initial={{ opacity: 0, y: 12 }}
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: "easeOut" }}
     >
@@ -314,10 +416,14 @@ function UserDashboardPage() {
             src="/images/dashboard-open-book.png"
             alt=""
             aria-hidden="true"
-            animate={{
-              y: [0, -6, 0],
-              rotate: [0, 0.5, 0],
-            }}
+            animate={
+              shouldReduceMotion
+                ? undefined
+                : {
+                    y: [0, -6, 0],
+                    rotate: [0, 0.5, 0],
+                  }
+            }
             transition={{
               duration: 5,
               repeat: Infinity,
@@ -331,7 +437,7 @@ function UserDashboardPage() {
             alt=""
             aria-hidden="true"
             style={{ transformOrigin: "bottom center" }}
-            animate={{ rotate: [0, -12, 0] }}
+            animate={shouldReduceMotion ? undefined : { rotate: [0, -12, 0] }}
             transition={{
               duration: 6,
               repeat: Infinity,
@@ -416,65 +522,168 @@ function UserDashboardPage() {
           <section className="user-dashboard-charts">
             <section className="dashboard-chart-card">
               <div className="dashboard-chart-heading">
-                <div>
-                  <h3>Mina lån över tid</h3>
-                  <p>Antal lån under de senaste sex månaderna</p>
+                <div className="dashboard-chart-icon" aria-hidden="true">
+                  <ChartNoAxesCombined size={22} strokeWidth={1.8} />
                 </div>
+
+                <h3>Mina lån över tid</h3>
+
+                <select
+                  className="dashboard-chart-period"
+                  value={chartPeriod}
+                  onChange={(event) =>
+                    setChartPeriod(event.target.value as ChartPeriod)
+                  }
+                  aria-label="Välj tidsperiod för din lånestatistik"
+                >
+                  <option value="week">Senaste veckan</option>
+                  <option value="month">Senaste månaden</option>
+                  <option value="sixMonths">Senaste 6 månaderna</option>
+                  <option value="year">Senaste året</option>
+                </select>
               </div>
 
               <div className="dashboard-chart-container">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={monthlyLoans}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="month" />
-                    <YAxis allowDecimals={false} />
+                <ResponsiveContainer width="100%" height={280}>
+                  <BarChart
+                    data={loanChartData}
+                    margin={{ top: 12, right: 8, left: 0, bottom: 0 }}
+                    barCategoryGap="22%"
+                    barGap={4}
+                  >
+                    <CartesianGrid
+                      stroke="#eeeaf7"
+                      strokeDasharray="3 3"
+                      vertical={false}
+                    />
+
+                    <XAxis
+                      dataKey="label"
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fill: "#807990", fontSize: 12 }}
+                      dy={8}
+                    />
+
+                    <YAxis
+                      allowDecimals={false}
+                      axisLine={false}
+                      tickLine={false}
+                      tick={{ fill: "#807990", fontSize: 12 }}
+                      width={34}
+                    />
+
                     <Tooltip />
+
+                    <Legend
+                      verticalAlign="bottom"
+                      align="center"
+                      iconType="circle"
+                      iconSize={10}
+                      wrapperStyle={{ paddingTop: 20, fontSize: 12 }}
+                    />
+
                     <Bar
                       dataKey="total"
                       name="Antal lån"
-                      fill="#7656c9"
-                      radius={[5, 5, 0, 0]}
+                      fill="#7138df"
+                      radius={[4, 4, 0, 0]}
+                      maxBarSize={24}
                     />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
             </section>
 
-            <section className="dashboard-chart-card">
-              <div className="dashboard-chart-heading">
-                <div>
-                  <h3>Mina lån per kategori</h3>
-                  <p>Fördelning av alla dina lån</p>
+            <section className="dashboard-category-card">
+              <div className="dashboard-category-heading">
+                <div className="dashboard-chart-icon" aria-hidden="true">
+                  <Tags size={20} strokeWidth={1.8} />
                 </div>
+                <h3>Mina lån per kategori</h3>
               </div>
 
               {categoryLoans.length === 0 ? (
                 <p>Du har inga lån att visa ännu.</p>
               ) : (
-                <div className="dashboard-chart-container">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={categoryLoans}
-                        dataKey="value"
-                        nameKey="name"
-                        cx="50%"
-                        cy="50%"
-                        outerRadius={100}
-                        label={({ name, percent }) =>
-                          `${name} (${((percent ?? 0) * 100).toFixed(0)}%)`
-                        }
-                      >
-                        {categoryLoans.map((category, index) => (
-                          <Cell
-                            key={category.name}
-                            fill={categoryColors[index % categoryColors.length]}
+                <div className="dashboard-category-layout">
+                  <div className="dashboard-category-chart-container">
+                    <ResponsiveContainer width="100%" height={280}>
+                      <PieChart>
+                        <Pie
+                          data={categoryLoans}
+                          dataKey="value"
+                          nameKey="name"
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={90}
+                          paddingAngle={2}
+                        >
+                          {categoryLoans.map((category, index) => (
+                            <Cell
+                              key={category.name}
+                              fill={
+                                categoryColors[index % categoryColors.length]
+                              }
+                            />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+
+                    <div className="dashboard-category-total">
+                      <strong>
+                        <AnimatedCount
+                          value={loans.length}
+                          shouldReduceMotion={shouldReduceMotion}
+                        />
+                      </strong>
+                      <span>Totalt</span>
+                    </div>
+                  </div>
+
+                  <div className="dashboard-category-legend">
+                    {categoryLoans.map((category, index) => {
+                      const percentage =
+                        loans.length > 0
+                          ? Math.round((category.value / loans.length) * 100)
+                          : 0;
+
+                      return (
+                        <div
+                          className="dashboard-category-legend-item"
+                          key={category.name}
+                        >
+                          <span
+                            className="dashboard-category-legend-dot"
+                            style={{
+                              backgroundColor:
+                                categoryColors[index % categoryColors.length],
+                            }}
                           />
-                        ))}
-                      </Pie>
-                      <Tooltip />
-                    </PieChart>
-                  </ResponsiveContainer>
+                          <span className="dashboard-category-legend-name">
+                            {category.name}
+                          </span>
+                          <span className="dashboard-category-legend-value">
+                            <AnimatedCount
+                              value={category.value}
+                              shouldReduceMotion={shouldReduceMotion}
+                            />
+                          </span>
+                          <span className="dashboard-category-legend-percentage">
+                            (
+                            <AnimatedCount
+                              value={percentage}
+                              shouldReduceMotion={shouldReduceMotion}
+                            />
+                            %)
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
               )}
             </section>
