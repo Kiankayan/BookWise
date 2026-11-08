@@ -396,10 +396,12 @@ function UserDashboardPage() {
     returnedLoans.length,
   ]);
 
+  if (isLoading) return null;
+
   return (
     <motion.div
       className="dashboard-page"
-      initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: "easeOut" }}
     >
@@ -447,11 +449,7 @@ function UserDashboardPage() {
         </div>
       </section>
 
-      {isLoading ? (
-        <section className="page-panel">
-          <p>Hämtar din låneöversikt...</p>
-        </section>
-      ) : error ? (
+      {error ? (
         <section className="page-panel">
           <p role="alert">{error}</p>
         </section>
@@ -466,16 +464,21 @@ function UserDashboardPage() {
               const percentage = percentageChanges[stat.key];
 
               return (
-                <article className="dashboard-stat-card" key={stat.label}>
-                  <motion.div
-                    initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: 0.4,
-                      delay: shouldReduceMotion ? 0 : 0.2 + index * 0.12,
-                      ease: "easeOut",
-                    }}
-                  >
+                <motion.article
+                  className="dashboard-stat-card"
+                  key={stat.label}
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  whileHover={{ y: -5, scale: 1.015 }}
+                  transition={{
+                    duration: 0.25,
+                    delay: shouldReduceMotion
+                      ? 0
+                      : Math.min(index * 0.08, 0.48),
+                    ease: "easeOut",
+                  }}
+                >
+                  <div>
                     <div className="dashboard-stat-top">
                       <span className="dashboard-stat-icon" aria-hidden="true">
                         <Icon size={22} strokeWidth={1.8} />
@@ -513,8 +516,8 @@ function UserDashboardPage() {
                     <p className="dashboard-stat-description">
                       {stat.description}
                     </p>
-                  </motion.div>
-                </article>
+                  </div>
+                </motion.article>
               );
             })}
           </section>
