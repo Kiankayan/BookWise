@@ -413,69 +413,71 @@ function UserDashboardPage() {
             })}
           </section>
 
-          <section className="dashboard-chart-card">
-            <div className="dashboard-chart-heading">
-              <div>
-                <h3>Mina lån över tid</h3>
-                <p>Antal lån under de senaste sex månaderna</p>
+          <section className="user-dashboard-charts">
+            <section className="dashboard-chart-card">
+              <div className="dashboard-chart-heading">
+                <div>
+                  <h3>Mina lån över tid</h3>
+                  <p>Antal lån under de senaste sex månaderna</p>
+                </div>
               </div>
-            </div>
 
-            <div className="dashboard-chart-container">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={monthlyLoans}>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                  <XAxis dataKey="month" />
-                  <YAxis allowDecimals={false} />
-                  <Tooltip />
-                  <Bar
-                    dataKey="total"
-                    name="Antal lån"
-                    fill="#7656c9"
-                    radius={[5, 5, 0, 0]}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </section>
-
-          <section className="dashboard-chart-card">
-            <div className="dashboard-chart-heading">
-              <div>
-                <h3>Mina lån per kategori</h3>
-                <p>Fördelning av alla dina lån</p>
-              </div>
-            </div>
-
-            {categoryLoans.length === 0 ? (
-              <p>Du har inga lån att visa ännu.</p>
-            ) : (
               <div className="dashboard-chart-container">
                 <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={categoryLoans}
-                      dataKey="value"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={100}
-                      label={({ name, percent }) =>
-                        `${name} (${((percent ?? 0) * 100).toFixed(0)}%)`
-                      }
-                    >
-                      {categoryLoans.map((category, index) => (
-                        <Cell
-                          key={category.name}
-                          fill={categoryColors[index % categoryColors.length]}
-                        />
-                      ))}
-                    </Pie>
+                  <BarChart data={monthlyLoans}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis dataKey="month" />
+                    <YAxis allowDecimals={false} />
                     <Tooltip />
-                  </PieChart>
+                    <Bar
+                      dataKey="total"
+                      name="Antal lån"
+                      fill="#7656c9"
+                      radius={[5, 5, 0, 0]}
+                    />
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
-            )}
+            </section>
+
+            <section className="dashboard-chart-card">
+              <div className="dashboard-chart-heading">
+                <div>
+                  <h3>Mina lån per kategori</h3>
+                  <p>Fördelning av alla dina lån</p>
+                </div>
+              </div>
+
+              {categoryLoans.length === 0 ? (
+                <p>Du har inga lån att visa ännu.</p>
+              ) : (
+                <div className="dashboard-chart-container">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={categoryLoans}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={100}
+                        label={({ name, percent }) =>
+                          `${name} (${((percent ?? 0) * 100).toFixed(0)}%)`
+                        }
+                      >
+                        {categoryLoans.map((category, index) => (
+                          <Cell
+                            key={category.name}
+                            fill={categoryColors[index % categoryColors.length]}
+                          />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+            </section>
           </section>
 
           <section className="page-panel">
@@ -555,22 +557,44 @@ function UserDashboardPage() {
             )}
           </section>
 
-          <section className="page-panel">
-            <div className="page-panel-heading">
-              <div>
-                <h3>Utforska biblioteket</h3>
-                <p>Hitta nästa bok att läsa.</p>
-              </div>
+          <section className="dashboard-overview-card">
+            <div className="dashboard-overview-content">
+              <p className="eyebrow">SNABBÖVERSIKT</p>
+              <h3>Ditt bibliotek på ett ställe</h3>
+              <p>
+                Du har {loans.length} lånehändelser i ditt personliga bibliotek.
+              </p>
 
               <button
                 className="dashboard-library-button"
                 type="button"
                 onClick={() => navigate("/library")}
               >
-                Till biblioteket
-                <ArrowRight size={14} />
+                Utforska biblioteket
+                <span aria-hidden="true">→</span>
               </button>
             </div>
+
+            <motion.img
+              className="dashboard-overview-illustration"
+              src="/images/dashboard-book-stack.png"
+              alt=""
+              aria-hidden="true"
+              animate={
+                shouldReduceMotion
+                  ? undefined
+                  : {
+                      y: [0, -5, 0],
+                      rotate: [0, 1, 0],
+                    }
+              }
+              transition={{
+                duration: 6,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: 0.5,
+              }}
+            />
           </section>
         </>
       )}

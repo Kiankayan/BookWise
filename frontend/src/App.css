@@ -3183,3 +3183,20 @@ button:active {
     animation: auth-slide-from-right 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
 }
+
+.user-dashboard-charts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  min-width: 0;
+}
+
+.user-dashboard-charts > * {
+  min-width: 0;
+}
+
+@media (max-width: 850px) {
+  .user-dashboard-charts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
