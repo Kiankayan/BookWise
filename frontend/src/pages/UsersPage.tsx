@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
+import { Users, ShieldCheck, UserRound, Search } from "lucide-react";
 import {
   getUsers,
   updateUserRole,
@@ -11,6 +12,7 @@ import type { ManagedUser } from "../types/user";
 
 function UsersPage() {
   const { user: currentUser } = useAuth();
+  const shouldReduceMotion = useReducedMotion();
 
   const [users, setUsers] = useState<ManagedUser[]>([]);
   const [search, setSearch] = useState("");
@@ -93,10 +95,30 @@ function UsersPage() {
   const adminCount = users.filter((user) => user.role === "ADMIN").length;
   const regularUserCount = users.filter((user) => user.role === "USER").length;
 
+  const stats = [
+    {
+      label: "Totalt antal användare",
+      value: users.length,
+      icon: Users,
+    },
+    {
+      label: "Administratörer",
+      value: adminCount,
+      icon: ShieldCheck,
+    },
+    {
+      label: "Vanliga användare",
+      value: regularUserCount,
+      icon: UserRound,
+    },
+  ];
+
+  if (isLoading) return null;
+
   return (
     <motion.div
       className="users-page"
-      initial={{ opacity: 0, y: 12 }}
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: "easeOut" }}
     >
@@ -106,129 +128,187 @@ function UsersPage() {
         <p>Hantera registrerade användare och deras behörigheter.</p>
       </section>
 
-      {isLoading ? (
-        <section className="page-panel">
-          <p>Hämtar användare...</p>
-        </section>
-      ) : error ? (
-        <section className="page-panel">
+      {error ? (
+        <section className="users-panel">
           <p role="alert">{error}</p>
         </section>
       ) : (
         <>
-          <section className="dashboard-stats" aria-label="Användarstatistik">
-            <article className="dashboard-stat-card">
-              <p className="dashboard-stat-label">Totalt antal användare</p>
-              <p className="dashboard-stat-value">{users.length}</p>
-            </article>
+          <section className="users-stats" aria-label="Användarstatistik">
+            {stats.map((stat, index) => {
+              const Icon = stat.icon;
 
-            <article className="dashboard-stat-card">
-              <p className="dashboard-stat-label">Administratörer</p>
-              <p className="dashboard-stat-value">{adminCount}</p>
-            </article>
-
-            <article className="dashboard-stat-card">
-              <p className="dashboard-stat-label">Vanliga användare</p>
-              <p className="dashboard-stat-value">{regularUserCount}</p>
-            </article>
+              return (
+                <motion.article
+                  className="users-stat-card"
+                  key={stat.label}
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.25,
+                    delay: shouldReduceMotion ? 0 : index * 0.08,
+                    ease: "easeOut",
+                  }}
+                >
+                  <div className="users-stat-icon">
+                    <Icon size={21} strokeWidth={1.8} />
+                  </div>
+                  <p className="users-stat-label">{stat.label}</p>
+                  <p className="users-stat-value">{stat.value}</p>
+                </motion.article>
+              );
+            })}
           </section>
 
-          <section className="page-panel">
-            <div className="page-panel-heading">
+          <motion.section
+            className="users-panel"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.35,
+              delay: shouldReduceMotion ? 0 : 0.25,
+              ease: "easeOut",
+            }}
+          >
+            <div className="users-panel-heading">
               <div>
                 <h3>Användarlista</h3>
                 <p>{filteredUsers.length} användare visas</p>
               </div>
+              <Users size={22} />
             </div>
 
-            <input
-              type="search"
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
-              placeholder="Sök efter namn eller e-postadress..."
-              aria-label="Sök användare"
-            />
+            <div className="users-search">
+              <Search size={18} />
+              <input
+                type="search"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+                placeholder="Sök efter namn eller e-postadress..."
+                aria-label="Sök användare"
+              />
+            </div>
 
-            {userUpdateError && <p role="alert">{userUpdateError}</p>}
+            {userUpdateError && (
+              <p className="users-error" role="alert">
+                {userUpdateError}
+              </p>
+            )}
 
             {filteredUsers.length === 0 ? (
-              <p>Inga användare hittades.</p>
+              <p className="users-empty">Inga användare hittades.</p>
             ) : (
-              <div>
-                {filteredUsers.map((user) => (
-                  <article key={user.id}>
-                    <div>
-                      <h4>
-                        <Link to={`/users/${user.id}`}>{user.name}</Link>
-                      </h4>
+              <div className="users-list">
+                {filteredUsers.map((user, index) => {
+                  const isCurrentUser = user.id === currentUser?.id;
+                  const isUpdating = updatingUserId === user.id;
 
-                      <p>{user.email}</p>
+                  return (
+                    <motion.article
+                      className="users-item"
+                      key={user.id}
+                      initial={
+                        shouldReduceMotion ? false : { opacity: 0, y: 12 }
+                      }
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.25,
+                        delay: shouldReduceMotion ? 0 : 0.3 + index * 0.06,
+                        ease: "easeOut",
+                      }}
+                    >
+                      <div className="users-item-main">
+                        <div className="users-avatar">
+                          {user.gender === "MAN" ? (
+                            <img
+                              src="/images/avatar-man.png"
+                              alt={`Profilbild för ${user.name}`}
+                            />
+                          ) : user.gender === "WOMAN" ? (
+                            <img
+                              src="/images/avatar-woman.png"
+                              alt={`Profilbild för ${user.name}`}
+                            />
+                          ) : (
+                            <UserRound size={21} />
+                          )}
+                        </div>
 
-                      <p>
-                        Kontostatus: {user.isActive ? "Aktivt" : "Inaktivt"}
-                      </p>
+                        <div className="users-item-info">
+                          <div className="users-item-title">
+                            <h4>
+                              <Link to={`/users/${user.id}`}>{user.name}</Link>
+                            </h4>
+                            <span
+                              className={`users-status ${
+                                user.isActive ? "is-active" : "is-inactive"
+                              }`}
+                            >
+                              {user.isActive ? "Aktiv" : "Inaktiv"}
+                            </span>
+                          </div>
 
-                      <button
-                        type="button"
-                        disabled={
-                          user.id === currentUser?.id ||
-                          updatingUserId === user.id
-                        }
-                        onClick={() =>
-                          void handleStatusChange(user.id, !user.isActive)
-                        }
-                      >
-                        {updatingUserId === user.id
-                          ? "Uppdaterar..."
-                          : user.id === currentUser?.id
-                            ? "Eget konto"
-                            : user.isActive
-                              ? "Inaktivera konto"
-                              : "Aktivera konto"}
-                      </button>
+                          <p className="users-email">{user.email}</p>
 
-                      {user.id === currentUser?.id && (
-                        <p>Du kan inte inaktivera ditt eget konto.</p>
-                      )}
+                          <p className="users-registered">
+                            Registrerad:{" "}
+                            {new Date(user.createdAt).toLocaleDateString(
+                              "sv-SE",
+                            )}
+                          </p>
+                        </div>
+                      </div>
 
-                      <label>
-                        Användarroll:
-                        <select
-                          value={user.role}
-                          disabled={
-                            user.id === currentUser?.id ||
-                            updatingUserId === user.id
-                          }
-                          onChange={(event) =>
-                            void handleRoleChange(
-                              user.id,
-                              event.target.value as ManagedUser["role"],
-                            )
+                      <div className="users-item-actions">
+                        <button
+                          type="button"
+                          className={`users-status-button ${
+                            user.isActive ? "is-deactivate" : "is-activate"
+                          }`}
+                          disabled={isCurrentUser || isUpdating}
+                          onClick={() =>
+                            void handleStatusChange(user.id, !user.isActive)
                           }
                         >
-                          <option value="USER">Användare</option>
-                          <option value="ADMIN">Administratör</option>
-                        </select>
-                      </label>
+                          {isUpdating
+                            ? "Uppdaterar..."
+                            : isCurrentUser
+                              ? "Eget konto"
+                              : user.isActive
+                                ? "Inaktivera konto"
+                                : "Aktivera konto"}
+                        </button>
 
-                      {user.id === currentUser?.id && (
-                        <p>Du kan inte ändra din egen roll.</p>
+                        <label className="users-role-control">
+                          <span>Användarroll</span>
+                          <select
+                            value={user.role}
+                            disabled={isCurrentUser || isUpdating}
+                            onChange={(event) =>
+                              void handleRoleChange(
+                                user.id,
+                                event.target.value as ManagedUser["role"],
+                              )
+                            }
+                          >
+                            <option value="USER">Användare</option>
+                            <option value="ADMIN">Administratör</option>
+                          </select>
+                        </label>
+                      </div>
+
+                      {isCurrentUser && (
+                        <p className="users-own-account">
+                          Du kan inte ändra din egen roll eller inaktivera ditt
+                          eget konto.
+                        </p>
                       )}
-
-                      {updatingUserId === user.id && (
-                        <p>Uppdaterar användare...</p>
-                      )}
-
-                      <p>
-                        Registrerad:{" "}
-                        {new Date(user.createdAt).toLocaleDateString("sv-SE")}
-                      </p>
-                    </div>
-                  </article>
-                ))}
+                    </motion.article>
+                  );
+                })}
               </div>
             )}
-          </section>
+          </motion.section>
         </>
       )}
     </motion.div>

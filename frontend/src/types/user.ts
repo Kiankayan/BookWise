@@ -3,6 +3,7 @@ export type ManagedUser = {
   name: string;
   email: string;
   role: "USER" | "ADMIN";
+  gender: "MAN" | "WOMAN" | null;
   isActive: boolean;
   createdAt: string;
 };
