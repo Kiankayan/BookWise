@@ -8,11 +8,12 @@ function ProfilePage() {
   const roleLabel = user?.role === "ADMIN" ? "Administratör" : "Användare";
 
   const avatar =
-    user?.gender === "MAN"
+    user?.avatarUrl ??
+    (user?.gender === "MAN"
       ? "/images/avatar-man.png"
       : user?.gender === "WOMAN"
         ? "/images/avatar-woman.png"
-        : null;
+        : null);
 
   const personalDetails = [
     {

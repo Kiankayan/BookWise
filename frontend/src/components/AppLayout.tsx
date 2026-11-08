@@ -20,7 +20,9 @@ function AppLayout() {
 
           <div className="topbar-profile">
             <div className="topbar-avatar">
-              {user?.gender === "MAN" ? (
+              {user?.avatarUrl ? (
+                <img src={user.avatarUrl} alt="Profilbild" />
+              ) : user?.gender === "MAN" ? (
                 <img src="/images/avatar-man.png" alt="Profilbild" />
               ) : user?.gender === "WOMAN" ? (
                 <img src="/images/avatar-woman.png" alt="Profilbild" />
