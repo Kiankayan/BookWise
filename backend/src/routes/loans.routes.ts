@@ -5,6 +5,7 @@ import {
   borrowLibraryItem,
   returnLibraryItem,
   getUserLoans,
+  getRecentLoans,
   getAvailabilityHistory,
   type AvailabilityChartPeriod,
 } from "../services/loan.service.js";
@@ -58,6 +59,20 @@ router.get("/my-loans", auth, async (req, res) => {
 
     return res.status(500).json({
       message: "Kunde inte hämta dina lån.",
+    });
+  }
+});
+
+router.get("/recent-loans", auth, admin, async (_req, res) => {
+  try {
+    const loans = await getRecentLoans();
+
+    return res.json(loans);
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: "Kunde inte hämta de senaste lånen.",
     });
   }
 });

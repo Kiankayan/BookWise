@@ -7,3 +7,7 @@ const LOANS_URL = `${API_BASE_URL}/loans`;
 export async function getMyLoans() {
   return api.get<Loan[]>(`${LOANS_URL}/my-loans`);
 }
+
+export async function getRecentLoans() {
+  return api.get<Loan[]>(`${LOANS_URL}/recent-loans`);
+}

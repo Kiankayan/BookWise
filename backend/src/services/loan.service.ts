@@ -214,6 +214,22 @@ export async function getUserLoans(userId: string) {
   });
 }
 
+export async function getRecentLoans() {
+  return prisma.loan.findMany({
+    take: 5,
+    include: {
+      item: {
+        include: {
+          category: true,
+        },
+      },
+    },
+    orderBy: {
+      borrowDate: "desc",
+    },
+  });
+}
+
 export type AvailabilityChartPeriod = "week" | "month" | "sixMonths" | "year";
 
 export type AvailabilityHistoryPoint = {

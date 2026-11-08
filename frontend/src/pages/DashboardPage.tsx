@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Category, LibraryItem } from "../types/library";
+import type { Loan } from "../types/loan";
 import { getLibraryItemImage } from "../utils/libraryItemImage";
 import {
   BookOpen,
@@ -32,6 +33,7 @@ import type {
   ChartPeriod,
 } from "../utils/dashboardChartData";
 import { getAvailabilityHistory } from "../services/LibraryItemService";
+import { getRecentLoans } from "../services/LoanService";
 import { motion, useReducedMotion } from "motion/react";
 
 type DashboardPageProps = {
@@ -146,6 +148,8 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
     AvailabilityHistoryPoint[]
   >([]);
 
+  const [recentLoans, setRecentLoans] = useState<Loan[]>([]);
+
   useEffect(() => {
     let isMounted = true;
 
@@ -167,6 +171,28 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
       isMounted = false;
     };
   }, [chartPeriod]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    getRecentLoans()
+      .then((response) => {
+        if (isMounted) {
+          setRecentLoans(response.data);
+        }
+      })
+      .catch((error) => {
+        console.error("Kunde inte hämta de senaste lånen:", error);
+
+        if (isMounted) {
+          setRecentLoans([]);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const categoryData = categories.map((category) => ({
     name: category.name,
@@ -193,14 +219,6 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
       item.dueDate !== null &&
       new Date(item.dueDate) < now,
   ).length;
-
-  const recentLoans = libraryItems
-    .filter((item) => item.borrower !== null && item.borrowDate !== null)
-    .sort(
-      (a, b) =>
-        new Date(b.borrowDate!).getTime() - new Date(a.borrowDate!).getTime(),
-    )
-    .slice(0, 5);
 
   const stats = [
     {
@@ -625,31 +643,43 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
 
           {recentLoans.length === 0 ? (
             <p className="dashboard-recent-loans-empty">
-              Det finns inga aktiva lån att visa.
+              Det finns inga lån att visa.
             </p>
           ) : (
             <div className="dashboard-recent-loans-list">
-              {recentLoans.map((item) => {
-                const isOverdue =
-                  item.dueDate !== null && new Date(item.dueDate) < now;
+              {recentLoans.map((loan) => {
+                const isReturned = loan.returnedAt !== null;
+                const isOverdue = !isReturned && new Date(loan.dueDate) < now;
+
+                const statusClass = isReturned
+                  ? "is-returned"
+                  : isOverdue
+                    ? "is-overdue"
+                    : "is-borrowed";
+
+                const statusLabel = isReturned
+                  ? "Återlämnad"
+                  : isOverdue
+                    ? "Försenad"
+                    : "Utlånad";
 
                 return (
-                  <article className="dashboard-recent-loan" key={item.id}>
+                  <article className="dashboard-recent-loan" key={loan.id}>
                     <div className="dashboard-recent-loan-details">
                       <img
                         className={`dashboard-recent-loan-cover ${
-                          item.imageUrl ? "" : "is-default-image"
+                          loan.item.imageUrl ? "" : "is-default-image"
                         }`}
-                        src={getLibraryItemImage(item)}
-                        alt={`Omslag till ${item.title}`}
+                        src={getLibraryItemImage(loan.item as LibraryItem)}
+                        alt={`Omslag till ${loan.item.title}`}
                       />
 
                       <div className="dashboard-recent-loan-info">
-                        <h4>{item.title}</h4>
-                        <p>Låntagare: {item.borrower}</p>
+                        <h4>{loan.item.title}</h4>
+                        <p>Låntagare: {loan.borrowerName}</p>
                         <p>
                           Utlånad:{" "}
-                          {new Date(item.borrowDate!).toLocaleDateString(
+                          {new Date(loan.borrowDate).toLocaleDateString(
                             "sv-SE",
                           )}
                         </p>
@@ -657,11 +687,9 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
                     </div>
 
                     <span
-                      className={`dashboard-recent-loan-status ${
-                        isOverdue ? "is-overdue" : "is-borrowed"
-                      }`}
+                      className={`dashboard-recent-loan-status ${statusClass}`}
                     >
-                      {isOverdue ? "Försenad" : "Utlånad"}
+                      {statusLabel}
                     </span>
                   </article>
                 );
