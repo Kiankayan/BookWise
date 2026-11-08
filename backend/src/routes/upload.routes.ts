@@ -57,13 +57,24 @@ router.post(
         return;
       }
 
+      const imageType = req.body.imageType || "book";
+
+      if (imageType !== "book" && imageType !== "avatar") {
+        res.status(400).json({
+          message: "Ogiltig bildtyp.",
+        });
+        return;
+      }
+
+      const folder = imageType === "avatar" ? "bookwise/avatars" : "bookwise";
+
       const imageData = `data:${req.file.mimetype};base64,${req.file.buffer.toString("base64")}`;
 
       const result = await cloudinary.uploader.unsigned_upload(
         imageData,
         "bookwise_unsigned",
         {
-          folder: "bookwise",
+          folder,
           resource_type: "image",
         },
       );

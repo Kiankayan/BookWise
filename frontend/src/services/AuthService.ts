@@ -9,6 +9,7 @@ interface RegisterData {
   email: string;
   password: string;
   gender: "MAN" | "WOMAN";
+  avatarUrl?: string | null;
 }
 
 interface RegisterResponse {

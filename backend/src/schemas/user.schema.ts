@@ -19,6 +19,7 @@ export const registerUserSchema = z.object({
     .max(72, "Lösenordet får vara högst 72 tecken."),
 
   gender: z.enum(["MAN", "WOMAN"]),
+  avatarUrl: z.string().url("Ogiltig bildadress.").nullable().optional(),
 });
 
 export const loginUserSchema = z.object({

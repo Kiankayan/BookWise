@@ -9,6 +9,17 @@ interface ImageUploadResponse {
 
 export async function uploadLibraryItemImage(file: File): Promise<string> {
   const formData = new FormData();
+  formData.append("imageType", "book");
+  formData.append("image", file);
+
+  const response = await api.post<ImageUploadResponse>(UPLOAD_URL, formData);
+
+  return response.data.imageUrl;
+}
+
+export async function uploadAvatarImage(file: File): Promise<string> {
+  const formData = new FormData();
+  formData.append("imageType", "avatar");
   formData.append("image", file);
 
   const response = await api.post<ImageUploadResponse>(UPLOAD_URL, formData);
