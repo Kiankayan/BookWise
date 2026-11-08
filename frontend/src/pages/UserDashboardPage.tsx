@@ -341,8 +341,8 @@ function UserDashboardPage() {
   useEffect(() => {
     if (isLoading) return;
 
-    const storageKey = "bookwise-user-dashboard-percentage";
-    const storedData = sessionStorage.getItem(storageKey);
+    const storageKey = `bookwise-user-dashboard-percentage-${user?.id}`;
+    const storedData = localStorage.getItem(storageKey);
 
     type StoredData = {
       values: typeof currentValues;
@@ -383,7 +383,7 @@ function UserDashboardPage() {
             );
     });
 
-    sessionStorage.setItem(
+    localStorage.setItem(
       storageKey,
       JSON.stringify({ values: currentValues, changes }),
     );
