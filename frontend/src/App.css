@@ -1080,6 +1080,10 @@ button:active {
   gap: 18px;
 }
 
+.user-dashboard-stats {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .dashboard-stat-card {
   min-width: 0;
   padding: 24px 22px;
