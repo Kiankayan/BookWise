@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { BookOpen, CircleAlert, CircleCheck } from "lucide-react";
 import { getMyLoans } from "../services/LoanService";
 import type { Loan } from "../types/loan";
@@ -9,6 +9,7 @@ function MyLoansPage() {
   const [loans, setLoans] = useState<Loan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const shouldReduceMotion = useReducedMotion();
 
   useEffect(() => {
     async function loadMyLoans() {
@@ -37,6 +38,8 @@ function MyLoansPage() {
 
   const returnedLoans = loans.filter((loan) => loan.returnedAt !== null);
 
+  if (isLoading) return null;
+
   return (
     <motion.div
       className="my-loans-page"
@@ -50,44 +53,68 @@ function MyLoansPage() {
         <p>Håll koll på dina lån och återlämningsdatum.</p>
       </section>
 
-      {isLoading ? (
-        <section className="page-panel">
-          <p>Hämtar dina lån...</p>
-        </section>
-      ) : error ? (
-        <section className="page-panel">
+      {error ? (
+        <section className="my-loans-panel">
           <p role="alert">{error}</p>
         </section>
       ) : (
         <>
-          <section className="dashboard-stats" aria-label="Lånestatistik">
-            <article className="dashboard-stat-card">
-              <div className="dashboard-stat-icon">
-                <BookOpen size={22} />
-              </div>
-              <p className="dashboard-stat-label">Aktiva lån</p>
-              <p className="dashboard-stat-value">{activeLoans.length}</p>
-            </article>
+          <section className="my-loans-stats" aria-label="Lånestatistik">
+            {[
+              {
+                label: "Aktiva lån",
+                value: activeLoans.length,
+                icon: BookOpen,
+              },
+              {
+                label: "Försenade lån",
+                value: overdueLoans.length,
+                icon: CircleAlert,
+              },
+              {
+                label: "Återlämnade",
+                value: returnedLoans.length,
+                icon: CircleCheck,
+              },
+            ].map((stat, index) => {
+              const Icon = stat.icon;
 
-            <article className="dashboard-stat-card">
-              <div className="dashboard-stat-icon">
-                <CircleAlert size={22} />
-              </div>
-              <p className="dashboard-stat-label">Försenade lån</p>
-              <p className="dashboard-stat-value">{overdueLoans.length}</p>
-            </article>
-
-            <article className="dashboard-stat-card">
-              <div className="dashboard-stat-icon">
-                <CircleCheck size={22} />
-              </div>
-              <p className="dashboard-stat-label">Återlämnade</p>
-              <p className="dashboard-stat-value">{returnedLoans.length}</p>
-            </article>
+              return (
+                <motion.article
+                  className="my-loans-stat-card"
+                  key={stat.label}
+                  initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  whileHover={{ y: -5, scale: 1.015 }}
+                  transition={{
+                    duration: 0.25,
+                    delay: shouldReduceMotion
+                      ? 0
+                      : Math.min(index * 0.08, 0.48),
+                    ease: "easeOut",
+                  }}
+                >
+                  <div className="my-loans-stat-icon">
+                    <Icon size={22} strokeWidth={1.8} />
+                  </div>
+                  <p className="my-loans-stat-label">{stat.label}</p>
+                  <p className="my-loans-stat-value">{stat.value}</p>
+                </motion.article>
+              );
+            })}
           </section>
 
-          <section className="page-panel">
-            <div className="page-panel-heading">
+          <motion.section
+            className="my-loans-panel"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.35,
+              delay: shouldReduceMotion ? 0 : 0.25,
+              ease: "easeOut",
+            }}
+          >
+            <div className="my-loans-panel-heading">
               <div>
                 <h3>Aktiva lån</h3>
                 <p>{activeLoans.length} aktiva lån</p>
@@ -97,22 +124,34 @@ function MyLoansPage() {
             {activeLoans.length === 0 ? (
               <p>Du har inga aktiva lån just nu.</p>
             ) : (
-              <div className="dashboard-recent-loans-list">
-                {activeLoans.map((loan) => {
+              <div className="my-loans-list">
+                {activeLoans.map((loan, index) => {
                   const isOverdue = new Date(loan.dueDate) < now;
 
                   return (
-                    <article className="dashboard-recent-loan" key={loan.id}>
-                      <div className="dashboard-recent-loan-details">
+                    <motion.article
+                      className="my-loans-item"
+                      key={loan.id}
+                      initial={
+                        shouldReduceMotion ? false : { opacity: 0, y: 12 }
+                      }
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.25,
+                        delay: shouldReduceMotion ? 0 : 0.3 + index * 0.08,
+                        ease: "easeOut",
+                      }}
+                    >
+                      <div className="my-loans-item-details">
                         <img
-                          className={`dashboard-recent-loan-cover ${
+                          className={`my-loans-item-cover ${
                             loan.item.imageUrl ? "" : "is-default-image"
                           }`}
                           src={getLibraryItemImage(loan.item)}
                           alt={`Omslag till ${loan.item.title}`}
                         />
 
-                        <div className="dashboard-recent-loan-info">
+                        <div className="my-loans-item-info">
                           <h4>{loan.item.title}</h4>
                           <p>
                             Lånad:{" "}
@@ -128,21 +167,30 @@ function MyLoansPage() {
                       </div>
 
                       <span
-                        className={`dashboard-recent-loan-status ${
+                        className={`my-loans-item-status ${
                           isOverdue ? "is-overdue" : "is-borrowed"
                         }`}
                       >
                         {isOverdue ? "Försenad" : "Aktiv"}
                       </span>
-                    </article>
+                    </motion.article>
                   );
                 })}
               </div>
             )}
-          </section>
+          </motion.section>
 
-          <section className="page-panel">
-            <div className="page-panel-heading">
+          <motion.section
+            className="my-loans-panel"
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.35,
+              delay: shouldReduceMotion ? 0 : 0.4,
+              ease: "easeOut",
+            }}
+          >
+            <div className="my-loans-panel-heading">
               <div>
                 <h3>Lånehistorik</h3>
                 <p>{returnedLoans.length} återlämnade lån</p>
@@ -152,19 +200,29 @@ function MyLoansPage() {
             {returnedLoans.length === 0 ? (
               <p>Du har ingen tidigare lånehistorik.</p>
             ) : (
-              <div className="dashboard-recent-loans-list">
-                {returnedLoans.map((loan) => (
-                  <article className="dashboard-recent-loan" key={loan.id}>
-                    <div className="dashboard-recent-loan-details">
+              <div className="my-loans-list">
+                {returnedLoans.map((loan, index) => (
+                  <motion.article
+                    className="my-loans-item"
+                    key={loan.id}
+                    initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.25,
+                      delay: shouldReduceMotion ? 0 : 0.45 + index * 0.08,
+                      ease: "easeOut",
+                    }}
+                  >
+                    <div className="my-loans-item-details">
                       <img
-                        className={`dashboard-recent-loan-cover ${
+                        className={`my-loans-item-cover ${
                           loan.item.imageUrl ? "" : "is-default-image"
                         }`}
                         src={getLibraryItemImage(loan.item)}
                         alt={`Omslag till ${loan.item.title}`}
                       />
 
-                      <div className="dashboard-recent-loan-info">
+                      <div className="my-loans-item-info">
                         <h4>{loan.item.title}</h4>
                         <p>
                           Lånad:{" "}
@@ -181,14 +239,14 @@ function MyLoansPage() {
                       </div>
                     </div>
 
-                    <span className="dashboard-recent-loan-status is-returned">
+                    <span className="my-loans-item-status is-returned">
                       Återlämnad
                     </span>
-                  </article>
+                  </motion.article>
                 ))}
               </div>
             )}
-          </section>
+          </motion.section>
         </>
       )}
     </motion.div>
