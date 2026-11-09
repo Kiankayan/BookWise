@@ -21,10 +21,11 @@ import UserDetailsPage from "./pages/UserDetailsPage";
 import AdminRoute from "./components/AdminRoute";
 import "./App.css";
 import SettingsPage from "./pages/SettingsPage";
+import { useTranslation } from "react-i18next";
 
 function App() {
   const { isAuthenticated, isLoggingOut, user } = useAuth();
-
+  const { t } = useTranslation();
   const [libraryItems, setLibraryItems] = useState<LibraryItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [sort, setSort] = useState<LibrarySort>("title-asc");
@@ -103,7 +104,7 @@ function App() {
   }, [isAuthenticated, loadCategories, loadLibraryItems]);
 
   if (isLoggingOut) {
-    return <LoadingScreen message="Loggar ut..." />;
+    return <LoadingScreen message={t("loadingScreen.loggingOut")} />;
   }
 
   if (isInitialLoading || (isAuthenticated && isLoading)) {

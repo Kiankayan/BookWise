@@ -1,13 +1,16 @@
 import { motion } from "motion/react";
+import { useTranslation } from "react-i18next";
 import "./LoadingScreen.css";
 
 interface LoadingScreenProps {
   message?: string;
 }
 
-function LoadingScreen({
-  message = "Bibliotekshantering",
-}: LoadingScreenProps) {
+function LoadingScreen({ message }: LoadingScreenProps) {
+  const { t } = useTranslation();
+
+  const displayMessage = message ?? t("loadingScreen.defaultMessage");
+
   return (
     <motion.div
       className="loading-screen"
@@ -40,9 +43,13 @@ function LoadingScreen({
         Bookwise
       </motion.h1>
 
-      <p className="loading-subtitle">{message}</p>
+      <p className="loading-subtitle">{displayMessage}</p>
 
-      <div className="loading-dots" aria-label="Laddar" role="status">
+      <div
+        className="loading-dots"
+        aria-label={t("loadingScreen.loading")}
+        role="status"
+      >
         {[0, 1, 2].map((dot) => (
           <motion.span
             key={dot}

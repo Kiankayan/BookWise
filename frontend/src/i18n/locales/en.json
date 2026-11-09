@@ -382,5 +382,10 @@
     "administrator": "Administrator",
     "user": "User",
     "profilePicture": "Profile picture"
+  },
+  "loadingScreen": {
+    "defaultMessage": "Library Management",
+    "loading": "Loading",
+    "loggingOut": "Logging out"
   }
 }

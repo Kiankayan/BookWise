@@ -383,5 +383,10 @@
     "administrator": "Administratör",
     "user": "Användare",
     "profilePicture": "Profilbild"
+  },
+  "loadingScreen": {
+    "defaultMessage": "Bibliotekshantering",
+    "loading": "Laddar",
+    "loggingOut": "Loggar ut"
   }
 }
