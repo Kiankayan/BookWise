@@ -1,0 +1,15 @@
+{
+  "settings": {
+    "title": "Settings",
+    "notifications": "Notifications",
+    "notificationsDescription": "Manage your notifications",
+    "appearance": "Appearance",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "language": "Language",
+    "languageDescription": "Choose which language you want to use",
+    "swedish": "Swedish",
+    "english": "English"
+  }
+}

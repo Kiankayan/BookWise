@@ -1,0 +1,15 @@
+{
+  "settings": {
+    "title": "Inställningar",
+    "notifications": "Notiser",
+    "notificationsDescription": "Hantera dina notiser",
+    "appearance": "Utseende",
+    "theme": "Tema",
+    "light": "Ljust",
+    "dark": "Mörkt",
+    "language": "Språk",
+    "languageDescription": "Välj vilket språk du vill använda",
+    "swedish": "Svenska",
+    "english": "Engelska"
+  }
+}
