@@ -375,5 +375,12 @@
     "libraryDescription": "Keep your collection organized",
     "logout": "Log out",
     "logoutAriaLabel": "Log out of BookWise"
+  },
+  "appLayout": {
+    "breadcrumb": "BOOKWISE / LIBRARY",
+    "title": "Library Management",
+    "administrator": "Administrator",
+    "user": "User",
+    "profilePicture": "Profile picture"
   }
 }

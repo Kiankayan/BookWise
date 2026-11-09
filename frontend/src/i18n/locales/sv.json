@@ -376,5 +376,12 @@
     "libraryDescription": "Ordning bland samlingarna",
     "logout": "Logga ut",
     "logoutAriaLabel": "Logga ut från BookWise"
+  },
+  "appLayout": {
+    "breadcrumb": "BOOKWISE / BIBLIOTEK",
+    "title": "Bibliotekshantering",
+    "administrator": "Administratör",
+    "user": "Användare",
+    "profilePicture": "Profilbild"
   }
 }
