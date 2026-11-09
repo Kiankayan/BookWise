@@ -358,5 +358,22 @@
     "active": "Active",
     "returned": "Returned",
     "loanHistory": "Loan history"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "library": "Library",
+    "categories": "Categories",
+    "addItem": "Add item",
+    "users": "Users",
+    "profile": "My profile",
+    "myLoans": "My loans",
+    "settings": "Settings",
+    "brandDescription": "Library management",
+    "menu": "MENU",
+    "mainMenu": "Main menu",
+    "libraryTitle": "Your library",
+    "libraryDescription": "Keep your collection organized",
+    "logout": "Log out",
+    "logoutAriaLabel": "Log out of BookWise"
   }
 }

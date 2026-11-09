@@ -9,25 +9,27 @@ import {
   Users,
   Settings,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { NavLink } from "react-router-dom";
 
 function Sidebar() {
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
 
   const navigationItems = [
-    { label: "Dashboard", path: "/", icon: LayoutDashboard },
-    { label: "Bibliotek", path: "/library", icon: BookOpen },
+    { label: t("sidebar.dashboard"), path: "/", icon: LayoutDashboard },
+    { label: t("sidebar.library"), path: "/library", icon: BookOpen },
     ...(user?.role === "ADMIN"
       ? [
-          { label: "Kategorier", path: "/categories", icon: Tags },
-          { label: "Lägg till material", path: "/add-item", icon: Plus },
-          { label: "Användare", path: "/users", icon: Users },
+          { label: t("sidebar.categories"), path: "/categories", icon: Tags },
+          { label: t("sidebar.addItem"), path: "/add-item", icon: Plus },
+          { label: t("sidebar.users"), path: "/users", icon: Users },
         ]
       : []),
-    { label: "Min profil", path: "/profile", icon: User },
-    { label: "Mina lån", path: "/my-loans", icon: BookOpen },
-    { label: "Inställningar", path: "/settings", icon: Settings },
+    { label: t("sidebar.profile"), path: "/profile", icon: User },
+    { label: t("sidebar.myLoans"), path: "/my-loans", icon: BookOpen },
+    { label: t("sidebar.settings"), path: "/settings", icon: Settings },
   ];
 
   const handleLogout = async () => {
@@ -40,13 +42,13 @@ function Sidebar() {
         <div className="sidebar-logo">B</div>
         <div className="sidebar-brand-text">
           <h2>Bookwise</h2>
-          <p>Library management</p>
+          <p>{t("sidebar.brandDescription")}</p>
         </div>
       </div>
 
-      <div className="sidebar-section-label">MENY</div>
+      <div className="sidebar-section-label">{t("sidebar.menu")}</div>
 
-      <nav className="sidebar-navigation" aria-label="Huvudmeny">
+      <nav className="sidebar-navigation" aria-label={t("sidebar.mainMenu")}>
         {navigationItems.map((item) => {
           const Icon = item.icon;
 
@@ -73,8 +75,10 @@ function Sidebar() {
           <Sparkles size={18} strokeWidth={1.8} />
         </div>
         <div>
-          <p className="sidebar-footer-title">Ditt bibliotek</p>
-          <p className="sidebar-footer-text">Ordning bland samlingarna</p>
+          <p className="sidebar-footer-title">{t("sidebar.libraryTitle")}</p>
+          <p className="sidebar-footer-text">
+            {t("sidebar.libraryDescription")}
+          </p>
         </div>
       </div>
 
@@ -82,12 +86,12 @@ function Sidebar() {
         type="button"
         className="sidebar-link"
         onClick={handleLogout}
-        aria-label="Logga ut från BookWise"
+        aria-label={t("sidebar.logoutAriaLabel")}
       >
         <span className="sidebar-link-icon" aria-hidden="true">
           <LogOut size={19} strokeWidth={1.8} />
         </span>
-        <span>Logga ut</span>
+        <span>{t("sidebar.logout")}</span>
       </button>
     </aside>
   );

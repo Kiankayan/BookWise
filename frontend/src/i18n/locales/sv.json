@@ -359,5 +359,22 @@
     "active": "Aktiv",
     "returned": "Återlämnad",
     "loanHistory": "Lånehistorik"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "library": "Bibliotek",
+    "categories": "Kategorier",
+    "addItem": "Lägg till material",
+    "users": "Användare",
+    "profile": "Min profil",
+    "myLoans": "Mina lån",
+    "settings": "Inställningar",
+    "brandDescription": "Bibliotekshantering",
+    "menu": "MENY",
+    "mainMenu": "Huvudmeny",
+    "libraryTitle": "Ditt bibliotek",
+    "libraryDescription": "Ordning bland samlingarna",
+    "logout": "Logga ut",
+    "logoutAriaLabel": "Logga ut från BookWise"
   }
 }
