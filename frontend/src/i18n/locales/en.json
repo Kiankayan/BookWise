@@ -316,5 +316,23 @@
     "loadError": "Could not load users. Please try again later.",
     "updateRoleError": "Could not change user role. Please try again.",
     "updateStatusError": "Could not change account status. Please try again."
+  },
+  "profilePage": {
+    "administrator": "Administrator",
+    "user": "User",
+    "fullName": "Full name",
+    "notAvailable": "Not available",
+    "email": "Email address",
+    "accountType": "Account type",
+    "userId": "User ID",
+    "eyebrow": "YOUR ACCOUNT",
+    "title": "My profile",
+    "description": "Here you can find information about your BookWise account.",
+    "avatarAlt": "Profile picture of {{name}}",
+    "profileEyebrow": "YOUR PROFILE",
+    "personalInfo": "Personal information",
+    "personalInfoDescription": "Your registered contact details.",
+    "accountInfo": "Account information",
+    "accountInfoDescription": "Information about your BookWise account."
   }
 }

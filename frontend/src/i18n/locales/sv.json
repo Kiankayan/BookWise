@@ -316,5 +316,24 @@
     "loadError": "Kunde inte hämta användare. Försök igen senare.",
     "updateRoleError": "Kunde inte ändra användarroll. Försök igen.",
     "updateStatusError": "Kunde inte ändra kontostatus. Försök igen."
+  },
+
+  "profilePage": {
+    "administrator": "Administratör",
+    "user": "Användare",
+    "fullName": "Fullständigt namn",
+    "notAvailable": "Inte tillgängligt",
+    "email": "E-postadress",
+    "accountType": "Kontotyp",
+    "userId": "Användar-ID",
+    "eyebrow": "DITT KONTO",
+    "title": "Min profil",
+    "description": "Här hittar du information om ditt BookWise-konto.",
+    "avatarAlt": "Profilbild för {{name}}",
+    "profileEyebrow": "DIN PROFIL",
+    "personalInfo": "Personuppgifter",
+    "personalInfoDescription": "Dina registrerade kontaktuppgifter.",
+    "accountInfo": "Kontoinformation",
+    "accountInfoDescription": "Information om ditt BookWise-konto."
   }
 }

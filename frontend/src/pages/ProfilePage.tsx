@@ -1,11 +1,16 @@
 import { motion } from "motion/react";
 import { UserRound, Mail, ShieldCheck, CalendarDays } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 
 function ProfilePage() {
   const { user } = useAuth();
+  const { t } = useTranslation();
 
-  const roleLabel = user?.role === "ADMIN" ? "Administratör" : "Användare";
+  const roleLabel =
+    user?.role === "ADMIN"
+      ? t("profilePage.administrator")
+      : t("profilePage.user");
 
   const avatar =
     user?.avatarUrl ??
@@ -17,26 +22,26 @@ function ProfilePage() {
 
   const personalDetails = [
     {
-      label: "Fullständigt namn",
-      value: user?.name ?? "Inte tillgängligt",
+      label: t("profilePage.fullName"),
+      value: user?.name ?? t("profilePage.notAvailable"),
       icon: UserRound,
     },
     {
-      label: "E-postadress",
-      value: user?.email ?? "Inte tillgängligt",
+      label: t("profilePage.email"),
+      value: user?.email ?? t("profilePage.notAvailable"),
       icon: Mail,
     },
   ];
 
   const accountDetails = [
     {
-      label: "Kontotyp",
+      label: t("profilePage.accountType"),
       value: roleLabel,
       icon: ShieldCheck,
     },
     {
-      label: "Användar-ID",
-      value: user?.id ?? "Inte tillgängligt",
+      label: t("profilePage.userId"),
+      value: user?.id ?? t("profilePage.notAvailable"),
       icon: CalendarDays,
     },
   ];
@@ -49,23 +54,28 @@ function ProfilePage() {
       transition={{ duration: 0.45, ease: "easeOut" }}
     >
       <section className="page-intro">
-        <p className="eyebrow">DITT KONTO</p>
-        <h2>Min profil</h2>
-        <p>Här hittar du information om ditt BookWise-konto.</p>
+        <p className="eyebrow">{t("profilePage.eyebrow")}</p>
+        <h2>{t("profilePage.title")}</h2>
+        <p>{t("profilePage.description")}</p>
       </section>
 
       <section className="profile-hero-card">
         <div className="profile-hero-avatar">
           {avatar ? (
-            <img src={avatar} alt={`Profilbild för ${user?.name}`} />
+            <img
+              src={avatar}
+              alt={t("profilePage.avatarAlt", {
+                name: user?.name ?? t("profilePage.user"),
+              })}
+            />
           ) : (
             <UserRound size={42} />
           )}
         </div>
 
         <div className="profile-hero-info">
-          <p className="eyebrow">DIN PROFIL</p>
-          <h3>{user?.name ?? "Användare"}</h3>
+          <p className="eyebrow">{t("profilePage.profileEyebrow")}</p>
+          <h3>{user?.name ?? t("profilePage.user")}</h3>
           <span className="profile-role-badge">
             <ShieldCheck size={15} />
             {roleLabel}
@@ -77,8 +87,8 @@ function ProfilePage() {
         <section className="page-panel profile-info-card">
           <div className="profile-section-heading">
             <div>
-              <h3>Personuppgifter</h3>
-              <p>Dina registrerade kontaktuppgifter.</p>
+              <h3>{t("profilePage.personalInfo")}</h3>
+              <p>{t("profilePage.personalInfoDescription")}</p>
             </div>
           </div>
 
@@ -104,8 +114,8 @@ function ProfilePage() {
         <section className="page-panel profile-info-card">
           <div className="profile-section-heading">
             <div>
-              <h3>Kontoinformation</h3>
-              <p>Information om ditt BookWise-konto.</p>
+              <h3>{t("profilePage.accountInfo")}</h3>
+              <p>{t("profilePage.accountInfoDescription")}</p>
             </div>
           </div>
 
