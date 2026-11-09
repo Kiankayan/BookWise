@@ -17,7 +17,7 @@ import { registerUser } from "../services/AuthService";
 import { uploadAvatarImage } from "../services/ImageUploadService";
 
 function RegisterPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -170,6 +170,25 @@ function RegisterPage() {
 
         <div className="auth-form-panel">
           <div className="auth-form-content">
+            <div className="auth-language-switch">
+              <button
+                type="button"
+                className={i18n.language.startsWith("sv") ? "active" : ""}
+                onClick={() => i18n.changeLanguage("sv")}
+                aria-pressed={i18n.language.startsWith("sv")}
+              >
+                SV
+              </button>
+
+              <button
+                type="button"
+                className={i18n.language.startsWith("en") ? "active" : ""}
+                onClick={() => i18n.changeLanguage("en")}
+                aria-pressed={i18n.language.startsWith("en")}
+              >
+                EN
+              </button>
+            </div>
             <div className="auth-form-heading">
               <h2>{t("register.title")}</h2>
               <p>{t("register.welcome")}</p>

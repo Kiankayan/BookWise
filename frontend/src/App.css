@@ -2858,6 +2858,35 @@ button:active {
   box-sizing: border-box;
 }
 
+.auth-language-switch {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-bottom: 18px;
+}
+
+.auth-language-switch button {
+  min-width: 42px;
+  min-height: 32px;
+  padding: 5px 9px;
+  border: 1px solid var(--bookwise-border);
+  border-radius: 8px;
+  background: var(--bookwise-bg);
+  color: var(--bookwise-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.auth-language-switch button.active {
+  background: var(--bookwise-primary);
+  border-color: var(--bookwise-primary);
+  color: #ffffff;
+}
+
+.auth-language-switch button:hover {
+  transform: none;
+}
+
 .auth-form-heading {
   margin-bottom: 38px;
 }

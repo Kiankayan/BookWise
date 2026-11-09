@@ -14,7 +14,7 @@ import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "react-i18next";
 
 function LoginPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -114,6 +114,25 @@ function LoginPage() {
 
         <div className="auth-form-panel">
           <div className="auth-form-content">
+            <div className="auth-language-switch">
+              <button
+                type="button"
+                className={i18n.language.startsWith("sv") ? "active" : ""}
+                onClick={() => i18n.changeLanguage("sv")}
+                aria-pressed={i18n.language.startsWith("sv")}
+              >
+                SV
+              </button>
+
+              <button
+                type="button"
+                className={i18n.language.startsWith("en") ? "active" : ""}
+                onClick={() => i18n.changeLanguage("en")}
+                aria-pressed={i18n.language.startsWith("en")}
+              >
+                EN
+              </button>
+            </div>
             <div className="auth-form-heading">
               <h2>{t("login.title")}</h2>
               <p>{t("login.welcome")}</p>
