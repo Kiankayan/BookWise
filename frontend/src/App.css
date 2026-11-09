@@ -2866,6 +2866,7 @@ button:active {
 }
 
 .auth-language-switch button {
+  position: relative;
   min-width: 42px;
   min-height: 32px;
   padding: 5px 9px;
@@ -2875,12 +2876,26 @@ button:active {
   color: var(--bookwise-muted);
   font-size: 11px;
   font-weight: 700;
+  overflow: hidden;
+}
+
+.auth-language-switch button > span:last-child {
+  position: relative;
+  z-index: 1;
 }
 
 .auth-language-switch button.active {
-  background: var(--bookwise-primary);
-  border-color: var(--bookwise-primary);
+  background: transparent;
+  border-color: transparent;
   color: #ffffff;
+}
+
+.auth-language-indicator {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: 8px;
+  background: var(--bookwise-primary);
 }
 
 .auth-language-switch button:hover {

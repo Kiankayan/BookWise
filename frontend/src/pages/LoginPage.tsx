@@ -121,7 +121,14 @@ function LoginPage() {
                 onClick={() => i18n.changeLanguage("sv")}
                 aria-pressed={i18n.language.startsWith("sv")}
               >
-                SV
+                {i18n.language.startsWith("sv") && (
+                  <motion.span
+                    layoutId="auth-language-indicator"
+                    className="auth-language-indicator"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span>SV</span>
               </button>
 
               <button
@@ -130,7 +137,14 @@ function LoginPage() {
                 onClick={() => i18n.changeLanguage("en")}
                 aria-pressed={i18n.language.startsWith("en")}
               >
-                EN
+                {i18n.language.startsWith("en") && (
+                  <motion.span
+                    layoutId="auth-language-indicator"
+                    className="auth-language-indicator"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+                <span>EN</span>
               </button>
             </div>
             <div className="auth-form-heading">
