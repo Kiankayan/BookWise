@@ -101,5 +101,28 @@
     "overviewEyebrow": "SNABBÖVERSIKT",
     "overviewTitle": "Ditt bibliotek på ett ställe",
     "overviewDescription": "Du har {{loanCount}} lånehändelser i ditt personliga bibliotek."
+  },
+
+  "login": {
+    "brandDescription": "Bibliotekshantering",
+    "heroTitle": "Upptäck en värld av kunskap.",
+    "heroDescription": "Organisera ditt bibliotek, hantera dina böcker och håll koll på allt på ett och samma ställe.",
+    "featureManage": "Hantera bibliotekets material",
+    "featureBorrow": "Låna och returnera",
+    "featureLoans": "Håll koll på dina lån",
+    "title": "Logga in",
+    "welcome": "Välkommen tillbaka till BookWise.",
+    "email": "E-post",
+    "emailPlaceholder": "Ange din e-postadress",
+    "password": "Lösenord",
+    "passwordPlaceholder": "Ange ditt lösenord",
+    "showPassword": "Visa lösenord",
+    "hidePassword": "Dölj lösenord",
+    "rememberMe": "Kom ihåg mig",
+    "loading": "Loggar in...",
+    "submit": "Logga in",
+    "error": "Fel e-postadress eller lösenord. Försök igen.",
+    "noAccount": "Har du inget konto?",
+    "register": "Registrera dig"
   }
 }

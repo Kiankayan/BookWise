@@ -100,5 +100,27 @@
     "overviewEyebrow": "QUICK OVERVIEW",
     "overviewTitle": "Your library in one place",
     "overviewDescription": "You have {{loanCount}} loan activities in your personal library."
+  },
+  "login": {
+    "brandDescription": "Library management",
+    "heroTitle": "Discover a world of knowledge.",
+    "heroDescription": "Organize your library, manage your books and keep track of everything in one place.",
+    "featureManage": "Manage library materials",
+    "featureBorrow": "Borrow and return",
+    "featureLoans": "Keep track of your loans",
+    "title": "Log in",
+    "welcome": "Welcome back to BookWise.",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email address",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "rememberMe": "Remember me",
+    "loading": "Logging in...",
+    "submit": "Log in",
+    "error": "Incorrect email or password. Please try again.",
+    "noAccount": "Don't have an account?",
+    "register": "Register"
   }
 }
