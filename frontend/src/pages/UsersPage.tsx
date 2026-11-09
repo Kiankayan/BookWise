@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "motion/react";
 import { Users, ShieldCheck, UserRound, Search } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import {
   getUsers,
   updateUserRole,
@@ -11,6 +12,7 @@ import { useAuth } from "../context/AuthContext";
 import type { ManagedUser } from "../types/user";
 
 function UsersPage() {
+  const { t, i18n } = useTranslation();
   const { user: currentUser } = useAuth();
   const shouldReduceMotion = useReducedMotion();
 
@@ -28,15 +30,15 @@ function UsersPage() {
         setUsers(response.data.users);
         setError("");
       } catch (error) {
-        console.error("Kunde inte hämta användare.", error);
-        setError("Kunde inte hämta användare. Försök igen senare.");
+        console.error("Could not load users.", error);
+        setError(t("usersPage.loadError"));
       } finally {
         setIsLoading(false);
       }
     }
 
     void loadUsers();
-  }, []);
+  }, [t]);
 
   async function handleRoleChange(userId: string, role: ManagedUser["role"]) {
     setUpdatingUserId(userId);
@@ -51,8 +53,8 @@ function UsersPage() {
         ),
       );
     } catch (error) {
-      console.error("Kunde inte ändra användarroll.", error);
-      setUserUpdateError("Kunde inte ändra användarroll. Försök igen.");
+      console.error("Could not change user role.", error);
+      setUserUpdateError(t("usersPage.updateRoleError"));
     } finally {
       setUpdatingUserId(null);
     }
@@ -71,8 +73,8 @@ function UsersPage() {
         ),
       );
     } catch (error) {
-      console.error("Kunde inte ändra kontostatus.", error);
-      setUserUpdateError("Kunde inte ändra kontostatus. Försök igen.");
+      console.error("Could not change account status.", error);
+      setUserUpdateError(t("usersPage.updateStatusError"));
     } finally {
       setUpdatingUserId(null);
     }
@@ -97,17 +99,17 @@ function UsersPage() {
 
   const stats = [
     {
-      label: "Totalt antal användare",
+      label: t("usersPage.totalUsers"),
       value: users.length,
       icon: Users,
     },
     {
-      label: "Administratörer",
+      label: t("usersPage.administrators"),
       value: adminCount,
       icon: ShieldCheck,
     },
     {
-      label: "Vanliga användare",
+      label: t("usersPage.regularUsers"),
       value: regularUserCount,
       icon: UserRound,
     },
@@ -123,9 +125,9 @@ function UsersPage() {
       transition={{ duration: 0.45, ease: "easeOut" }}
     >
       <section className="page-intro">
-        <p className="eyebrow">ADMINISTRATION</p>
-        <h2>Användare</h2>
-        <p>Hantera registrerade användare och deras behörigheter.</p>
+        <p className="eyebrow">{t("usersPage.eyebrow")}</p>
+        <h2>{t("usersPage.title")}</h2>
+        <p>{t("usersPage.description")}</p>
       </section>
 
       {error ? (
@@ -134,7 +136,10 @@ function UsersPage() {
         </section>
       ) : (
         <>
-          <section className="users-stats" aria-label="Användarstatistik">
+          <section
+            className="users-stats"
+            aria-label={t("usersPage.statisticsLabel")}
+          >
             {stats.map((stat, index) => {
               const Icon = stat.icon;
 
@@ -172,8 +177,12 @@ function UsersPage() {
           >
             <div className="users-panel-heading">
               <div>
-                <h3>Användarlista</h3>
-                <p>{filteredUsers.length} användare visas</p>
+                <h3>{t("usersPage.userList")}</h3>
+                <p>
+                  {t("usersPage.usersDisplayed", {
+                    count: filteredUsers.length,
+                  })}
+                </p>
               </div>
               <Users size={22} />
             </div>
@@ -184,8 +193,8 @@ function UsersPage() {
                 type="search"
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="Sök efter namn eller e-postadress..."
-                aria-label="Sök användare"
+                placeholder={t("usersPage.searchPlaceholder")}
+                aria-label={t("usersPage.searchLabel")}
               />
             </div>
 
@@ -196,7 +205,7 @@ function UsersPage() {
             )}
 
             {filteredUsers.length === 0 ? (
-              <p className="users-empty">Inga användare hittades.</p>
+              <p className="users-empty">{t("usersPage.noUsersFound")}</p>
             ) : (
               <div className="users-list">
                 {filteredUsers.map((user, index) => {
@@ -222,17 +231,23 @@ function UsersPage() {
                           {user.avatarUrl ? (
                             <img
                               src={user.avatarUrl}
-                              alt={`Profilbild för ${user.name}`}
+                              alt={t("usersPage.profilePictureAlt", {
+                                name: user.name,
+                              })}
                             />
                           ) : user.gender === "MAN" ? (
                             <img
                               src="/images/avatar-man.png"
-                              alt={`Profilbild för ${user.name}`}
+                              alt={t("usersPage.profilePictureAlt", {
+                                name: user.name,
+                              })}
                             />
                           ) : user.gender === "WOMAN" ? (
                             <img
                               src="/images/avatar-woman.png"
-                              alt={`Profilbild för ${user.name}`}
+                              alt={t("usersPage.profilePictureAlt", {
+                                name: user.name,
+                              })}
                             />
                           ) : (
                             <UserRound size={21} />
@@ -249,16 +264,20 @@ function UsersPage() {
                                 user.isActive ? "is-active" : "is-inactive"
                               }`}
                             >
-                              {user.isActive ? "Aktiv" : "Inaktiv"}
+                              {user.isActive
+                                ? t("usersPage.active")
+                                : t("usersPage.inactive")}
                             </span>
                           </div>
 
                           <p className="users-email">{user.email}</p>
 
                           <p className="users-registered">
-                            Registrerad:{" "}
+                            {t("usersPage.registered")}{" "}
                             {new Date(user.createdAt).toLocaleDateString(
-                              "sv-SE",
+                              i18n.language.startsWith("sv")
+                                ? "sv-SE"
+                                : "en-GB",
                             )}
                           </p>
                         </div>
@@ -276,16 +295,16 @@ function UsersPage() {
                           }
                         >
                           {isUpdating
-                            ? "Uppdaterar..."
+                            ? t("usersPage.updating")
                             : isCurrentUser
-                              ? "Eget konto"
+                              ? t("usersPage.ownAccount")
                               : user.isActive
-                                ? "Inaktivera konto"
-                                : "Aktivera konto"}
+                                ? t("usersPage.deactivateAccount")
+                                : t("usersPage.activateAccount")}
                         </button>
 
                         <label className="users-role-control">
-                          <span>Användarroll</span>
+                          <span>{t("usersPage.userRole")}</span>
                           <select
                             value={user.role}
                             disabled={isCurrentUser || isUpdating}
@@ -296,16 +315,17 @@ function UsersPage() {
                               )
                             }
                           >
-                            <option value="USER">Användare</option>
-                            <option value="ADMIN">Administratör</option>
+                            <option value="USER">{t("usersPage.user")}</option>
+                            <option value="ADMIN">
+                              {t("usersPage.administrator")}
+                            </option>
                           </select>
                         </label>
                       </div>
 
                       {isCurrentUser && (
                         <p className="users-own-account">
-                          Du kan inte ändra din egen roll eller inaktivera ditt
-                          eget konto.
+                          {t("usersPage.ownAccountWarning")}
                         </p>
                       )}
                     </motion.article>
