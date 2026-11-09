@@ -6,6 +6,7 @@ import {
   Moon,
   Sun,
   ShieldCheck,
+  Languages,
   ImagePlus,
   X,
   UserRound,
@@ -292,6 +293,7 @@ function SettingsPage() {
             <h3>{t("settings.language")}</h3>
             <p>{t("settings.languageDescription")}</p>
           </div>
+          <Languages size={22} />
         </div>
 
         <div className="settings-options">
