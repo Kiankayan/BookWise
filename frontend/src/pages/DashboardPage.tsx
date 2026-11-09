@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import type { Category, LibraryItem } from "../types/library";
 import type { Loan } from "../types/loan";
 import { getLibraryItemImage } from "../utils/libraryItemImage";
@@ -44,9 +45,11 @@ type DashboardPageProps = {
 function AnimatedPercentage({
   value,
   shouldReduceMotion,
+  locale,
 }: {
   value: number;
   shouldReduceMotion: boolean | null;
+  locale: string;
 }) {
   const [displayValue, setDisplayValue] = useState(0);
 
@@ -82,7 +85,7 @@ function AnimatedPercentage({
   return (
     <>
       {displayValue > 0 ? "+" : ""}
-      {displayValue.toLocaleString("sv-SE", {
+      {displayValue.toLocaleString(locale, {
         minimumFractionDigits: 1,
         maximumFractionDigits: 1,
       })}
@@ -94,9 +97,11 @@ function AnimatedPercentage({
 function AnimatedCount({
   value,
   shouldReduceMotion,
+  locale,
 }: {
   value: number;
   shouldReduceMotion: boolean | null;
+  locale: string;
 }) {
   const [displayValue, setDisplayValue] = useState(0);
 
@@ -129,12 +134,14 @@ function AnimatedCount({
     return () => cancelAnimationFrame(animationFrame);
   }, [value, shouldReduceMotion]);
 
-  return <>{displayValue.toLocaleString("sv-SE")}</>;
+  return <>{displayValue.toLocaleString(locale)}</>;
 }
 
 function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
   const navigate = useNavigate();
   const shouldReduceMotion = useReducedMotion();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language.startsWith("sv") ? "sv-SE" : "en-US";
 
   const borrowedItems = libraryItems.filter(
     (item) => item.borrower !== null,
@@ -160,7 +167,7 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
         }
       })
       .catch((error) => {
-        console.error("Kunde inte hämta diagramdata:", error);
+        console.error("Could not fetch chart data:", error);
 
         if (isMounted) {
           setAvailabilityData([]);
@@ -182,7 +189,7 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
         }
       })
       .catch((error) => {
-        console.error("Kunde inte hämta de senaste lånen:", error);
+        console.error("Could not fetch recent loans:", error);
 
         if (isMounted) {
           setRecentLoans([]);
@@ -223,38 +230,38 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
   const stats = [
     {
       key: "totalItems",
-      label: "Totalt material",
+      label: t("dashboard.totalItems"),
       value: libraryItems.length,
       icon: BookOpen,
-      description: "Bibliotekets samlade material",
+      description: t("dashboard.totalItemsDescription"),
     },
     {
       key: "categories",
-      label: "Kategorier",
+      label: t("dashboard.categories"),
       value: categories.length,
       icon: Tags,
-      description: "Organiserade kategorier",
+      description: t("dashboard.categoriesDescription"),
     },
     {
       key: "borrowed",
-      label: "Utlånade",
+      label: t("dashboard.borrowed"),
       value: borrowedItems,
       icon: ArrowUpRight,
-      description: "Material som är utlånat",
+      description: t("dashboard.borrowedDescription"),
     },
     {
       key: "available",
-      label: "Tillgängliga",
+      label: t("dashboard.available"),
       value: availableItems,
       icon: CircleCheck,
-      description: "Material som inte är utlånat",
+      description: t("dashboard.availableDescription"),
     },
     {
       key: "overdue",
-      label: "Försenade lån",
+      label: t("dashboard.overdue"),
       value: overdueItems,
       icon: CircleAlert,
-      description: "Material med passerat återlämningsdatum",
+      description: t("dashboard.overdueDescription"),
     },
   ];
 
@@ -350,11 +357,9 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
     >
       <section className="dashboard-welcome">
         <div className="dashboard-welcome-content">
-          <p className="eyebrow">DIN BIBLIOTEKSÖVERSIKT</p>
-          <h2>Välkommen tillbaka!</h2>
-          <p>
-            Här får du en snabb överblick över biblioteket och dess material.
-          </p>
+          <p className="eyebrow">{t("dashboard.welcomeEyebrow")}</p>
+          <h2>{t("dashboard.welcomeTitle")}</h2>
+          <p>{t("dashboard.welcomeDescription")}</p>
         </div>
 
         <div className="dashboard-book-illustration">
@@ -390,7 +395,10 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
         </div>
       </section>
 
-      <section className="dashboard-stats" aria-label="Biblioteksstatistik">
+      <section
+        className="dashboard-stats"
+        aria-label={t("dashboard.statistics")}
+      >
         {stats.map((stat, index) => {
           const Icon = stat.icon;
           const percentage = percentageChanges[stat.key as StatKey];
@@ -433,6 +441,7 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
                         key={stat.key}
                         value={percentage}
                         shouldReduceMotion={shouldReduceMotion}
+                        locale={locale}
                       />
                     </span>
                   </span>
@@ -454,7 +463,7 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
               <ChartNoAxesCombined size={22} strokeWidth={1.8} />
             </div>
 
-            <h3>Utlånade vs tillgängliga</h3>
+            <h3>{t("dashboard.availabilityChart")}</h3>
 
             <select
               className="dashboard-chart-period"
@@ -462,12 +471,12 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
               onChange={(event) =>
                 setChartPeriod(event.target.value as ChartPeriod)
               }
-              aria-label="Välj tidsperiod för biblioteksstatistik"
+              aria-label={t("dashboard.periodLabel")}
             >
-              <option value="week">Senaste veckan</option>
-              <option value="month">Senaste månaden</option>
-              <option value="sixMonths">Senaste 6 månaderna</option>
-              <option value="year">Senaste året</option>
+              <option value="week">{t("dashboard.lastWeek")}</option>
+              <option value="month">{t("dashboard.lastMonth")}</option>
+              <option value="sixMonths">{t("dashboard.lastSixMonths")}</option>
+              <option value="year">{t("dashboard.lastYear")}</option>
             </select>
           </div>
 
@@ -513,7 +522,7 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
 
                 <Bar
                   dataKey="available"
-                  name="Tillgängliga"
+                  name={t("dashboard.availableLegend")}
                   fill="#c9b8fa"
                   radius={[4, 4, 0, 0]}
                   maxBarSize={24}
@@ -521,7 +530,7 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
 
                 <Bar
                   dataKey="borrowed"
-                  name="Utlånade"
+                  name={t("dashboard.borrowedLegend")}
                   fill="#7138df"
                   radius={[4, 4, 0, 0]}
                   maxBarSize={24}
@@ -536,11 +545,11 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
             <div className="dashboard-chart-icon" aria-hidden="true">
               <Tags size={20} strokeWidth={1.8} />
             </div>
-            <h3>Material per kategori</h3>
+            <h3>{t("dashboard.categoryChart")}</h3>
           </div>
 
           {categoryData.length === 0 ? (
-            <p>Det finns inga kategorier att visa.</p>
+            <p>{t("dashboard.noCategories")}</p>
           ) : (
             <div className="dashboard-category-layout">
               <div className="dashboard-category-chart-container">
@@ -572,9 +581,10 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
                     <AnimatedCount
                       value={libraryItems.length}
                       shouldReduceMotion={shouldReduceMotion}
+                      locale={locale}
                     />
                   </strong>
-                  <span>Totalt</span>
+                  <span>{t("dashboard.total")}</span>
                 </div>
               </div>
 
@@ -604,6 +614,7 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
                         <AnimatedCount
                           value={category.antal}
                           shouldReduceMotion={shouldReduceMotion}
+                          locale={locale}
                         />
                       </span>
                       <span className="dashboard-category-legend-percentage">
@@ -611,6 +622,7 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
                         <AnimatedCount
                           value={percentage}
                           shouldReduceMotion={shouldReduceMotion}
+                          locale={locale}
                         />
                         %)
                       </span>
@@ -628,7 +640,7 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
               <div className="dashboard-chart-icon" aria-hidden="true">
                 <Clock3 size={20} strokeWidth={1.8} />
               </div>
-              <h3>Senaste utlånen</h3>
+              <h3>{t("dashboard.recentLoans")}</h3>
             </div>
 
             <button
@@ -636,14 +648,14 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
               type="button"
               onClick={() => navigate("/library")}
             >
-              Visa alla
+              {t("dashboard.viewAll")}
               <ArrowRight size={14} strokeWidth={2} />
             </button>
           </div>
 
           {recentLoans.length === 0 ? (
             <p className="dashboard-recent-loans-empty">
-              Det finns inga lån att visa.
+              {t("dashboard.noLoans")}
             </p>
           ) : (
             <div className="dashboard-recent-loans-list">
@@ -658,10 +670,10 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
                     : "is-borrowed";
 
                 const statusLabel = isReturned
-                  ? "Återlämnad"
+                  ? t("dashboard.returned")
                   : isOverdue
-                    ? "Försenad"
-                    : "Utlånad";
+                    ? t("dashboard.overdueStatus")
+                    : t("dashboard.borrowedStatus");
 
                 return (
                   <article className="dashboard-recent-loan" key={loan.id}>
@@ -676,12 +688,12 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
 
                       <div className="dashboard-recent-loan-info">
                         <h4>{loan.item.title}</h4>
-                        <p>Låntagare: {loan.borrowerName}</p>
                         <p>
-                          Utlånad:{" "}
-                          {new Date(loan.borrowDate).toLocaleDateString(
-                            "sv-SE",
-                          )}
+                          {t("dashboard.borrower")}: {loan.borrowerName}
+                        </p>
+                        <p>
+                          {t("dashboard.borrowDate")}:{" "}
+                          {new Date(loan.borrowDate).toLocaleDateString(locale)}
                         </p>
                       </div>
                     </div>
@@ -701,11 +713,13 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
 
       <section className="dashboard-overview-card">
         <div className="dashboard-overview-content">
-          <p className="eyebrow">SNABBÖVERSIKT</p>
-          <h3>Ditt bibliotek på ett ställe</h3>
+          <p className="eyebrow">{t("dashboard.overviewEyebrow")}</p>
+          <h3>{t("dashboard.overviewTitle")}</h3>
           <p>
-            Du har {libraryItems.length} biblioteksposter fördelade över{" "}
-            {categories.length} kategorier.
+            {t("dashboard.overviewDescription", {
+              itemCount: libraryItems.length,
+              categoryCount: categories.length,
+            })}
           </p>
 
           <button
@@ -713,7 +727,7 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
             type="button"
             onClick={() => navigate("/library")}
           >
-            Utforska biblioteket
+            {t("dashboard.exploreLibrary")}
             <span aria-hidden="true">→</span>
           </button>
         </div>
