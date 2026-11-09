@@ -12,10 +12,12 @@ import {
   X,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { registerUser } from "../services/AuthService";
 import { uploadAvatarImage } from "../services/ImageUploadService";
 
 function RegisterPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -40,13 +42,13 @@ function RegisterPage() {
     const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 
     if (!allowedTypes.includes(file.type)) {
-      setError("Välj en JPG-, PNG- eller WebP-bild.");
+      setError(t("register.invalidImageFormat"));
       event.target.value = "";
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      setError("Profilbilden får vara högst 5 MB.");
+      setError(t("register.imageTooLarge"));
       event.target.value = "";
       return;
     }
@@ -71,12 +73,12 @@ function RegisterPage() {
     setError("");
 
     if (gender === "") {
-      setError("Välj kön innan du fortsätter.");
+      setError(t("register.genderRequired"));
       return;
     }
 
     if (password !== confirmPassword) {
-      setError("Lösenorden matchar inte.");
+      setError(t("register.passwordMismatch"));
       return;
     }
 
@@ -99,9 +101,7 @@ function RegisterPage() {
 
       navigate("/login");
     } catch {
-      setError(
-        "Kunde inte skapa kontot. Kontrollera uppgifterna och försök igen.",
-      );
+      setError(t("register.registerError"));
     } finally {
       setIsLoading(false);
     }
@@ -119,14 +119,13 @@ function RegisterPage() {
           </div>
 
           <div className="auth-brand-content">
-            <p className="auth-brand-description">Bibliotekshantering</p>
-
-            <h1>Upptäck en värld av kunskap.</h1>
-
-            <p>
-              Organisera ditt bibliotek, hantera dina böcker och håll koll på
-              allt på ett och samma ställe.
+            <p className="auth-brand-description">
+              {t("register.brandDescription")}
             </p>
+
+            <h1>{t("register.heroTitle")}</h1>
+
+            <p>{t("register.heroDescription")}</p>
 
             <motion.img
               className="auth-illustration"
@@ -149,21 +148,21 @@ function RegisterPage() {
                 <span className="auth-feature-icon">
                   <BookOpen size={13} />
                 </span>
-                <span>Hantera bibliotekets material</span>
+                <span>{t("register.featureManage")}</span>
               </div>
 
               <div className="auth-feature">
                 <span className="auth-feature-icon">
                   <Tag size={13} />
                 </span>
-                <span>Låna och returnera</span>
+                <span>{t("register.featureBorrow")}</span>
               </div>
 
               <div className="auth-feature">
                 <span className="auth-feature-icon">
                   <UserRound size={13} />
                 </span>
-                <span>Håll koll på dina lån</span>
+                <span>{t("register.featureLoans")}</span>
               </div>
             </div>
           </div>
@@ -172,26 +171,23 @@ function RegisterPage() {
         <div className="auth-form-panel">
           <div className="auth-form-content">
             <div className="auth-form-heading">
-              <h2>Skapa konto</h2>
-              <p>Skapa ett konto för att börja använda BookWise.</p>
+              <h2>{t("register.title")}</h2>
+              <p>{t("register.welcome")}</p>
             </div>
 
             <form className="auth-form" onSubmit={handleSubmit}>
               <div className="auth-form-group">
-                <label>Profilbild (valfritt)</label>
+                <label>{t("register.profilePicture")}</label>
 
                 <div className="auth-avatar-upload">
                   {avatarPreview ? (
                     <div className="auth-avatar-preview">
-                      <img
-                        src={avatarPreview}
-                        alt="Förhandsvisning av profilbild"
-                      />
+                      <img src={avatarPreview} alt={t("register.previewAlt")} />
 
                       <button
                         type="button"
                         onClick={handleRemoveAvatar}
-                        aria-label="Ta bort profilbild"
+                        aria-label={t("register.removePicture")}
                       >
                         <X size={16} />
                       </button>
@@ -209,10 +205,10 @@ function RegisterPage() {
                       onClick={() => fileInputRef.current?.click()}
                     >
                       <ImagePlus size={16} />
-                      Välj bild
+                      {t("register.chooseImage")}
                     </button>
 
-                    <span>JPG, PNG eller WebP · Max 5 MB</span>
+                    <span>{t("register.imageFormats")}</span>
                   </div>
 
                   <input
@@ -226,7 +222,7 @@ function RegisterPage() {
               </div>
 
               <div className="auth-form-group">
-                <label htmlFor="name">Namn</label>
+                <label htmlFor="name">{t("register.name")}</label>
                 <div className="auth-input-wrapper">
                   <UserRound size={18} />
                   <input
@@ -234,14 +230,14 @@ function RegisterPage() {
                     type="text"
                     value={name}
                     onChange={(event) => setName(event.target.value)}
-                    placeholder="Ange ditt namn"
+                    placeholder={t("register.namePlaceholder")}
                     required
                   />
                 </div>
               </div>
 
               <div className="auth-form-group">
-                <label htmlFor="email">E-post</label>
+                <label htmlFor="email">{t("register.email")}</label>
                 <div className="auth-input-wrapper">
                   <Mail size={18} />
                   <input
@@ -249,14 +245,14 @@ function RegisterPage() {
                     type="email"
                     value={email}
                     onChange={(event) => setEmail(event.target.value)}
-                    placeholder="Ange din e-postadress"
+                    placeholder={t("register.emailPlaceholder")}
                     required
                   />
                 </div>
               </div>
 
               <div className="auth-form-group">
-                <label>Kön</label>
+                <label>{t("register.gender")}</label>
                 <div className="auth-gender-options">
                   <label className="auth-gender-option">
                     <input
@@ -266,7 +262,7 @@ function RegisterPage() {
                       checked={gender === "MAN"}
                       onChange={() => setGender("MAN")}
                     />
-                    <span>Man</span>
+                    <span>{t("register.man")}</span>
                   </label>
 
                   <label className="auth-gender-option">
@@ -277,13 +273,13 @@ function RegisterPage() {
                       checked={gender === "WOMAN"}
                       onChange={() => setGender("WOMAN")}
                     />
-                    <span>Kvinna</span>
+                    <span>{t("register.woman")}</span>
                   </label>
                 </div>
               </div>
 
               <div className="auth-form-group">
-                <label htmlFor="password">Lösenord</label>
+                <label htmlFor="password">{t("register.password")}</label>
 
                 <div className="auth-input-wrapper auth-password-wrapper">
                   <LockKeyhole size={18} />
@@ -293,7 +289,7 @@ function RegisterPage() {
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
-                    placeholder="Minst 8 tecken"
+                    placeholder={t("register.passwordPlaceholder")}
                     minLength={8}
                     maxLength={72}
                     required
@@ -304,7 +300,9 @@ function RegisterPage() {
                     type="button"
                     onClick={() => setShowPassword((current) => !current)}
                     aria-label={
-                      showPassword ? "Dölj lösenord" : "Visa lösenord"
+                      showPassword
+                        ? t("register.hidePassword")
+                        : t("register.showPassword")
                     }
                   >
                     {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
@@ -313,7 +311,9 @@ function RegisterPage() {
               </div>
 
               <div className="auth-form-group">
-                <label htmlFor="confirmPassword">Bekräfta lösenord</label>
+                <label htmlFor="confirmPassword">
+                  {t("register.confirmPassword")}
+                </label>
 
                 <div className="auth-input-wrapper auth-password-wrapper">
                   <LockKeyhole size={18} />
@@ -323,7 +323,7 @@ function RegisterPage() {
                     type={showPassword ? "text" : "password"}
                     value={confirmPassword}
                     onChange={(event) => setConfirmPassword(event.target.value)}
-                    placeholder="Ange ditt lösenord igen"
+                    placeholder={t("register.confirmPasswordPlaceholder")}
                     minLength={8}
                     maxLength={72}
                     required
@@ -342,12 +342,13 @@ function RegisterPage() {
                 type="submit"
                 disabled={isLoading}
               >
-                {isLoading ? "Skapar konto..." : "Registrera konto"}
+                {isLoading ? t("register.loading") : t("register.submit")}
               </button>
             </form>
 
             <p className="auth-switch-link">
-              Har du inget konto? <Link to="/login">Logga in</Link>
+              {t("register.noAccount")}{" "}
+              <Link to="/login">{t("register.login")}</Link>
             </p>
           </div>
         </div>
