@@ -2,6 +2,7 @@ import type { Dispatch, SetStateAction } from "react";
 import type { Category, LibraryItem, LibrarySort } from "../types/library";
 import LibraryItemList from "../components/LibraryItemList";
 import { motion } from "motion/react";
+import { useTranslation } from "react-i18next";
 
 type LibraryPageProps = {
   libraryItems: LibraryItem[];
@@ -18,6 +19,8 @@ function LibraryPage({
   setSort,
   onLibraryItemUpdated,
 }: LibraryPageProps) {
+  const { t } = useTranslation();
+
   return (
     <motion.div
       className="library-page"
@@ -26,18 +29,16 @@ function LibraryPage({
       transition={{ duration: 0.45, ease: "easeOut" }}
     >
       <section className="page-intro">
-        <p className="eyebrow">DIN SAMLING</p>
-        <h2>Bibliotek</h2>
-        <p>
-          Visa, sortera och hantera böcker, DVD:er och annat biblioteksmaterial.
-        </p>
+        <p className="eyebrow">{t("library.eyebrow")}</p>
+        <h2>{t("library.title")}</h2>
+        <p>{t("library.description")}</p>
       </section>
 
       <section className="page-panel">
         <div className="page-panel-heading">
           <div>
-            <h3>Alla biblioteksposter</h3>
-            <p>{libraryItems.length} poster i samlingen</p>
+            <h3>{t("library.allItems")}</h3>
+            <p>{t("library.itemCount", { count: libraryItems.length })}</p>
           </div>
         </div>
 

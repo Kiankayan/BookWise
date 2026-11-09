@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useTranslation } from "react-i18next";
 import { motion } from "motion/react";
 import { toast } from "react-toastify";
 import {
@@ -37,19 +38,6 @@ function getTitleAbbreviation(title: string) {
     .join("");
 }
 
-function getLibraryItemTypeLabel(type: LibraryItem["type"]) {
-  switch (type) {
-    case "BOOK":
-      return "Bok";
-    case "DVD":
-      return "DVD";
-    case "AUDIOBOOK":
-      return "Ljudbok";
-    case "REFERENCE_BOOK":
-      return "Referensbok";
-  }
-}
-
 function isOverdue(dueDate: string | null) {
   if (!dueDate) {
     return false;
@@ -71,8 +59,24 @@ function LibraryItemList({
   setSort,
   onLibraryItemUpdated,
 }: LibraryItemListProps) {
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const isAdmin = user?.role === "ADMIN";
+
+  const dateLocale = i18n.language.startsWith("sv") ? "sv-SE" : "en-US";
+
+  const getTypeLabel = (type: LibraryItem["type"]) => {
+    switch (type) {
+      case "BOOK":
+        return t("library.book");
+      case "DVD":
+        return t("library.dvd");
+      case "AUDIOBOOK":
+        return t("library.audiobook");
+      case "REFERENCE_BOOK":
+        return t("library.referenceBook");
+    }
+  };
 
   const [showAbbreviations, setShowAbbreviations] = useState(false);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
@@ -122,18 +126,18 @@ function LibraryItemList({
 
       switch (sort) {
         case "title-asc":
-          return titleA.localeCompare(titleB, "sv");
+          return titleA.localeCompare(titleB, dateLocale);
 
         case "title-desc":
-          return titleB.localeCompare(titleA, "sv");
+          return titleB.localeCompare(titleA, dateLocale);
 
         case "category":
-          return a.category.name.localeCompare(b.category.name, "sv");
+          return a.category.name.localeCompare(b.category.name, dateLocale);
 
         case "type":
-          return getLibraryItemTypeLabel(a.type).localeCompare(
-            getLibraryItemTypeLabel(b.type),
-            "sv",
+          return getTypeLabel(a.type).localeCompare(
+            getTypeLabel(b.type),
+            dateLocale,
           );
 
         default:
@@ -156,10 +160,10 @@ function LibraryItemList({
       await borrowLibraryItem(itemToBorrow.id);
       closeBorrowDialog();
       await onLibraryItemUpdated();
-      toast.success("Biblioteksposten har lånats ut!");
+      toast.success(t("library.borrowSuccess"));
     } catch (error) {
-      console.error("Kunde inte låna library item.", error);
-      toast.error("Det gick inte att låna objektet.");
+      console.error("Could not borrow library item.", error);
+      toast.error(t("library.borrowError"));
     }
   }
 
@@ -174,10 +178,10 @@ function LibraryItemList({
       await returnLibraryItem(itemToReturn.id);
       setItemToReturn(null);
       await onLibraryItemUpdated();
-      toast.success("Biblioteksposten har returnerats!");
+      toast.success(t("library.returnSuccess"));
     } catch (error) {
-      console.error("Kunde inte returnera library item.", error);
-      toast.error("Det gick inte att returnera objektet.");
+      console.error("Could not return library item.", error);
+      toast.error(t("library.returnError"));
     }
   }
 
@@ -185,9 +189,7 @@ function LibraryItemList({
     if (!itemToDelete) return;
 
     if (itemToDelete.loans.length > 0) {
-      toast.error(
-        "Boken kan inte tas bort eftersom den är utlånad. Registrera återlämningen först.",
-      );
+      toast.error(t("library.cannotDeleteBorrowed"));
       return;
     }
 
@@ -195,10 +197,10 @@ function LibraryItemList({
       await deleteLibraryItem(itemToDelete.id);
       setItemToDelete(null);
       await onLibraryItemUpdated();
-      toast.success("Biblioteksposten har tagits bort!");
+      toast.success(t("library.deleteSuccess"));
     } catch (error) {
-      console.error("Kunde inte ta bort library item.", error);
-      toast.error("Det gick inte att ta bort biblioteksposten.");
+      console.error("Could not delete library item.", error);
+      toast.error(t("library.deleteError"));
     }
   }
 
@@ -206,24 +208,26 @@ function LibraryItemList({
     <div className="library-list">
       <div className="library-toolbar">
         <div className="library-search">
-          <label htmlFor="library-search-input">Sök material</label>
+          <label htmlFor="library-search-input">
+            {t("library.searchLabel")}
+          </label>
           <input
             id="library-search-input"
             type="search"
-            placeholder="Sök efter titel eller författare..."
+            placeholder={t("library.searchPlaceholder")}
             value={searchTerm}
             onChange={(event) => setSearchTerm(event.target.value)}
           />
         </div>
 
         <div className="sort-control">
-          <label htmlFor="category-filter">Filtrera kategori:</label>
+          <label htmlFor="category-filter">{t("library.categoryFilter")}</label>
           <select
             id="category-filter"
             value={selectedCategory}
             onChange={(event) => setSelectedCategory(event.target.value)}
           >
-            <option value="all">Alla kategorier</option>
+            <option value="all">{t("library.allCategories")}</option>
             {categories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
@@ -233,31 +237,33 @@ function LibraryItemList({
         </div>
 
         <div className="sort-control">
-          <label htmlFor="availability-filter">Tillgänglighet:</label>
+          <label htmlFor="availability-filter">
+            {t("library.availability")}
+          </label>
           <select
             id="availability-filter"
             value={selectedAvailability}
             onChange={(event) => setSelectedAvailability(event.target.value)}
           >
-            <option value="all">Alla material</option>
-            <option value="available">Tillgängliga</option>
-            <option value="borrowed">Utlånade</option>
-            <option value="reference">Referensexemplar</option>
+            <option value="all">{t("library.allMaterials")}</option>
+            <option value="available">{t("library.available")}</option>
+            <option value="borrowed">{t("library.borrowed")}</option>
+            <option value="reference">{t("library.reference")}</option>
           </select>
         </div>
 
         <div className="sort-control">
-          <label htmlFor="sort">Sortera efter:</label>
+          <label htmlFor="sort">{t("library.sortBy")}</label>
 
           <select
             id="sort"
             value={sort}
             onChange={(event) => setSort(event.target.value as LibrarySort)}
           >
-            <option value="title-asc">Titel A–Ö</option>
-            <option value="title-desc">Titel Ö–A</option>
-            <option value="category">Kategori A–Ö</option>
-            <option value="type">Typ</option>
+            <option value="title-asc">{t("library.titleAsc")}</option>
+            <option value="title-desc">{t("library.titleDesc")}</option>
+            <option value="category">{t("library.categoryAsc")}</option>
+            <option value="type">{t("library.type")}</option>
           </select>
         </div>
 
@@ -266,14 +272,13 @@ function LibraryItemList({
           onClick={() => setShowAbbreviations(!showAbbreviations)}
         >
           {showAbbreviations
-            ? "Visa fullständiga titlar"
-            : "Visa förkortade titlar"}
+            ? t("library.showFullTitles")
+            : t("library.showAbbreviatedTitles")}
         </button>
       </div>
 
       <p className="library-results-count" aria-live="polite">
-        {filteredItems.length}{" "}
-        {filteredItems.length === 1 ? "träff" : "träffar"}
+        {t("library.results", { count: filteredItems.length })}
       </p>
 
       <div className="library-items">
@@ -306,7 +311,9 @@ function LibraryItemList({
               }}
               role="button"
               tabIndex={0}
-              aria-label={`Visa detaljer för ${item.title}`}
+              aria-label={t("library.detailsAriaLabel", {
+                title: item.title,
+              })}
               onKeyDown={(event) => {
                 if (event.target !== event.currentTarget) return;
 
@@ -328,7 +335,7 @@ function LibraryItemList({
                   <img
                     className="library-item-image"
                     src={getLibraryItemImage(item)}
-                    alt={`Omslag till ${item.title}`}
+                    alt={t("library.coverAlt", { title: item.title })}
                     loading="lazy"
                   />
 
@@ -338,39 +345,46 @@ function LibraryItemList({
                       : item.title}
                   </h2>
 
-                  <p>Typ: {getLibraryItemTypeLabel(item.type)}</p>
-                  <p>Kategori: {item.category.name}</p>
+                  <p>
+                    {t("library.typeLabel")} {getTypeLabel(item.type)}
+                  </p>
+                  <p>
+                    {t("library.categoryLabel")} {item.category.name}
+                  </p>
 
                   {item.isBorrowable ? (
                     activeLoan ? (
                       <>
-                        <p>Utlånad till: {activeLoan?.borrowerName ?? "-"}</p>
+                        <p>
+                          {t("library.borrowedTo")}{" "}
+                          {activeLoan?.borrowerName ?? "-"}
+                        </p>
 
                         <p>
-                          Utlånad datum:{" "}
+                          {t("library.borrowDate")}{" "}
                           {activeLoan?.borrowDate
                             ? new Date(
                                 activeLoan.borrowDate,
-                              ).toLocaleDateString("sv-SE")
+                              ).toLocaleDateString(dateLocale)
                             : "-"}
                         </p>
 
                         <p>
-                          Förfallodatum:{" "}
+                          {t("library.dueDate")}{" "}
                           {activeLoan?.dueDate
                             ? new Date(activeLoan.dueDate).toLocaleDateString(
-                                "sv-SE",
+                                dateLocale,
                               )
                             : "-"}
                         </p>
 
                         {isOverdue(activeLoan?.dueDate ?? null) ? (
                           <p className="overdue-label" role="status">
-                            Försenad
+                            {t("library.overdue")}
                           </p>
                         ) : (
                           <p className="borrowed-label" role="status">
-                            Utlånad
+                            {t("library.borrowedStatus")}
                           </p>
                         )}
 
@@ -381,7 +395,7 @@ function LibraryItemList({
                               className="library-action-button"
                               onClick={() => handleReturn(item)}
                             >
-                              Returnera
+                              {t("library.return")}
                             </button>
                           )}
 
@@ -392,7 +406,7 @@ function LibraryItemList({
                                 className="library-action-button"
                                 onClick={() => setEditingItemId(item.id)}
                               >
-                                Ändra
+                                {t("library.edit")}
                               </button>
 
                               <button
@@ -400,7 +414,7 @@ function LibraryItemList({
                                 className="library-action-button"
                                 onClick={() => setItemToDelete(item)}
                               >
-                                Ta bort
+                                {t("library.delete")}
                               </button>
                             </>
                           )}
@@ -409,7 +423,7 @@ function LibraryItemList({
                     ) : (
                       <>
                         <p className="available-label" role="status">
-                          Ej utlånad
+                          {t("library.notBorrowed")}
                         </p>
 
                         <div className="library-item-actions">
@@ -418,7 +432,7 @@ function LibraryItemList({
                             className="library-action-button"
                             onClick={() => handleBorrow(item)}
                           >
-                            Låna
+                            {t("library.borrow")}
                           </button>
 
                           {isAdmin && (
@@ -428,7 +442,7 @@ function LibraryItemList({
                                 className="library-action-button"
                                 onClick={() => setEditingItemId(item.id)}
                               >
-                                Ändra
+                                {t("library.edit")}
                               </button>
 
                               <button
@@ -436,7 +450,7 @@ function LibraryItemList({
                                 className="library-action-button"
                                 onClick={() => setItemToDelete(item)}
                               >
-                                Ta bort
+                                {t("library.delete")}
                               </button>
                             </>
                           )}
@@ -445,7 +459,7 @@ function LibraryItemList({
                     )
                   ) : (
                     <>
-                      <p>Referensexemplar – kan inte lånas</p>
+                      <p>{t("library.referenceDescription")}</p>
 
                       {isAdmin && (
                         <div className="library-item-actions">
@@ -454,7 +468,7 @@ function LibraryItemList({
                             className="library-action-button"
                             onClick={() => setEditingItemId(item.id)}
                           >
-                            Ändra
+                            {t("library.edit")}
                           </button>
 
                           <button
@@ -462,7 +476,7 @@ function LibraryItemList({
                             className="library-action-button"
                             onClick={() => setItemToDelete(item)}
                           >
-                            Ta bort
+                            {t("library.delete")}
                           </button>
                         </div>
                       )}
@@ -476,9 +490,7 @@ function LibraryItemList({
       </div>
 
       {filteredItems.length === 0 && (
-        <p className="library-empty-state">
-          Inga biblioteksposter matchar din sökning.
-        </p>
+        <p className="library-empty-state">{t("library.emptyState")}</p>
       )}
 
       <Dialog
@@ -497,13 +509,15 @@ function LibraryItemList({
         }}
       >
         <DialogTitle id="borrow-library-item-title" sx={{ color: "#6d28d9" }}>
-          Låna bibliotekspost
+          {t("library.borrowDialogTitle")}
         </DialogTitle>
 
         <DialogContent>
           <DialogContentText>
-            Du kommer att låna <strong>{itemToBorrow?.title}</strong> som{" "}
-            <strong>{user?.name}</strong>.
+            {t("library.borrowDialogDescription", {
+              title: itemToBorrow?.title ?? "",
+              name: user?.name ?? "",
+            })}
           </DialogContentText>
         </DialogContent>
 
@@ -520,7 +534,7 @@ function LibraryItemList({
               },
             }}
           >
-            Avbryt
+            {t("library.cancel")}
           </MuiButton>
 
           <MuiButton
@@ -533,7 +547,7 @@ function LibraryItemList({
               },
             }}
           >
-            Bekräfta lån
+            {t("library.confirmBorrow")}
           </MuiButton>
         </DialogActions>
       </Dialog>
@@ -563,14 +577,14 @@ function LibraryItemList({
           }}
         >
           <AlertTriangle size={24} />
-          Ta bort bibliotekspost
+          {t("library.deleteDialogTitle")}
         </DialogTitle>
 
         <DialogContent>
           <DialogContentText>
-            Är du säker på att du vill ta bort{" "}
-            <strong>{itemToDelete?.title}</strong>? Den här åtgärden kan inte
-            ångras.
+            {t("library.deleteDialogDescription", {
+              title: itemToDelete?.title ?? "",
+            })}
           </DialogContentText>
         </DialogContent>
 
@@ -587,7 +601,7 @@ function LibraryItemList({
               },
             }}
           >
-            Avbryt
+            {t("library.cancel")}
           </MuiButton>
 
           <MuiButton
@@ -601,7 +615,7 @@ function LibraryItemList({
               },
             }}
           >
-            Ta bort
+            {t("library.delete")}
           </MuiButton>
         </DialogActions>
       </Dialog>
@@ -622,13 +636,14 @@ function LibraryItemList({
         }}
       >
         <DialogTitle id="return-library-item-title" sx={{ color: "#6d28d9" }}>
-          Återlämna bibliotekspost
+          {t("library.returnDialogTitle")}
         </DialogTitle>
 
         <DialogContent>
           <DialogContentText>
-            Vill du bekräfta att <strong>{itemToReturn?.title}</strong> har
-            återlämnats?
+            {t("library.returnDialogDescription", {
+              title: itemToReturn?.title ?? "",
+            })}
           </DialogContentText>
         </DialogContent>
 
@@ -645,7 +660,7 @@ function LibraryItemList({
               },
             }}
           >
-            Avbryt
+            {t("library.cancel")}
           </MuiButton>
 
           <MuiButton
@@ -658,7 +673,7 @@ function LibraryItemList({
               },
             }}
           >
-            Bekräfta återlämning
+            {t("library.confirmReturn")}
           </MuiButton>
         </DialogActions>
       </Dialog>
