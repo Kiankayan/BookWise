@@ -334,5 +334,29 @@
     "personalInfoDescription": "Your registered contact details.",
     "accountInfo": "Account information",
     "accountInfoDescription": "Information about your BookWise account."
+  },
+  "myLoansPage": {
+    "eyebrow": "YOUR LOAN OVERVIEW",
+    "title": "My loans",
+    "description": "Keep track of your loans and return dates.",
+    "loadError": "Could not load your loans. Please try again later.",
+    "statisticsLabel": "Loan statistics",
+    "activeLoans": "Active loans",
+    "overdueLoans": "Overdue loans",
+    "returnedLoans": "Returned",
+    "activeLoansCount_one": "{{count}} active loan",
+    "activeLoansCount_other": "{{count}} active loans",
+    "returnedLoansCount_one": "{{count}} returned loan",
+    "returnedLoansCount_other": "{{count}} returned loans",
+    "noActiveLoans": "You have no active loans right now.",
+    "noLoanHistory": "You have no previous loan history.",
+    "coverAlt": "Cover of {{title}}",
+    "borrowedDate": "Borrowed",
+    "dueDate": "Due date",
+    "returnedDate": "Returned",
+    "overdue": "Overdue",
+    "active": "Active",
+    "returned": "Returned",
+    "loanHistory": "Loan history"
   }
 }

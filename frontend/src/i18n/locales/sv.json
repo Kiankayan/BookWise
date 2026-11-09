@@ -335,5 +335,29 @@
     "personalInfoDescription": "Dina registrerade kontaktuppgifter.",
     "accountInfo": "Kontoinformation",
     "accountInfoDescription": "Information om ditt BookWise-konto."
+  },
+  "myLoansPage": {
+    "eyebrow": "DIN LÅNEÖVERSIKT",
+    "title": "Mina lån",
+    "description": "Håll koll på dina lån och återlämningsdatum.",
+    "loadError": "Kunde inte hämta dina lån. Försök igen senare.",
+    "statisticsLabel": "Lånestatistik",
+    "activeLoans": "Aktiva lån",
+    "overdueLoans": "Försenade lån",
+    "returnedLoans": "Återlämnade",
+    "activeLoansCount_one": "{{count}} aktivt lån",
+    "activeLoansCount_other": "{{count}} aktiva lån",
+    "returnedLoansCount_one": "{{count}} återlämnat lån",
+    "returnedLoansCount_other": "{{count}} återlämnade lån",
+    "noActiveLoans": "Du har inga aktiva lån just nu.",
+    "noLoanHistory": "Du har ingen tidigare lånehistorik.",
+    "coverAlt": "Omslag till {{title}}",
+    "borrowedDate": "Lånad",
+    "dueDate": "Återlämnas",
+    "returnedDate": "Återlämnad",
+    "overdue": "Försenad",
+    "active": "Aktiv",
+    "returned": "Återlämnad",
+    "loanHistory": "Lånehistorik"
   }
 }

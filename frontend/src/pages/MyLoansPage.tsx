@@ -1,25 +1,34 @@
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { BookOpen, CircleAlert, CircleCheck } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { getMyLoans } from "../services/LoanService";
 import type { Loan } from "../types/loan";
 import { getLibraryItemImage } from "../utils/libraryItemImage";
 
 function MyLoansPage() {
+  const { t, i18n } = useTranslation();
   const [loans, setLoans] = useState<Loan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [hasError, setHasError] = useState(false);
   const shouldReduceMotion = useReducedMotion();
+
+  const dateLocale = i18n.resolvedLanguage?.startsWith("en")
+    ? "en-GB"
+    : "sv-SE";
+
+  const formatDate = (date: string | Date) =>
+    new Date(date).toLocaleDateString(dateLocale);
 
   useEffect(() => {
     async function loadMyLoans() {
       try {
         const response = await getMyLoans();
         setLoans(response.data);
-        setError("");
+        setHasError(false);
       } catch (error) {
-        console.error("Kunde inte hämta användarens lån.", error);
-        setError("Kunde inte hämta dina lån. Försök igen senare.");
+        console.error("Failed to fetch user loans.", error);
+        setHasError(true);
       } finally {
         setIsLoading(false);
       }
@@ -48,31 +57,34 @@ function MyLoansPage() {
       transition={{ duration: 0.45, ease: "easeOut" }}
     >
       <section className="page-intro">
-        <p className="eyebrow">DIN LÅNEÖVERSIKT</p>
-        <h2>Mina lån</h2>
-        <p>Håll koll på dina lån och återlämningsdatum.</p>
+        <p className="eyebrow">{t("myLoansPage.eyebrow")}</p>
+        <h2>{t("myLoansPage.title")}</h2>
+        <p>{t("myLoansPage.description")}</p>
       </section>
 
-      {error ? (
+      {hasError ? (
         <section className="my-loans-panel">
-          <p role="alert">{error}</p>
+          <p role="alert">{t("myLoansPage.loadError")}</p>
         </section>
       ) : (
         <>
-          <section className="my-loans-stats" aria-label="Lånestatistik">
+          <section
+            className="my-loans-stats"
+            aria-label={t("myLoansPage.statisticsLabel")}
+          >
             {[
               {
-                label: "Aktiva lån",
+                label: t("myLoansPage.activeLoans"),
                 value: activeLoans.length,
                 icon: BookOpen,
               },
               {
-                label: "Försenade lån",
+                label: t("myLoansPage.overdueLoans"),
                 value: overdueLoans.length,
                 icon: CircleAlert,
               },
               {
-                label: "Återlämnade",
+                label: t("myLoansPage.returnedLoans"),
                 value: returnedLoans.length,
                 icon: CircleCheck,
               },
@@ -116,13 +128,17 @@ function MyLoansPage() {
           >
             <div className="my-loans-panel-heading">
               <div>
-                <h3>Aktiva lån</h3>
-                <p>{activeLoans.length} aktiva lån</p>
+                <h3>{t("myLoansPage.activeLoans")}</h3>
+                <p>
+                  {t("myLoansPage.activeLoansCount", {
+                    count: activeLoans.length,
+                  })}
+                </p>
               </div>
             </div>
 
             {activeLoans.length === 0 ? (
-              <p>Du har inga aktiva lån just nu.</p>
+              <p>{t("myLoansPage.noActiveLoans")}</p>
             ) : (
               <div className="my-loans-list">
                 {activeLoans.map((loan, index) => {
@@ -148,20 +164,20 @@ function MyLoansPage() {
                             loan.item.imageUrl ? "" : "is-default-image"
                           }`}
                           src={getLibraryItemImage(loan.item)}
-                          alt={`Omslag till ${loan.item.title}`}
+                          alt={t("myLoansPage.coverAlt", {
+                            title: loan.item.title,
+                          })}
                         />
 
                         <div className="my-loans-item-info">
                           <h4>{loan.item.title}</h4>
                           <p>
-                            Lånad:{" "}
-                            {new Date(loan.borrowDate).toLocaleDateString(
-                              "sv-SE",
-                            )}
+                            {t("myLoansPage.borrowedDate")}:{" "}
+                            {formatDate(loan.borrowDate)}
                           </p>
                           <p>
-                            Återlämnas:{" "}
-                            {new Date(loan.dueDate).toLocaleDateString("sv-SE")}
+                            {t("myLoansPage.dueDate")}:{" "}
+                            {formatDate(loan.dueDate)}
                           </p>
                         </div>
                       </div>
@@ -171,7 +187,9 @@ function MyLoansPage() {
                           isOverdue ? "is-overdue" : "is-borrowed"
                         }`}
                       >
-                        {isOverdue ? "Försenad" : "Aktiv"}
+                        {isOverdue
+                          ? t("myLoansPage.overdue")
+                          : t("myLoansPage.active")}
                       </span>
                     </motion.article>
                   );
@@ -192,13 +210,17 @@ function MyLoansPage() {
           >
             <div className="my-loans-panel-heading">
               <div>
-                <h3>Lånehistorik</h3>
-                <p>{returnedLoans.length} återlämnade lån</p>
+                <h3>{t("myLoansPage.loanHistory")}</h3>
+                <p>
+                  {t("myLoansPage.returnedLoansCount", {
+                    count: returnedLoans.length,
+                  })}
+                </p>
               </div>
             </div>
 
             {returnedLoans.length === 0 ? (
-              <p>Du har ingen tidigare lånehistorik.</p>
+              <p>{t("myLoansPage.noLoanHistory")}</p>
             ) : (
               <div className="my-loans-list">
                 {returnedLoans.map((loan, index) => (
@@ -219,28 +241,26 @@ function MyLoansPage() {
                           loan.item.imageUrl ? "" : "is-default-image"
                         }`}
                         src={getLibraryItemImage(loan.item)}
-                        alt={`Omslag till ${loan.item.title}`}
+                        alt={t("myLoansPage.coverAlt", {
+                          title: loan.item.title,
+                        })}
                       />
 
                       <div className="my-loans-item-info">
                         <h4>{loan.item.title}</h4>
                         <p>
-                          Lånad:{" "}
-                          {new Date(loan.borrowDate).toLocaleDateString(
-                            "sv-SE",
-                          )}
+                          {t("myLoansPage.borrowedDate")}:{" "}
+                          {formatDate(loan.borrowDate)}
                         </p>
                         <p>
-                          Återlämnad:{" "}
-                          {new Date(loan.returnedAt!).toLocaleDateString(
-                            "sv-SE",
-                          )}
+                          {t("myLoansPage.returnedDate")}:{" "}
+                          {formatDate(loan.returnedAt!)}
                         </p>
                       </div>
                     </div>
 
                     <span className="my-loans-item-status is-returned">
-                      Återlämnad
+                      {t("myLoansPage.returned")}
                     </span>
                   </motion.article>
                 ))}
