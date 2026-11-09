@@ -32,7 +32,8 @@ function SettingsPage() {
   const [avatarSuccess, setAvatarSuccess] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const roleLabel = user?.role === "ADMIN" ? "Administratör" : "Användare";
+  const roleLabel =
+    user?.role === "ADMIN" ? t("settings.administrator") : t("settings.user");
 
   useEffect(() => {
     return () => {
@@ -53,13 +54,13 @@ function SettingsPage() {
     const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 
     if (!allowedTypes.includes(file.type)) {
-      setAvatarError("Välj en JPG-, PNG- eller WebP-bild.");
+      setAvatarError(t("settings.invalidImageFormat"));
       event.target.value = "";
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      setAvatarError("Bilden får vara högst 5 MB.");
+      setAvatarError(t("settings.imageTooLarge"));
       event.target.value = "";
       return;
     }
@@ -101,9 +102,9 @@ function SettingsPage() {
       setAvatarFile(null);
       setAvatarPreview(null);
       setRemoveAvatar(false);
-      setAvatarSuccess("Profilbilden har uppdaterats.");
+      setAvatarSuccess(t("settings.imageUpdated"));
     } catch {
-      setAvatarError("Det gick inte att uppdatera profilbilden. Försök igen.");
+      setAvatarError(t("settings.imageUpdateError"));
     } finally {
       setIsSavingAvatar(false);
     }
@@ -138,16 +139,16 @@ function SettingsPage() {
       transition={{ duration: 0.45, ease: "easeOut" }}
     >
       <section className="page-intro">
-        <p className="eyebrow">PERSONLIGT</p>
-        <h2>Inställningar</h2>
-        <p>Anpassa dina personliga inställningar i BookWise.</p>
+        <p className="eyebrow">{t("settings.personal")}</p>
+        <h2>{t("settings.title")}</h2>
+        <p>{t("settings.description")}</p>
       </section>
 
       <motion.section className="settings-panel" {...panelAnimation(0.05)}>
         <div className="settings-panel-heading">
           <div>
-            <h3>Profilbild</h3>
-            <p>Hantera din personliga profilbild.</p>
+            <h3>{t("settings.profilePicture")}</h3>
+            <p>{t("settings.profilePictureDescription")}</p>
           </div>
           <ImagePlus size={22} />
         </div>
@@ -155,7 +156,7 @@ function SettingsPage() {
         <div className="settings-avatar-section">
           <div className="settings-avatar-preview">
             {displayedAvatar ? (
-              <img src={displayedAvatar} alt="Profilbild" />
+              <img src={displayedAvatar} alt={t("settings.avatarAlt")} />
             ) : (
               <UserRound size={38} />
             )}
@@ -177,7 +178,7 @@ function SettingsPage() {
               disabled={isSavingAvatar}
             >
               <ImagePlus size={16} />
-              Välj bild
+              {t("settings.chooseImage")}
             </button>
 
             {user?.avatarUrl && !removeAvatar && (
@@ -188,11 +189,11 @@ function SettingsPage() {
                 disabled={isSavingAvatar}
               >
                 <X size={16} />
-                Ta bort bild
+                {t("settings.removeImage")}
               </button>
             )}
 
-            <p>JPG, PNG eller WebP. Max 5 MB.</p>
+            <p>{t("settings.imageFormats")}</p>
           </div>
         </div>
 
@@ -212,7 +213,7 @@ function SettingsPage() {
             disabled={isSavingAvatar}
           >
             <Save size={16} />
-            {isSavingAvatar ? "Sparar..." : "Spara profilbild"}
+            {isSavingAvatar ? t("settings.saving") : t("settings.saveImage")}
           </button>
         )}
       </motion.section>
@@ -220,8 +221,8 @@ function SettingsPage() {
       <motion.section className="settings-panel" {...panelAnimation(0.1)}>
         <div className="settings-panel-heading">
           <div>
-            <h3>Aviseringar</h3>
-            <p>Hantera dina aviseringsinställningar.</p>
+            <h3>{t("settings.notifications")}</h3>
+            <p>{t("settings.notificationsDescription")}</p>
           </div>
           <Bell size={22} />
         </div>
@@ -235,7 +236,7 @@ function SettingsPage() {
                 setReminderNotifications(event.target.checked)
               }
             />
-            <span>Påminnelser om kommande förfallodatum</span>
+            <span>{t("settings.reminderNotifications")}</span>
           </label>
 
           <label className="settings-option">
@@ -246,7 +247,7 @@ function SettingsPage() {
                 setOverdueNotifications(event.target.checked)
               }
             />
-            <span>Aviseringar om försenade lån</span>
+            <span>{t("settings.overdueNotifications")}</span>
           </label>
         </div>
       </motion.section>
@@ -254,8 +255,8 @@ function SettingsPage() {
       <motion.section className="settings-panel" {...panelAnimation(0.2)}>
         <div className="settings-panel-heading">
           <div>
-            <h3>Utseende</h3>
-            <p>Välj hur BookWise ska visas.</p>
+            <h3>{t("settings.appearance")}</h3>
+            <p>{t("settings.appearanceDescription")}</p>
           </div>
           {theme === "light" ? <Sun size={22} /> : <Moon size={22} />}
         </div>
@@ -269,7 +270,7 @@ function SettingsPage() {
               checked={theme === "light"}
               onChange={() => setTheme("light")}
             />
-            <span>Ljust tema</span>
+            <span>{t("settings.light")}</span>
           </label>
 
           <label className="settings-option">
@@ -280,7 +281,7 @@ function SettingsPage() {
               checked={theme === "dark"}
               onChange={() => setTheme("dark")}
             />
-            <span>Mörkt tema</span>
+            <span>{t("settings.dark")}</span>
           </label>
         </div>
       </motion.section>
@@ -321,18 +322,19 @@ function SettingsPage() {
       <motion.section className="settings-panel" {...panelAnimation(0.4)}>
         <div className="settings-panel-heading">
           <div>
-            <h3>Kontoinformation</h3>
-            <p>Information om ditt BookWise-konto.</p>
+            <h3>{t("settings.accountInformation")}</h3>
+            <p>{t("settings.accountInformationDescription")}</p>
           </div>
           <ShieldCheck size={22} />
         </div>
 
         <div className="settings-account-details">
           <p>
-            <strong>Kontotyp:</strong> {roleLabel}
+            <strong>{t("settings.accountType")}:</strong> {roleLabel}
           </p>
           <p>
-            <strong>Användar-ID:</strong> {user?.id ?? "Inte tillgängligt"}
+            <strong>{t("settings.userId")}:</strong>{" "}
+            {user?.id ?? t("settings.notAvailable")}
           </p>
         </div>
       </motion.section>
