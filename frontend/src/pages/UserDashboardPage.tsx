@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { motion, useReducedMotion } from "motion/react";
 import {
   BookOpen,
@@ -34,9 +35,11 @@ type ChartPeriod = "week" | "month" | "sixMonths" | "year";
 function AnimatedPercentage({
   value,
   shouldReduceMotion,
+  locale,
 }: {
   value: number;
   shouldReduceMotion: boolean | null;
+  locale: string;
 }) {
   const [displayValue, setDisplayValue] = useState(0);
 
@@ -72,7 +75,7 @@ function AnimatedPercentage({
   return (
     <>
       {displayValue > 0 ? "+" : ""}
-      {displayValue.toLocaleString("sv-SE", {
+      {displayValue.toLocaleString(locale, {
         minimumFractionDigits: 1,
         maximumFractionDigits: 1,
       })}
@@ -84,9 +87,11 @@ function AnimatedPercentage({
 function AnimatedCount({
   value,
   shouldReduceMotion,
+  locale,
 }: {
   value: number;
   shouldReduceMotion: boolean | null;
+  locale: string;
 }) {
   const [displayValue, setDisplayValue] = useState(0);
 
@@ -119,13 +124,15 @@ function AnimatedCount({
     return () => cancelAnimationFrame(animationFrame);
   }, [value, shouldReduceMotion]);
 
-  return <>{displayValue.toLocaleString("sv-SE")}</>;
+  return <>{displayValue.toLocaleString(locale)}</>;
 }
 
 function UserDashboardPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const shouldReduceMotion = useReducedMotion();
+  const { t, i18n } = useTranslation();
+  const locale = i18n.language.startsWith("sv") ? "sv-SE" : "en-US";
 
   const [loans, setLoans] = useState<Loan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -139,8 +146,8 @@ function UserDashboardPage() {
         setLoans(response.data);
         setError("");
       } catch (error) {
-        console.error("Kunde inte hämta användarens lån.", error);
-        setError("Kunde inte hämta dina lån. Försök igen senare.");
+        console.error("Could not fetch user's loans.", error);
+        setError(t("userDashboard.loadError"));
       } finally {
         setIsLoading(false);
       }
@@ -202,7 +209,7 @@ function UserDashboardPage() {
         }).length;
 
         return {
-          label: date.toLocaleDateString("sv-SE", { weekday: "short" }),
+          label: date.toLocaleDateString(locale, { weekday: "short" }),
           total,
         };
       });
@@ -228,7 +235,7 @@ function UserDashboardPage() {
         }).length;
 
         return {
-          label: `${startDate.getDate()} ${startDate.toLocaleDateString("sv-SE", { month: "short" })}`,
+          label: `${startDate.getDate()} ${startDate.toLocaleDateString(locale, { month: "short" })}`,
           total,
         };
       });
@@ -255,7 +262,7 @@ function UserDashboardPage() {
       }).length;
 
       return {
-        label: monthDate.toLocaleDateString("sv-SE", { month: "short" }),
+        label: monthDate.toLocaleDateString(locale, { month: "short" }),
         total,
       };
     });
@@ -309,24 +316,24 @@ function UserDashboardPage() {
   }[] = [
     {
       key: "activeLoans",
-      label: "Aktiva lån",
+      label: t("userDashboard.activeLoans"),
       value: activeLoans.length,
       icon: BookOpen,
-      description: "Dina pågående lån",
+      description: t("userDashboard.activeLoansDescription"),
     },
     {
       key: "overdueLoans",
-      label: "Försenade lån",
+      label: t("userDashboard.overdueLoans"),
       value: overdueLoans.length,
       icon: CircleAlert,
-      description: "Lån som passerat återlämningsdatum",
+      description: t("userDashboard.overdueLoansDescription"),
     },
     {
       key: "returnedLoans",
-      label: "Återlämnade",
+      label: t("userDashboard.returnedLoans"),
       value: returnedLoans.length,
       icon: CircleCheck,
-      description: "Böcker du har återlämnat",
+      description: t("userDashboard.returnedLoansDescription"),
     },
   ];
 
@@ -401,15 +408,15 @@ function UserDashboardPage() {
   return (
     <motion.div
       className="dashboard-page"
-      initial={{ opacity: 0, y: 12 }}
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: "easeOut" }}
     >
       <section className="dashboard-welcome">
         <div className="dashboard-welcome-content">
-          <p className="eyebrow">DIN PERSONLIGA ÖVERSIKT</p>
-          <h2>Välkommen tillbaka, {user?.name}!</h2>
-          <p>Här kan du följa dina lån och hålla koll på dina böcker.</p>
+          <p className="eyebrow">{t("userDashboard.welcomeEyebrow")}</p>
+          <h2>{t("userDashboard.welcomeTitle", { name: user?.name ?? "" })}</h2>
+          <p>{t("userDashboard.welcomeDescription")}</p>
         </div>
 
         <div className="dashboard-book-illustration">
@@ -457,7 +464,7 @@ function UserDashboardPage() {
         <>
           <section
             className="dashboard-stats user-dashboard-stats"
-            aria-label="Din lånestatistik"
+            aria-label={t("userDashboard.statistics")}
           >
             {stats.map((stat, index) => {
               const Icon = stat.icon;
@@ -506,6 +513,7 @@ function UserDashboardPage() {
                             key={stat.key}
                             value={percentage}
                             shouldReduceMotion={shouldReduceMotion}
+                            locale={locale}
                           />
                         </span>
                       </span>
@@ -529,7 +537,7 @@ function UserDashboardPage() {
                   <ChartNoAxesCombined size={22} strokeWidth={1.8} />
                 </div>
 
-                <h3>Mina lån över tid</h3>
+                <h3>{t("userDashboard.loansOverTime")}</h3>
 
                 <select
                   className="dashboard-chart-period"
@@ -537,12 +545,14 @@ function UserDashboardPage() {
                   onChange={(event) =>
                     setChartPeriod(event.target.value as ChartPeriod)
                   }
-                  aria-label="Välj tidsperiod för din lånestatistik"
+                  aria-label={t("userDashboard.periodLabel")}
                 >
-                  <option value="week">Senaste veckan</option>
-                  <option value="month">Senaste månaden</option>
-                  <option value="sixMonths">Senaste 6 månaderna</option>
-                  <option value="year">Senaste året</option>
+                  <option value="week">{t("dashboard.lastWeek")}</option>
+                  <option value="month">{t("dashboard.lastMonth")}</option>
+                  <option value="sixMonths">
+                    {t("dashboard.lastSixMonths")}
+                  </option>
+                  <option value="year">{t("dashboard.lastYear")}</option>
                 </select>
               </div>
 
@@ -588,7 +598,7 @@ function UserDashboardPage() {
 
                     <Bar
                       dataKey="total"
-                      name="Antal lån"
+                      name={t("userDashboard.loanCount")}
                       fill="#7138df"
                       radius={[4, 4, 0, 0]}
                       maxBarSize={24}
@@ -603,11 +613,11 @@ function UserDashboardPage() {
                 <div className="dashboard-chart-icon" aria-hidden="true">
                   <Tags size={20} strokeWidth={1.8} />
                 </div>
-                <h3>Mina lån per kategori</h3>
+                <h3>{t("userDashboard.loansByCategory")}</h3>
               </div>
 
               {categoryLoans.length === 0 ? (
-                <p>Du har inga lån att visa ännu.</p>
+                <p>{t("userDashboard.noLoans")}</p>
               ) : (
                 <div className="dashboard-category-layout">
                   <div className="dashboard-category-chart-container">
@@ -641,9 +651,10 @@ function UserDashboardPage() {
                         <AnimatedCount
                           value={loans.length}
                           shouldReduceMotion={shouldReduceMotion}
+                          locale={locale}
                         />
                       </strong>
-                      <span>Totalt</span>
+                      <span>{t("dashboard.total")}</span>
                     </div>
                   </div>
 
@@ -673,6 +684,7 @@ function UserDashboardPage() {
                             <AnimatedCount
                               value={category.value}
                               shouldReduceMotion={shouldReduceMotion}
+                              locale={locale}
                             />
                           </span>
                           <span className="dashboard-category-legend-percentage">
@@ -680,6 +692,7 @@ function UserDashboardPage() {
                             <AnimatedCount
                               value={percentage}
                               shouldReduceMotion={shouldReduceMotion}
+                              locale={locale}
                             />
                             %)
                           </span>
@@ -695,8 +708,8 @@ function UserDashboardPage() {
           <section className="page-panel">
             <div className="page-panel-heading">
               <div>
-                <h3>Senaste aktivitet</h3>
-                <p>Dina fem senaste lånehändelser</p>
+                <h3>{t("userDashboard.recentActivity")}</h3>
+                <p>{t("userDashboard.recentActivityDescription")}</p>
               </div>
 
               <button
@@ -704,13 +717,13 @@ function UserDashboardPage() {
                 type="button"
                 onClick={() => navigate("/my-loans")}
               >
-                Visa alla
+                {t("dashboard.viewAll")}
                 <ArrowRight size={14} />
               </button>
             </div>
 
             {recentActivities.length === 0 ? (
-              <p>Du har ingen låneaktivitet ännu.</p>
+              <p>{t("userDashboard.noActivity")}</p>
             ) : (
               <div className="dashboard-recent-loans-list">
                 {recentActivities.map((activity) => {
@@ -719,10 +732,10 @@ function UserDashboardPage() {
                     !isReturned && new Date(activity.loan.dueDate) < now;
 
                   const status = isReturned
-                    ? "Återlämnad"
+                    ? t("dashboard.returned")
                     : isOverdue
-                      ? "Försenad"
-                      : "Utlånad";
+                      ? t("dashboard.overdueStatus")
+                      : t("dashboard.borrowedStatus");
 
                   const statusClass = isReturned
                     ? "is-returned"
@@ -743,16 +756,19 @@ function UserDashboardPage() {
                               : "is-default-image"
                           }`}
                           src={getLibraryItemImage(activity.loan.item)}
-                          alt={`Omslag till ${activity.loan.item.title}`}
+                          alt={t("userDashboard.coverAlt", {
+                            title: activity.loan.item.title,
+                          })}
                         />
 
                         <div className="dashboard-recent-loan-info">
                           <h4>{activity.loan.item.title}</h4>
                           <p>
-                            {isReturned ? "Återlämnad:" : "Utlånad:"}{" "}
-                            {new Date(activity.date).toLocaleDateString(
-                              "sv-SE",
-                            )}
+                            {isReturned
+                              ? t("dashboard.returned")
+                              : t("dashboard.borrowDate")}
+                            :{" "}
+                            {new Date(activity.date).toLocaleDateString(locale)}
                           </p>
                         </div>
                       </div>
@@ -771,10 +787,12 @@ function UserDashboardPage() {
 
           <section className="dashboard-overview-card">
             <div className="dashboard-overview-content">
-              <p className="eyebrow">SNABBÖVERSIKT</p>
-              <h3>Ditt bibliotek på ett ställe</h3>
+              <p className="eyebrow">{t("userDashboard.overviewEyebrow")}</p>
+              <h3>{t("userDashboard.overviewTitle")}</h3>
               <p>
-                Du har {loans.length} lånehändelser i ditt personliga bibliotek.
+                {t("userDashboard.overviewDescription", {
+                  loanCount: loans.length,
+                })}
               </p>
 
               <button
@@ -782,7 +800,7 @@ function UserDashboardPage() {
                 type="button"
                 onClick={() => navigate("/library")}
               >
-                Utforska biblioteket
+                {t("dashboard.exploreLibrary")}
                 <span aria-hidden="true">→</span>
               </button>
             </div>

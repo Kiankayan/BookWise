@@ -75,5 +75,30 @@
     "exploreLibrary": "Explore library",
     "chartError": "Could not retrieve chart data:",
     "loansError": "Could not retrieve recent loans:"
+  },
+  "userDashboard": {
+    "welcomeEyebrow": "YOUR PERSONAL OVERVIEW",
+    "welcomeTitle": "Welcome back, {{name}}!",
+    "welcomeDescription": "Here you can follow your loans and keep track of your books.",
+    "statistics": "Your loan statistics",
+    "activeLoans": "Active loans",
+    "activeLoansDescription": "Your ongoing loans",
+    "overdueLoans": "Overdue loans",
+    "overdueLoansDescription": "Loans past their return date",
+    "returnedLoans": "Returned",
+    "returnedLoansDescription": "Books you have returned",
+    "loadError": "Could not retrieve your loans. Please try again later.",
+    "loansOverTime": "My loans over time",
+    "periodLabel": "Select time period for your loan statistics",
+    "loanCount": "Number of loans",
+    "loansByCategory": "My loans by category",
+    "noLoans": "You have no loans to display yet.",
+    "recentActivity": "Recent activity",
+    "recentActivityDescription": "Your five most recent loan activities",
+    "noActivity": "You have no loan activity yet.",
+    "coverAlt": "Cover of {{title}}",
+    "overviewEyebrow": "QUICK OVERVIEW",
+    "overviewTitle": "Your library in one place",
+    "overviewDescription": "You have {{loanCount}} loan activities in your personal library."
   }
 }

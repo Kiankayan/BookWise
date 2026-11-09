@@ -75,5 +75,31 @@
     "exploreLibrary": "Utforska biblioteket",
     "chartError": "Kunde inte hämta diagramdata:",
     "loansError": "Kunde inte hämta de senaste lånen:"
+  },
+
+  "userDashboard": {
+    "welcomeEyebrow": "DIN PERSONLIGA ÖVERSIKT",
+    "welcomeTitle": "Välkommen tillbaka, {{name}}!",
+    "welcomeDescription": "Här kan du följa dina lån och hålla koll på dina böcker.",
+    "statistics": "Din lånestatistik",
+    "activeLoans": "Aktiva lån",
+    "activeLoansDescription": "Dina pågående lån",
+    "overdueLoans": "Försenade lån",
+    "overdueLoansDescription": "Lån som passerat återlämningsdatum",
+    "returnedLoans": "Återlämnade",
+    "returnedLoansDescription": "Böcker du har återlämnat",
+    "loadError": "Kunde inte hämta dina lån. Försök igen senare.",
+    "loansOverTime": "Mina lån över tid",
+    "periodLabel": "Välj tidsperiod för din lånestatistik",
+    "loanCount": "Antal lån",
+    "loansByCategory": "Mina lån per kategori",
+    "noLoans": "Du har inga lån att visa ännu.",
+    "recentActivity": "Senaste aktivitet",
+    "recentActivityDescription": "Dina fem senaste lånehändelser",
+    "noActivity": "Du har ingen låneaktivitet ännu.",
+    "coverAlt": "Omslag till {{title}}",
+    "overviewEyebrow": "SNABBÖVERSIKT",
+    "overviewTitle": "Ditt bibliotek på ett ställe",
+    "overviewDescription": "Du har {{loanCount}} lånehändelser i ditt personliga bibliotek."
   }
 }
