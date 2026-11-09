@@ -221,5 +221,44 @@
     "returnDialogTitle": "Återlämna bibliotekspost",
     "returnDialogDescription": "Vill du bekräfta att {{title}} har återlämnats?",
     "confirmReturn": "Bekräfta återlämning"
+  },
+  "addItem": {
+    "eyebrow": "UTÖKA SAMLINGEN",
+    "title": "Lägg till material",
+    "description": "Registrera en ny bok, DVD eller annan bibliotekspost i samlingen.",
+    "panelTitle": "Ny bibliotekspost",
+    "panelDescription": "Fyll i uppgifterna för materialet nedan."
+  },
+  "libraryForm": {
+    "cancel": "Avbryt",
+    "create": "Skapa bibliotekspost",
+    "created": "Biblioteksposten har skapats!",
+    "createError": "Kunde inte skapa biblioteksposten. Försök igen."
+  },
+  "libraryFields": {
+    "type": "Typ",
+    "book": "Bok",
+    "dvd": "DVD",
+    "audiobook": "Ljudbok",
+    "referenceBook": "Referensbok",
+    "title": "Titel",
+    "author": "Författare",
+    "isbn": "ISBN (valfritt)",
+    "numberOfPages": "Antal sidor",
+    "runtime": "Speltid i minuter",
+    "category": "Kategori",
+    "selectCategory": "Välj kategori",
+    "borrowable": "Kan lånas",
+    "referenceNotice": "Referensböcker kan inte lånas."
+  },
+  "imageDropzone": {
+    "label": "Omslagsbild (valfritt)",
+    "previewAlt": "Förhandsvisning av omslagsbild",
+    "removeImage": "Ta bort bild",
+    "dragAndDrop": "Dra och släpp en bild här",
+    "orChoose": "eller klicka för att välja från datorn",
+    "imageFormats": "JPG, PNG eller WebP · Max 5 MB",
+    "invalidFormat": "Välj en JPG-, PNG- eller WebP-bild.",
+    "tooLarge": "Bilden får vara högst 5 MB."
   }
 }

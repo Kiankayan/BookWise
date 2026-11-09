@@ -1,6 +1,7 @@
 import type { Category } from "../types/library";
 import LibraryItemForm from "../components/LibraryItemForm";
 import { motion } from "motion/react";
+import { useTranslation } from "react-i18next";
 
 type AddItemPageProps = {
   categories: Category[];
@@ -8,6 +9,8 @@ type AddItemPageProps = {
 };
 
 function AddItemPage({ categories, onLibraryItemCreated }: AddItemPageProps) {
+  const { t } = useTranslation();
+
   return (
     <motion.div
       className="add-item-page"
@@ -16,16 +19,16 @@ function AddItemPage({ categories, onLibraryItemCreated }: AddItemPageProps) {
       transition={{ duration: 0.45, ease: "easeOut" }}
     >
       <section className="page-intro">
-        <p className="eyebrow">UTÖKA SAMLINGEN</p>
-        <h2>Lägg till material</h2>
-        <p>Registrera en ny bok, DVD eller annan bibliotekspost i samlingen.</p>
+        <p className="eyebrow">{t("addItem.eyebrow")}</p>
+        <h2>{t("addItem.title")}</h2>
+        <p>{t("addItem.description")}</p>
       </section>
 
       <section className="page-panel add-item-panel">
         <div className="page-panel-heading">
           <div>
-            <h3>Ny bibliotekspost</h3>
-            <p>Fyll i uppgifterna för materialet nedan.</p>
+            <h3>{t("addItem.panelTitle")}</h3>
+            <p>{t("addItem.panelDescription")}</p>
           </div>
         </div>
 

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 import { CloudUpload } from "lucide-react";
 
 interface ImageDropzoneProps {
@@ -8,6 +9,8 @@ interface ImageDropzoneProps {
 }
 
 function ImageDropzone({ imageFile, onImageChange }: ImageDropzoneProps) {
+  const { t } = useTranslation();
+
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -30,12 +33,12 @@ function ImageDropzone({ imageFile, onImageChange }: ImageDropzoneProps) {
     const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 
     if (!allowedTypes.includes(file.type)) {
-      toast.error("Välj en JPG-, PNG- eller WebP-bild.");
+      toast.error(t("imageDropzone.invalidFormat"));
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("Bilden får vara högst 5 MB.");
+      toast.error(t("imageDropzone.tooLarge"));
       return;
     }
 
@@ -50,7 +53,7 @@ function ImageDropzone({ imageFile, onImageChange }: ImageDropzoneProps) {
 
   return (
     <>
-      <label htmlFor="library-item-image">Omslagsbild (valfritt)</label>
+      <label htmlFor="library-item-image">{t("imageDropzone.label")}</label>
 
       <div
         className={`image-dropzone${isDragging ? " image-dropzone-active" : ""}`}
@@ -79,7 +82,7 @@ function ImageDropzone({ imageFile, onImageChange }: ImageDropzoneProps) {
             <img
               className="image-preview"
               src={imagePreview}
-              alt="Förhandsvisning av omslagsbild"
+              alt={t("imageDropzone.previewAlt")}
             />
 
             <span>{imageFile?.name}</span>
@@ -96,7 +99,7 @@ function ImageDropzone({ imageFile, onImageChange }: ImageDropzoneProps) {
                 }
               }}
             >
-              Ta bort bild
+              {t("imageDropzone.removeImage")}
             </button>
           </div>
         ) : (
@@ -104,9 +107,9 @@ function ImageDropzone({ imageFile, onImageChange }: ImageDropzoneProps) {
             <span className="image-upload-icon">
               <CloudUpload size={32} strokeWidth={1.8} />
             </span>
-            <strong>Dra och släpp en bild här</strong>
-            <span>eller klicka för att välja från datorn</span>
-            <small>JPG, PNG eller WebP · Max 5 MB</small>
+            <strong>{t("imageDropzone.dragAndDrop")}</strong>
+            <span>{t("imageDropzone.orChoose")}</span>
+            <small>{t("imageDropzone.imageFormats")}</small>
           </div>
         )}
       </div>

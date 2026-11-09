@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 import { createLibraryItem } from "../services/LibraryItemService";
 import type { Category, LibraryItemType } from "../types/library";
 import { libraryItemSchema } from "../schemas/libraryItemSchema";
@@ -20,6 +21,7 @@ function LibraryItemForm({
   onLibraryItemCreated,
 }: LibraryItemFormProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [type, setType] = useState<LibraryItemType>("BOOK");
   const [categoryId, setCategoryId] = useState("");
@@ -84,7 +86,7 @@ function LibraryItemForm({
       setImageFile(null);
 
       await onLibraryItemCreated();
-      toast.success("Biblioteksposten har skapats!");
+      toast.success(t("libraryForm.created"));
     } catch (error) {
       console.error("Kunde inte skapa library item.", error);
 
@@ -97,7 +99,7 @@ function LibraryItemForm({
         }
       }
 
-      toast.error("Kunde inte skapa biblioteksposten. Försök igen.");
+      toast.error(t("libraryForm.createError"));
     }
   }
 
@@ -132,11 +134,11 @@ function LibraryItemForm({
           className="secondary-button"
           onClick={() => navigate("/library")}
         >
-          Avbryt
+          {t("libraryForm.cancel")}
         </button>
 
         <button className="primary-button" type="submit">
-          Skapa bibliotekspost
+          {t("libraryForm.create")}
         </button>
       </div>
     </form>

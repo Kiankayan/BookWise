@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { Category, LibraryItemType } from "../types/library";
 
 interface LibraryItemFieldsProps {
@@ -41,11 +42,13 @@ function LibraryItemFields({
   onRunTimeMinutesChange,
   onIsBorrowableChange,
 }: LibraryItemFieldsProps) {
+  const { t } = useTranslation();
+
   return (
     <>
       <div className="form-grid">
         <div className="form-group">
-          <label htmlFor={`${idPrefix}-type`}>Typ</label>
+          <label htmlFor={`${idPrefix}-type`}>{t("libraryFields.type")}</label>
           <select
             id={`${idPrefix}-type`}
             value={type}
@@ -53,15 +56,19 @@ function LibraryItemFields({
               onTypeChange(event.target.value as LibraryItemType)
             }
           >
-            <option value="BOOK">Bok</option>
-            <option value="DVD">DVD</option>
-            <option value="AUDIOBOOK">Ljudbok</option>
-            <option value="REFERENCE_BOOK">Referensbok</option>
+            <option value="BOOK">{t("libraryFields.book")}</option>
+            <option value="DVD">{t("libraryFields.dvd")}</option>
+            <option value="AUDIOBOOK">{t("libraryFields.audiobook")}</option>
+            <option value="REFERENCE_BOOK">
+              {t("libraryFields.referenceBook")}
+            </option>
           </select>
         </div>
 
         <div className="form-group">
-          <label htmlFor={`${idPrefix}-title`}>Titel</label>
+          <label htmlFor={`${idPrefix}-title`}>
+            {t("libraryFields.title")}
+          </label>
           <input
             id={`${idPrefix}-title`}
             type="text"
@@ -73,7 +80,9 @@ function LibraryItemFields({
         {(type === "BOOK" || type === "REFERENCE_BOOK") && (
           <>
             <div className="form-group">
-              <label htmlFor={`${idPrefix}-author`}>Författare</label>
+              <label htmlFor={`${idPrefix}-author`}>
+                {t("libraryFields.author")}
+              </label>
               <input
                 id={`${idPrefix}-author`}
                 type="text"
@@ -83,7 +92,9 @@ function LibraryItemFields({
             </div>
 
             <div className="form-group">
-              <label htmlFor={`${idPrefix}-isbn`}>ISBN (valfritt)</label>
+              <label htmlFor={`${idPrefix}-isbn`}>
+                {t("libraryFields.isbn")}
+              </label>
               <input
                 id={`${idPrefix}-isbn`}
                 type="text"
@@ -94,7 +105,9 @@ function LibraryItemFields({
             </div>
 
             <div className="form-group">
-              <label htmlFor={`${idPrefix}-nbrPages`}>Antal sidor</label>
+              <label htmlFor={`${idPrefix}-nbrPages`}>
+                {t("libraryFields.numberOfPages")}
+              </label>
               <input
                 id={`${idPrefix}-nbrPages`}
                 type="number"
@@ -108,7 +121,7 @@ function LibraryItemFields({
         {(type === "DVD" || type === "AUDIOBOOK") && (
           <div className="form-group">
             <label htmlFor={`${idPrefix}-runTimeMinutes`}>
-              Speltid i minuter
+              {t("libraryFields.runtime")}
             </label>
             <input
               id={`${idPrefix}-runTimeMinutes`}
@@ -120,13 +133,15 @@ function LibraryItemFields({
         )}
 
         <div className="form-group">
-          <label htmlFor={`${idPrefix}-category`}>Kategori</label>
+          <label htmlFor={`${idPrefix}-category`}>
+            {t("libraryFields.category")}
+          </label>
           <select
             id={`${idPrefix}-category`}
             value={categoryId}
             onChange={(event) => onCategoryChange(event.target.value)}
           >
-            <option value="">Välj kategori</option>
+            <option value="">{t("libraryFields.selectCategory")}</option>
 
             {categories.map((category) => (
               <option key={category.id} value={category.id}>
@@ -145,12 +160,12 @@ function LibraryItemFields({
             checked={isBorrowable}
             onChange={(event) => onIsBorrowableChange(event.target.checked)}
           />
-          <span>Kan lånas</span>
+          <span>{t("libraryFields.borrowable")}</span>
         </label>
       )}
 
       {type === "REFERENCE_BOOK" && (
-        <p className="reference-notice">Referensböcker kan inte lånas.</p>
+        <p className="reference-notice">{t("libraryFields.referenceNotice")}</p>
       )}
     </>
   );

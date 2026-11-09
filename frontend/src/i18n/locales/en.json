@@ -221,5 +221,44 @@
     "returnDialogTitle": "Return library item",
     "returnDialogDescription": "Do you confirm that {{title}} has been returned?",
     "confirmReturn": "Confirm return"
+  },
+  "addItem": {
+    "eyebrow": "EXPAND YOUR COLLECTION",
+    "title": "Add material",
+    "description": "Register a new book, DVD or other library item in your collection.",
+    "panelTitle": "New library item",
+    "panelDescription": "Fill in the information for the material below."
+  },
+  "libraryForm": {
+    "cancel": "Cancel",
+    "create": "Create library item",
+    "created": "Library item has been created!",
+    "createError": "Could not create the library item. Please try again."
+  },
+  "libraryFields": {
+    "type": "Type",
+    "book": "Book",
+    "dvd": "DVD",
+    "audiobook": "Audiobook",
+    "referenceBook": "Reference book",
+    "title": "Title",
+    "author": "Author",
+    "isbn": "ISBN (optional)",
+    "numberOfPages": "Number of pages",
+    "runtime": "Runtime in minutes",
+    "category": "Category",
+    "selectCategory": "Select category",
+    "borrowable": "Available for borrowing",
+    "referenceNotice": "Reference books cannot be borrowed."
+  },
+  "imageDropzone": {
+    "label": "Cover image (optional)",
+    "previewAlt": "Cover image preview",
+    "removeImage": "Remove image",
+    "dragAndDrop": "Drag and drop an image here",
+    "orChoose": "or click to choose from your computer",
+    "imageFormats": "JPG, PNG or WebP · Max 5 MB",
+    "invalidFormat": "Choose a JPG, PNG or WebP image.",
+    "tooLarge": "The image must not exceed 5 MB."
   }
 }
