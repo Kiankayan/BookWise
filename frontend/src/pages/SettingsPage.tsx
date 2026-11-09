@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
+import { useTranslation } from "react-i18next";
 import {
   Bell,
   Moon,
@@ -18,6 +19,7 @@ import { updateMyProfile } from "../services/UserService";
 function SettingsPage() {
   const { user, updateUser } = useAuth();
   const { theme, setTheme } = useTheme();
+  const { t, i18n } = useTranslation();
   const shouldReduceMotion = useReducedMotion();
 
   const [reminderNotifications, setReminderNotifications] = useState(true);
@@ -284,6 +286,39 @@ function SettingsPage() {
       </motion.section>
 
       <motion.section className="settings-panel" {...panelAnimation(0.3)}>
+        <div className="settings-panel-heading">
+          <div>
+            <h3>{t("settings.language")}</h3>
+            <p>{t("settings.languageDescription")}</p>
+          </div>
+        </div>
+
+        <div className="settings-options">
+          <label className="settings-option">
+            <input
+              type="radio"
+              name="language"
+              value="sv"
+              checked={i18n.language.startsWith("sv")}
+              onChange={() => i18n.changeLanguage("sv")}
+            />
+            <span>{t("settings.swedish")}</span>
+          </label>
+
+          <label className="settings-option">
+            <input
+              type="radio"
+              name="language"
+              value="en"
+              checked={i18n.language.startsWith("en")}
+              onChange={() => i18n.changeLanguage("en")}
+            />
+            <span>{t("settings.english")}</span>
+          </label>
+        </div>
+      </motion.section>
+
+      <motion.section className="settings-panel" {...panelAnimation(0.4)}>
         <div className="settings-panel-heading">
           <div>
             <h3>Kontoinformation</h3>
