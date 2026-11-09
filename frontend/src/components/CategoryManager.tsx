@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion } from "motion/react";
 import { Folder, Trash2, AlertTriangle } from "lucide-react";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 import {
   Dialog,
   DialogTitle,
@@ -26,6 +27,8 @@ function CategoryManager({
   categories,
   onCategoriesChanged,
 }: CategoryManagerProps) {
+  const { t } = useTranslation();
+
   const [newCategoryName, setNewCategoryName] = useState("");
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(
     null,
@@ -39,7 +42,7 @@ function CategoryManager({
     const name = newCategoryName.trim();
 
     if (!name) {
-      toast.error("Kategorinamn krävs.");
+      toast.error(t("categoryManager.categoryNameRequired"));
       return;
     }
 
@@ -47,10 +50,10 @@ function CategoryManager({
       await createCategory(name);
       setNewCategoryName("");
       await onCategoriesChanged();
-      toast.success("Kategorin har skapats!");
+      toast.success(t("categoryManager.created"));
     } catch (error) {
-      console.error("Kunde inte skapa kategori.", error);
-      toast.error("Det finns redan en kategori med samma namn.");
+      console.error("Could not create category.", error);
+      toast.error(t("categoryManager.duplicateName"));
     }
   }
 
@@ -70,7 +73,7 @@ function CategoryManager({
     const name = editingCategoryName.trim();
 
     if (!name) {
-      toast.error("Kategorinamn krävs.");
+      toast.error(t("categoryManager.categoryNameRequired"));
       return;
     }
 
@@ -78,10 +81,10 @@ function CategoryManager({
       await updateCategory(editingCategoryId, name);
       cancelEditing();
       await onCategoriesChanged();
-      toast.success("Kategorin har uppdaterats!");
+      toast.success(t("categoryManager.updated"));
     } catch (error) {
-      console.error("Kunde inte uppdatera kategori.", error);
-      toast.error("Det finns redan en kategori med samma namn.");
+      console.error("Could not update category.", error);
+      toast.error(t("categoryManager.duplicateName"));
     }
   }
 
@@ -92,13 +95,11 @@ function CategoryManager({
       await deleteCategory(categoryToDelete.id);
       setCategoryToDelete(null);
       await onCategoriesChanged();
-      toast.success("Kategorin har tagits bort!");
+      toast.success(t("categoryManager.deleted"));
     } catch (error) {
-      console.error("Kunde inte ta bort kategori.", error);
+      console.error("Could not delete category.", error);
       setCategoryToDelete(null);
-      toast.error(
-        "Kategorin kunde inte tas bort. Kontrollera att den inte används av någon bibliotekspost.",
-      );
+      toast.error(t("categoryManager.deleteError"));
     }
   }
 
@@ -108,12 +109,12 @@ function CategoryManager({
         <input
           type="text"
           value={newCategoryName}
-          placeholder="Ny kategori"
+          placeholder={t("categoryManager.newCategory")}
           onChange={(event) => setNewCategoryName(event.target.value)}
         />
 
         <button type="button" onClick={handleCreateCategory}>
-          Skapa kategori
+          {t("categoryManager.create")}
         </button>
       </div>
 
@@ -142,11 +143,11 @@ function CategoryManager({
 
                 <div className="category-actions">
                   <button type="button" onClick={handleUpdateCategory}>
-                    Spara
+                    {t("categoryManager.save")}
                   </button>
 
                   <button type="button" onClick={cancelEditing}>
-                    Avbryt
+                    {t("categoryManager.cancel")}
                   </button>
                 </div>
               </div>
@@ -163,7 +164,7 @@ function CategoryManager({
                     className="category-edit-button"
                     onClick={() => startEditing(category)}
                   >
-                    Ändra
+                    {t("categoryManager.edit")}
                   </button>
 
                   <button
@@ -171,7 +172,7 @@ function CategoryManager({
                     className="category-delete-button"
                     onClick={() => setCategoryToDelete(category)}
                   >
-                    Ta bort
+                    {t("categoryManager.delete")}
                   </button>
                 </div>
               </>
@@ -209,7 +210,7 @@ function CategoryManager({
           }}
         >
           <AlertTriangle size={23} color="#7c3aed" />
-          Ta bort kategori?
+          {t("categoryManager.deleteTitle")}
         </DialogTitle>
 
         <DialogContent>
@@ -217,8 +218,9 @@ function CategoryManager({
             id="delete-category-description"
             sx={{ color: "#807990", lineHeight: 1.8 }}
           >
-            Vill du verkligen ta bort kategorin{" "}
-            <strong>{categoryToDelete?.name}</strong>? Åtgärden kan inte ångras.
+            {t("categoryManager.deleteDescription", {
+              name: categoryToDelete?.name ?? "",
+            })}
           </DialogContentText>
         </DialogContent>
 
@@ -244,7 +246,7 @@ function CategoryManager({
               },
             }}
           >
-            Avbryt
+            {t("categoryManager.cancel")}
           </MuiButton>
 
           <MuiButton
@@ -261,7 +263,7 @@ function CategoryManager({
               boxShadow: "none",
             }}
           >
-            Ta bort
+            {t("categoryManager.delete")}
           </MuiButton>
         </DialogActions>
       </Dialog>

@@ -260,5 +260,31 @@
     "imageFormats": "JPG, PNG eller WebP · Max 5 MB",
     "invalidFormat": "Välj en JPG-, PNG- eller WebP-bild.",
     "tooLarge": "Bilden får vara högst 5 MB."
+  },
+  "categoriesPage": {
+    "eyebrow": "ORGANISATION",
+    "title": "Kategorier",
+    "description": "Organisera bibliotekets material genom att skapa, redigera och ta bort kategorier.",
+    "panelTitle": "Kategorihantering",
+    "categoryCount_one": "{{count}} kategori registrerad",
+    "categoryCount_other": "{{count}} kategorier registrerade"
+  },
+  "categoryManager": {
+    "newCategory": "Ny kategori",
+    "create": "Skapa kategori",
+    "categoryNameRequired": "Kategorinamn krävs.",
+    "created": "Kategorin har skapats!",
+    "updated": "Kategorin har uppdaterats!",
+    "deleted": "Kategorin har tagits bort!",
+    "duplicateName": "Det finns redan en kategori med samma namn.",
+    "createError": "Kunde inte skapa kategori.",
+    "updateError": "Kunde inte uppdatera kategori.",
+    "deleteError": "Kategorin kunde inte tas bort. Kontrollera att den inte används av någon bibliotekspost.",
+    "save": "Spara",
+    "cancel": "Avbryt",
+    "edit": "Ändra",
+    "delete": "Ta bort",
+    "deleteTitle": "Ta bort kategori?",
+    "deleteDescription": "Vill du verkligen ta bort kategorin {{name}}? Åtgärden kan inte ångras."
   }
 }

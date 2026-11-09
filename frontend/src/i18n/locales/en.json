@@ -260,5 +260,31 @@
     "imageFormats": "JPG, PNG or WebP · Max 5 MB",
     "invalidFormat": "Choose a JPG, PNG or WebP image.",
     "tooLarge": "The image must not exceed 5 MB."
+  },
+  "categoriesPage": {
+    "eyebrow": "ORGANIZATION",
+    "title": "Categories",
+    "description": "Organize library materials by creating, editing and deleting categories.",
+    "panelTitle": "Category management",
+    "categoryCount_one": "{{count}} category registered",
+    "categoryCount_other": "{{count}} categories registered"
+  },
+  "categoryManager": {
+    "newCategory": "New category",
+    "create": "Create category",
+    "categoryNameRequired": "Category name is required.",
+    "created": "Category has been created!",
+    "updated": "Category has been updated!",
+    "deleted": "Category has been deleted!",
+    "duplicateName": "A category with this name already exists.",
+    "createError": "Could not create category.",
+    "updateError": "Could not update category.",
+    "deleteError": "The category could not be deleted. Make sure it is not used by any library item.",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteTitle": "Delete category?",
+    "deleteDescription": "Are you sure you want to delete the category {{name}}? This action cannot be undone."
   }
 }
