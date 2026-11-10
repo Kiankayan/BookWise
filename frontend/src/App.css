@@ -2785,6 +2785,27 @@ button:active {
   background: rgba(255, 255, 255, 0.15);
   font-size: 30px;
   font-weight: 800;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.auth-brand-logo::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -100%;
+  width: 60%;
+  height: 200%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.55),
+    transparent
+  );
+  transform: rotate(25deg);
+  animation: logo-shine 4s ease-in-out infinite;
+  pointer-events: none;
 }
 
 .auth-brand-content {
