@@ -1273,6 +1273,12 @@ button:active {
   transform: translate(3px, -3px);
 }
 
+:root[data-theme="dark"]
+  .dashboard-recent-loans
+  .dashboard-recent-loans-view-all {
+  color: var(--bookwise-primary);
+}
+
 .dashboard-recent-loans-header h3 {
   margin: 0;
   color: var(--bookwise-text, #302642);
