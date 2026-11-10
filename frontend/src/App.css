@@ -3248,14 +3248,12 @@ button:active {
   }
 }
 
-@media (min-width: 681px) {
-  .auth-brand-panel {
-    animation: auth-slide-from-left 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
+.auth-brand-panel {
+  animation: auth-slide-from-left 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
 
-  .auth-form-panel {
-    animation: auth-slide-from-right 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
-  }
+.auth-form-panel {
+  animation: auth-slide-from-right 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .user-dashboard-charts {
