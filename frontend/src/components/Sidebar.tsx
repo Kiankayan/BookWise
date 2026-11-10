@@ -44,6 +44,18 @@ function Sidebar() {
           <h2>Bookwise</h2>
           <p>{t("sidebar.brandDescription")}</p>
         </div>
+
+        <button
+          type="button"
+          className="sidebar-link sidebar-logout-mobile"
+          onClick={handleLogout}
+          aria-label={t("sidebar.logoutAriaLabel")}
+        >
+          <span className="sidebar-link-icon" aria-hidden="true">
+            <LogOut size={19} strokeWidth={1.8} />
+          </span>
+          <span>{t("sidebar.logout")}</span>
+        </button>
       </div>
 
       <div className="sidebar-section-label">{t("sidebar.menu")}</div>
@@ -84,7 +96,7 @@ function Sidebar() {
 
       <button
         type="button"
-        className="sidebar-link"
+        className="sidebar-link sidebar-logout-desktop"
         onClick={handleLogout}
         aria-label={t("sidebar.logoutAriaLabel")}
       >

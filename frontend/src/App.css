@@ -750,6 +750,10 @@ button:active {
   padding: 0 8px 34px;
 }
 
+.sidebar .sidebar-logout-mobile {
+  display: none;
+}
+
 .sidebar-logo {
   display: grid;
   place-items: center;
@@ -848,6 +852,12 @@ button:active {
 }
 
 .sidebar-link:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  transform: translateX(2px);
+}
+
+.sidebar .sidebar-logout-mobile:hover {
   background: rgba(255, 255, 255, 0.12);
   color: #ffffff;
   transform: translateX(2px);
@@ -1678,7 +1688,27 @@ button:active {
   }
 
   .sidebar-brand {
-    padding: 0 2px 15px;
+    position: relative;
+    padding: 0 90px 15px 2px;
+  }
+
+  .sidebar-logout-desktop {
+    display: none;
+  }
+
+  .sidebar .sidebar-logout-mobile {
+    position: absolute;
+    top: 0;
+    right: 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 39px;
+    padding: 0 9px;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    font-size: 11px;
   }
 
   .sidebar-logo {
