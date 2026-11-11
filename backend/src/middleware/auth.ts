@@ -57,6 +57,7 @@ export default async function auth(
       },
       select: {
         isActive: true,
+        role: true,
       },
     });
 
@@ -72,7 +73,10 @@ export default async function auth(
       });
     }
 
-    (req as AuthRequest).user = decoded;
+    (req as AuthRequest).user = {
+      userId: decoded.userId,
+      role: user.role,
+    };
 
     return next();
   } catch (error) {
