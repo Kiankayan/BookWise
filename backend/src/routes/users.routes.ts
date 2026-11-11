@@ -5,18 +5,20 @@ import admin from "../middleware/admin.js";
 
 const router = Router();
 
+const userSelect = {
+  id: true,
+  name: true,
+  email: true,
+  role: true,
+  gender: true,
+  avatarUrl: true,
+  isActive: true,
+  createdAt: true,
+} satisfies Prisma.UserSelect;
+
 router.get("/", auth, admin, async (_req, res) => {
   const users = await prisma.user.findMany({
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      role: true,
-      gender: true,
-      avatarUrl: true,
-      isActive: true,
-      createdAt: true,
-    },
+    select: userSelect,
     orderBy: {
       createdAt: "desc",
     },
@@ -40,16 +42,7 @@ router.get("/:id", auth, admin, async (req: Request, res) => {
     where: {
       id,
     },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      role: true,
-      gender: true,
-      avatarUrl: true,
-      isActive: true,
-      createdAt: true,
-    },
+    select: userSelect,
   });
 
   if (!user) {
@@ -96,16 +89,7 @@ router.patch("/:id/role", auth, admin, async (req: Request, res) => {
       data: {
         role,
       },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        gender: true,
-        avatarUrl: true,
-        isActive: true,
-        createdAt: true,
-      },
+      select: userSelect,
     });
 
     return res.status(200).json({
@@ -159,16 +143,7 @@ router.patch("/:id/status", auth, admin, async (req: Request, res) => {
       data: {
         isActive,
       },
-      select: {
-        id: true,
-        name: true,
-        email: true,
-        role: true,
-        gender: true,
-        avatarUrl: true,
-        isActive: true,
-        createdAt: true,
-      },
+      select: userSelect,
     });
 
     return res.status(200).json({
