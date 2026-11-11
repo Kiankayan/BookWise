@@ -6,9 +6,12 @@ import {
   returnLibraryItem,
   getUserLoans,
   getRecentLoans,
+} from "../services/loan.service.js";
+
+import {
   getAvailabilityHistory,
   type AvailabilityChartPeriod,
-} from "../services/loan.service.js";
+} from "../services/availabilityHistory.service.js";
 
 const router = Router();
 
