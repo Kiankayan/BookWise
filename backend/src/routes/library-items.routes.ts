@@ -88,6 +88,9 @@ router.get("/", auth, async (req, res) => {
     }
 
     const libraryItems = await prisma.libraryItem.findMany({
+      where: {
+        archivedAt: null,
+      },
       include: {
         category: true,
         loans: {
@@ -129,9 +132,10 @@ router.get("/:id", auth, async (req, res) => {
   }
 
   try {
-    const libraryItem = await prisma.libraryItem.findUnique({
+    const libraryItem = await prisma.libraryItem.findFirst({
       where: {
         id,
+        archivedAt: null,
       },
       include: {
         category: true,
@@ -173,24 +177,31 @@ router.put("/:id", auth, admin, async (req, res) => {
       });
     }
 
-    const libraryItem = await prisma.libraryItem.update({
+    const libraryItem = await prisma.libraryItem.updateMany({
       where: {
         id,
+        archivedAt: null,
       },
       data: result.data,
     });
 
-    res.json(libraryItem);
-  } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === "P2025"
-    ) {
+    if (libraryItem.count === 0) {
       return res.status(404).json({
         message: "Library item kunde inte hittas.",
       });
     }
 
+    const updatedLibraryItem = await prisma.libraryItem.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        category: true,
+      },
+    });
+
+    return res.json(updatedLibraryItem);
+  } catch (error) {
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === "P2003"
@@ -202,7 +213,7 @@ router.put("/:id", auth, admin, async (req, res) => {
 
     console.error(error);
 
-    res.status(500).json({
+    return res.status(500).json({
       message: "Kunde inte uppdatera library item.",
     });
   }
@@ -218,9 +229,10 @@ router.delete("/:id", auth, admin, async (req, res) => {
   }
 
   try {
-    const libraryItem = await prisma.libraryItem.findUnique({
+    const libraryItem = await prisma.libraryItem.findFirst({
       where: {
         id,
+        archivedAt: null,
       },
     });
 
@@ -230,10 +242,17 @@ router.delete("/:id", auth, admin, async (req, res) => {
       });
     }
 
-    if (libraryItem.borrower || libraryItem.borrowDate) {
+    const activeLoan = await prisma.loan.findFirst({
+      where: {
+        itemId: id,
+        returnedAt: null,
+      },
+    });
+
+    if (activeLoan) {
       return res.status(409).json({
         message:
-          "Boken kan inte tas bort eftersom den är utlånad. Registrera återlämningen först.",
+          "Boken kan inte arkiveras eftersom den är utlånad. Registrera återlämningen först.",
       });
     }
 
@@ -247,9 +266,12 @@ router.delete("/:id", auth, admin, async (req, res) => {
         },
       });
 
-      await tx.libraryItem.delete({
+      await tx.libraryItem.update({
         where: {
           id,
+        },
+        data: {
+          archivedAt: new Date(),
         },
       });
     });
@@ -259,7 +281,7 @@ router.delete("/:id", auth, admin, async (req, res) => {
     console.error(error);
 
     return res.status(500).json({
-      message: "Kunde inte ta bort biblioteksposten.",
+      message: "Kunde inte arkivera biblioteksposten.",
     });
   }
 });
