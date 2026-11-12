@@ -35,6 +35,7 @@ model LibraryItem {
   dueDate        DateTime?
   categoryId     String
   imageUrl       String?
+  archivedAt     DateTime?
 
   category       Category @relation(fields: [categoryId], references: [id])
   loans          Loan[]
