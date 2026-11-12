@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { motion } from "motion/react";
-import { Folder } from "lucide-react";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import {
@@ -10,6 +8,7 @@ import {
 } from "../services/CategoryService";
 import type { Category } from "../types/library";
 import DeleteCategoryDialog from "./DeleteCategoryDialog";
+import CategoryList from "./CategoryList";
 
 interface CategoryManagerProps {
   categories: Category[];
@@ -111,68 +110,16 @@ function CategoryManager({
         </button>
       </div>
 
-      <div className="category-list">
-        {categories.map((category, index) => (
-          <motion.div
-            className="category-row"
-            key={category.id}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              duration: 0.4,
-              delay: Math.min(index * 0.08, 0.48),
-              ease: "easeOut",
-            }}
-          >
-            {editingCategoryId === category.id ? (
-              <div className="category-edit">
-                <input
-                  type="text"
-                  value={editingCategoryName}
-                  onChange={(event) =>
-                    setEditingCategoryName(event.target.value)
-                  }
-                />
-
-                <div className="category-actions">
-                  <button type="button" onClick={handleUpdateCategory}>
-                    {t("categoryManager.save")}
-                  </button>
-
-                  <button type="button" onClick={cancelEditing}>
-                    {t("categoryManager.cancel")}
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <>
-                <div className="category-title">
-                  <Folder size={20} />
-                  <span className="category-name">{category.name}</span>
-                </div>
-
-                <div className="category-actions">
-                  <button
-                    type="button"
-                    className="category-edit-button"
-                    onClick={() => startEditing(category)}
-                  >
-                    {t("categoryManager.edit")}
-                  </button>
-
-                  <button
-                    type="button"
-                    className="category-delete-button"
-                    onClick={() => setCategoryToDelete(category)}
-                  >
-                    {t("categoryManager.delete")}
-                  </button>
-                </div>
-              </>
-            )}
-          </motion.div>
-        ))}
-      </div>
+      <CategoryList
+        categories={categories}
+        editingCategoryId={editingCategoryId}
+        editingCategoryName={editingCategoryName}
+        onEditingCategoryNameChange={setEditingCategoryName}
+        onStartEditing={startEditing}
+        onCancelEditing={cancelEditing}
+        onUpdateCategory={handleUpdateCategory}
+        onDeleteCategory={setCategoryToDelete}
+      />
 
       <DeleteCategoryDialog
         category={categoryToDelete}
