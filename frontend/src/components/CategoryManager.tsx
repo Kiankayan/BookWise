@@ -1,22 +1,15 @@
 import { useState } from "react";
 import { motion } from "motion/react";
-import { Folder, Trash2, AlertTriangle } from "lucide-react";
+import { Folder } from "lucide-react";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button as MuiButton,
-} from "@mui/material";
 import {
   createCategory,
   deleteCategory,
   updateCategory,
 } from "../services/CategoryService";
 import type { Category } from "../types/library";
+import DeleteCategoryDialog from "./DeleteCategoryDialog";
 
 interface CategoryManagerProps {
   categories: Category[];
@@ -181,92 +174,11 @@ function CategoryManager({
         ))}
       </div>
 
-      <Dialog
-        open={categoryToDelete !== null}
+      <DeleteCategoryDialog
+        category={categoryToDelete}
         onClose={() => setCategoryToDelete(null)}
-        aria-labelledby="delete-category-title"
-        aria-describedby="delete-category-description"
-        fullWidth
-        maxWidth="xs"
-        slotProps={{
-          paper: {
-            sx: {
-              borderRadius: "20px",
-              padding: "8px",
-              boxShadow: "0 20px 60px rgba(55, 35, 91, 0.18)",
-            },
-          },
-        }}
-      >
-        <DialogTitle
-          id="delete-category-title"
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1.5,
-            color: "#302642",
-            fontWeight: 750,
-            fontSize: "20px",
-          }}
-        >
-          <AlertTriangle size={23} color="#7c3aed" />
-          {t("categoryManager.deleteTitle")}
-        </DialogTitle>
-
-        <DialogContent>
-          <DialogContentText
-            id="delete-category-description"
-            sx={{ color: "#807990", lineHeight: 1.8 }}
-          >
-            {t("categoryManager.deleteDescription", {
-              name: categoryToDelete?.name ?? "",
-            })}
-          </DialogContentText>
-        </DialogContent>
-
-        <DialogActions sx={{ padding: "16px", gap: 1 }}>
-          <MuiButton
-            onClick={() => setCategoryToDelete(null)}
-            variant="outlined"
-            sx={{
-              color: "#6d28d9",
-              backgroundColor: "#ffffff",
-              border: "1px solid #d8ccff",
-              textTransform: "none",
-              fontWeight: 600,
-              borderRadius: "10px",
-              padding: "9px 16px",
-              boxShadow: "none",
-              "&:hover": {
-                color: "#6d28d9",
-                backgroundColor: "#eee5ff",
-                border: "1px solid #7c3aed",
-                boxShadow: "0 4px 12px rgba(124, 58, 237, 0.15)",
-                transform: "translateY(-1px)",
-              },
-            }}
-          >
-            {t("categoryManager.cancel")}
-          </MuiButton>
-
-          <MuiButton
-            onClick={confirmDeleteCategory}
-            variant="contained"
-            startIcon={<Trash2 size={17} />}
-            sx={{
-              backgroundColor: "#7c3aed",
-              "&:hover": { backgroundColor: "#6d28d9" },
-              textTransform: "none",
-              fontWeight: 600,
-              borderRadius: "10px",
-              padding: "9px 16px",
-              boxShadow: "none",
-            }}
-          >
-            {t("categoryManager.delete")}
-          </MuiButton>
-        </DialogActions>
-      </Dialog>
+        onConfirm={confirmDeleteCategory}
+      />
     </section>
   );
 }
