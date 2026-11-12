@@ -1,26 +1,18 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "react-i18next";
-import { motion } from "motion/react";
 import { toast } from "react-toastify";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button as MuiButton,
-} from "@mui/material";
-import { AlertTriangle, Trash2 } from "lucide-react";
 import {
   borrowLibraryItem,
   returnLibraryItem,
   deleteLibraryItem,
 } from "../services/LibraryItemService";
-import EditLibraryItemForm from "./EditLibraryItemForm";
 import type { Category, LibraryItem, LibrarySort } from "../types/library";
 import BookDetailsModal from "./BookDetailsModal";
-import { getLibraryItemImage } from "../utils/libraryItemImage";
+import LibraryToolbar from "./LibraryToolbar";
+import LibraryItemCard from "./LibraryItemCard";
+import LibraryItemDialogs from "./LibraryItemDialogs";
+import { getTypeLabel } from "../utils/libraryItemHelpers";
 
 interface LibraryItemListProps {
   libraryItems: LibraryItem[];
@@ -28,28 +20,6 @@ interface LibraryItemListProps {
   sort: LibrarySort;
   setSort: (sort: LibrarySort) => void;
   onLibraryItemUpdated: () => Promise<void>;
-}
-
-function getTitleAbbreviation(title: string) {
-  return title
-    .split(" ")
-    .filter((word) => word.length > 0)
-    .map((word) => word[0].toUpperCase())
-    .join("");
-}
-
-function isOverdue(dueDate: string | null) {
-  if (!dueDate) {
-    return false;
-  }
-
-  const date = new Date(dueDate);
-  const today = new Date();
-
-  date.setHours(0, 0, 0, 0);
-  today.setHours(0, 0, 0, 0);
-
-  return date < today;
 }
 
 function LibraryItemList({
@@ -64,19 +34,6 @@ function LibraryItemList({
   const isAdmin = user?.role === "ADMIN";
 
   const dateLocale = i18n.language.startsWith("sv") ? "sv-SE" : "en-US";
-
-  const getTypeLabel = (type: LibraryItem["type"]) => {
-    switch (type) {
-      case "BOOK":
-        return t("library.book");
-      case "DVD":
-        return t("library.dvd");
-      case "AUDIOBOOK":
-        return t("library.audiobook");
-      case "REFERENCE_BOOK":
-        return t("library.referenceBook");
-    }
-  };
 
   const [showAbbreviations, setShowAbbreviations] = useState(false);
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
@@ -135,8 +92,8 @@ function LibraryItemList({
           return a.category.name.localeCompare(b.category.name, dateLocale);
 
         case "type":
-          return getTypeLabel(a.type).localeCompare(
-            getTypeLabel(b.type),
+          return getTypeLabel(a.type, (key) => t(key)).localeCompare(
+            getTypeLabel(b.type, (key) => t(key)),
             dateLocale,
           );
 
@@ -188,6 +145,11 @@ function LibraryItemList({
   async function handleDelete() {
     if (!itemToDelete) return;
 
+    console.log("Library item:", itemToDelete);
+    console.log("Active loans:", itemToDelete.loans);
+    console.log("Borrower:", itemToDelete.borrower);
+    console.log("Borrow date:", itemToDelete.borrowDate);
+
     if (itemToDelete.loans.length > 0) {
       toast.error(t("library.cannotDeleteBorrowed"));
       return;
@@ -206,477 +168,63 @@ function LibraryItemList({
 
   return (
     <div className="library-list">
-      <div className="library-toolbar">
-        <div className="library-search">
-          <label htmlFor="library-search-input">
-            {t("library.searchLabel")}
-          </label>
-          <input
-            id="library-search-input"
-            type="search"
-            placeholder={t("library.searchPlaceholder")}
-            value={searchTerm}
-            onChange={(event) => setSearchTerm(event.target.value)}
-          />
-        </div>
-
-        <div className="sort-control">
-          <label htmlFor="category-filter">{t("library.categoryFilter")}</label>
-          <select
-            id="category-filter"
-            value={selectedCategory}
-            onChange={(event) => setSelectedCategory(event.target.value)}
-          >
-            <option value="all">{t("library.allCategories")}</option>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="sort-control">
-          <label htmlFor="availability-filter">
-            {t("library.availability")}
-          </label>
-          <select
-            id="availability-filter"
-            value={selectedAvailability}
-            onChange={(event) => setSelectedAvailability(event.target.value)}
-          >
-            <option value="all">{t("library.allMaterials")}</option>
-            <option value="available">{t("library.available")}</option>
-            <option value="borrowed">{t("library.borrowed")}</option>
-            <option value="reference">{t("library.reference")}</option>
-          </select>
-        </div>
-
-        <div className="sort-control">
-          <label htmlFor="sort">{t("library.sortBy")}</label>
-
-          <select
-            id="sort"
-            value={sort}
-            onChange={(event) => setSort(event.target.value as LibrarySort)}
-          >
-            <option value="title-asc">{t("library.titleAsc")}</option>
-            <option value="title-desc">{t("library.titleDesc")}</option>
-            <option value="category">{t("library.categoryAsc")}</option>
-            <option value="type">{t("library.type")}</option>
-          </select>
-        </div>
-
-        <button
-          type="button"
-          onClick={() => setShowAbbreviations(!showAbbreviations)}
-        >
-          {showAbbreviations
-            ? t("library.showFullTitles")
-            : t("library.showAbbreviatedTitles")}
-        </button>
-      </div>
+      <LibraryToolbar
+        categories={categories}
+        sort={sort}
+        setSort={setSort}
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        selectedAvailability={selectedAvailability}
+        setSelectedAvailability={setSelectedAvailability}
+        showAbbreviations={showAbbreviations}
+        setShowAbbreviations={setShowAbbreviations}
+      />
 
       <p className="library-results-count" aria-live="polite">
         {t("library.results", { count: filteredItems.length })}
       </p>
 
       <div className="library-items">
-        {filteredItems.map((item, index) => {
-          const activeLoan = item.loans[0];
-
-          return (
-            <motion.div
-              className="library-item"
-              key={item.id}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              whileHover={{ y: -5, scale: 1.015 }}
-              transition={{
-                duration: 0.25,
-                delay: Math.min(index * 0.08, 0.48),
-                ease: "easeOut",
-              }}
-              onClick={(event) => {
-                if (
-                  event.target instanceof Element &&
-                  event.target.closest("button, input, select, textarea, a")
-                ) {
-                  return;
-                }
-
-                if (editingItemId !== item.id) {
-                  setSelectedItem(item);
-                }
-              }}
-              role="button"
-              tabIndex={0}
-              aria-label={t("library.detailsAriaLabel", {
-                title: item.title,
-              })}
-              onKeyDown={(event) => {
-                if (event.target !== event.currentTarget) return;
-
-                if (event.key === "Enter" || event.key === " ") {
-                  event.preventDefault();
-                  setSelectedItem(item);
-                }
-              }}
-            >
-              {editingItemId === item.id ? (
-                <EditLibraryItemForm
-                  item={item}
-                  categories={categories}
-                  onLibraryItemUpdated={onLibraryItemUpdated}
-                  onCancel={() => setEditingItemId(null)}
-                />
-              ) : (
-                <>
-                  <img
-                    className="library-item-image"
-                    src={getLibraryItemImage(item)}
-                    alt={t("library.coverAlt", { title: item.title })}
-                    loading="lazy"
-                  />
-
-                  <h2>
-                    {showAbbreviations
-                      ? `${item.title} (${getTitleAbbreviation(item.title)})`
-                      : item.title}
-                  </h2>
-
-                  <p>
-                    {t("library.typeLabel")} {getTypeLabel(item.type)}
-                  </p>
-                  <p>
-                    {t("library.categoryLabel")} {item.category.name}
-                  </p>
-
-                  {item.isBorrowable ? (
-                    activeLoan ? (
-                      <>
-                        <p>
-                          {t("library.borrowedTo")}{" "}
-                          {activeLoan?.borrowerName ?? "-"}
-                        </p>
-
-                        <p>
-                          {t("library.borrowDate")}{" "}
-                          {activeLoan?.borrowDate
-                            ? new Date(
-                                activeLoan.borrowDate,
-                              ).toLocaleDateString(dateLocale)
-                            : "-"}
-                        </p>
-
-                        <p>
-                          {t("library.dueDate")}{" "}
-                          {activeLoan?.dueDate
-                            ? new Date(activeLoan.dueDate).toLocaleDateString(
-                                dateLocale,
-                              )
-                            : "-"}
-                        </p>
-
-                        {isOverdue(activeLoan?.dueDate ?? null) ? (
-                          <p className="overdue-label" role="status">
-                            {t("library.overdue")}
-                          </p>
-                        ) : (
-                          <p className="borrowed-label" role="status">
-                            {t("library.borrowedStatus")}
-                          </p>
-                        )}
-
-                        <div className="library-item-actions">
-                          {(isAdmin || item.loans[0]?.userId === user?.id) && (
-                            <button
-                              type="button"
-                              className="library-action-button"
-                              onClick={() => handleReturn(item)}
-                            >
-                              {t("library.return")}
-                            </button>
-                          )}
-
-                          {isAdmin && (
-                            <>
-                              <button
-                                type="button"
-                                className="library-action-button"
-                                onClick={() => setEditingItemId(item.id)}
-                              >
-                                {t("library.edit")}
-                              </button>
-
-                              <button
-                                type="button"
-                                className="library-action-button"
-                                onClick={() => setItemToDelete(item)}
-                              >
-                                {t("library.delete")}
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <p className="available-label" role="status">
-                          {t("library.notBorrowed")}
-                        </p>
-
-                        <div className="library-item-actions">
-                          <button
-                            type="button"
-                            className="library-action-button"
-                            onClick={() => handleBorrow(item)}
-                          >
-                            {t("library.borrow")}
-                          </button>
-
-                          {isAdmin && (
-                            <>
-                              <button
-                                type="button"
-                                className="library-action-button"
-                                onClick={() => setEditingItemId(item.id)}
-                              >
-                                {t("library.edit")}
-                              </button>
-
-                              <button
-                                type="button"
-                                className="library-action-button"
-                                onClick={() => setItemToDelete(item)}
-                              >
-                                {t("library.delete")}
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </>
-                    )
-                  ) : (
-                    <>
-                      <p>{t("library.referenceDescription")}</p>
-
-                      {isAdmin && (
-                        <div className="library-item-actions">
-                          <button
-                            type="button"
-                            className="library-action-button"
-                            onClick={() => setEditingItemId(item.id)}
-                          >
-                            {t("library.edit")}
-                          </button>
-
-                          <button
-                            type="button"
-                            className="library-action-button"
-                            onClick={() => setItemToDelete(item)}
-                          >
-                            {t("library.delete")}
-                          </button>
-                        </div>
-                      )}
-                    </>
-                  )}
-                </>
-              )}
-            </motion.div>
-          );
-        })}
+        {filteredItems.map((item, index) => (
+          <LibraryItemCard
+            key={item.id}
+            item={item}
+            index={index}
+            categories={categories}
+            isAdmin={isAdmin}
+            userId={user?.id}
+            dateLocale={dateLocale}
+            showAbbreviations={showAbbreviations}
+            editingItemId={editingItemId}
+            onEdit={(item) => setEditingItemId(item.id)}
+            onCancelEdit={() => setEditingItemId(null)}
+            onBorrow={handleBorrow}
+            onReturn={handleReturn}
+            onDelete={setItemToDelete}
+            onSelect={setSelectedItem}
+            onLibraryItemUpdated={onLibraryItemUpdated}
+          />
+        ))}
       </div>
 
       {filteredItems.length === 0 && (
         <p className="library-empty-state">{t("library.emptyState")}</p>
       )}
 
-      <Dialog
-        open={itemToBorrow !== null}
-        onClose={closeBorrowDialog}
-        aria-labelledby="borrow-library-item-title"
-        slotProps={{
-          paper: {
-            sx: {
-              borderRadius: "16px",
-              padding: "8px",
-              maxWidth: "440px",
-              width: "100%",
-            },
-          },
-        }}
-      >
-        <DialogTitle id="borrow-library-item-title" sx={{ color: "#6d28d9" }}>
-          {t("library.borrowDialogTitle")}
-        </DialogTitle>
-
-        <DialogContent>
-          <DialogContentText>
-            {t("library.borrowDialogDescription", {
-              title: itemToBorrow?.title ?? "",
-              name: user?.name ?? "",
-            })}
-          </DialogContentText>
-        </DialogContent>
-
-        <DialogActions sx={{ padding: "16px 24px" }}>
-          <MuiButton
-            onClick={closeBorrowDialog}
-            variant="outlined"
-            sx={{
-              borderColor: "#6d28d9",
-              color: "#6d28d9",
-              "&:hover": {
-                borderColor: "#5b21b6",
-                backgroundColor: "#f5f3ff",
-              },
-            }}
-          >
-            {t("library.cancel")}
-          </MuiButton>
-
-          <MuiButton
-            onClick={() => void confirmBorrow()}
-            variant="contained"
-            sx={{
-              backgroundColor: "#6d28d9",
-              "&:hover": {
-                backgroundColor: "#5b21b6",
-              },
-            }}
-          >
-            {t("library.confirmBorrow")}
-          </MuiButton>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog
-        open={itemToDelete !== null}
-        onClose={() => setItemToDelete(null)}
-        aria-labelledby="delete-library-item-title"
-        slotProps={{
-          paper: {
-            sx: {
-              borderRadius: "16px",
-              padding: "8px",
-              maxWidth: "440px",
-              width: "100%",
-            },
-          },
-        }}
-      >
-        <DialogTitle
-          id="delete-library-item-title"
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1,
-            color: "#b91c1c",
-          }}
-        >
-          <AlertTriangle size={24} />
-          {t("library.deleteDialogTitle")}
-        </DialogTitle>
-
-        <DialogContent>
-          <DialogContentText>
-            {t("library.deleteDialogDescription", {
-              title: itemToDelete?.title ?? "",
-            })}
-          </DialogContentText>
-        </DialogContent>
-
-        <DialogActions sx={{ padding: "16px 24px" }}>
-          <MuiButton
-            onClick={() => setItemToDelete(null)}
-            variant="outlined"
-            sx={{
-              borderColor: "#6d28d9",
-              color: "#6d28d9",
-              "&:hover": {
-                borderColor: "#5b21b6",
-                backgroundColor: "#f5f3ff",
-              },
-            }}
-          >
-            {t("library.cancel")}
-          </MuiButton>
-
-          <MuiButton
-            onClick={handleDelete}
-            variant="contained"
-            startIcon={<Trash2 size={18} />}
-            sx={{
-              backgroundColor: "#dc2626",
-              "&:hover": {
-                backgroundColor: "#b91c1c",
-              },
-            }}
-          >
-            {t("library.delete")}
-          </MuiButton>
-        </DialogActions>
-      </Dialog>
-
-      <Dialog
-        open={itemToReturn !== null}
-        onClose={() => setItemToReturn(null)}
-        aria-labelledby="return-library-item-title"
-        slotProps={{
-          paper: {
-            sx: {
-              borderRadius: "16px",
-              padding: "8px",
-              maxWidth: "440px",
-              width: "100%",
-            },
-          },
-        }}
-      >
-        <DialogTitle id="return-library-item-title" sx={{ color: "#6d28d9" }}>
-          {t("library.returnDialogTitle")}
-        </DialogTitle>
-
-        <DialogContent>
-          <DialogContentText>
-            {t("library.returnDialogDescription", {
-              title: itemToReturn?.title ?? "",
-            })}
-          </DialogContentText>
-        </DialogContent>
-
-        <DialogActions sx={{ padding: "16px 24px" }}>
-          <MuiButton
-            onClick={() => setItemToReturn(null)}
-            variant="outlined"
-            sx={{
-              borderColor: "#6d28d9",
-              color: "#6d28d9",
-              "&:hover": {
-                borderColor: "#5b21b6",
-                backgroundColor: "#f5f3ff",
-              },
-            }}
-          >
-            {t("library.cancel")}
-          </MuiButton>
-
-          <MuiButton
-            onClick={() => void confirmReturn()}
-            variant="contained"
-            sx={{
-              backgroundColor: "#6d28d9",
-              "&:hover": {
-                backgroundColor: "#5b21b6",
-              },
-            }}
-          >
-            {t("library.confirmReturn")}
-          </MuiButton>
-        </DialogActions>
-      </Dialog>
+      <LibraryItemDialogs
+        itemToBorrow={itemToBorrow}
+        itemToDelete={itemToDelete}
+        itemToReturn={itemToReturn}
+        userName={user?.name}
+        onCloseBorrow={closeBorrowDialog}
+        onCloseDelete={() => setItemToDelete(null)}
+        onCloseReturn={() => setItemToReturn(null)}
+        onConfirmBorrow={() => void confirmBorrow()}
+        onConfirmDelete={() => void handleDelete()}
+        onConfirmReturn={() => void confirmReturn()}
+      />
 
       <BookDetailsModal
         item={selectedItem}
