@@ -1,8 +1,4 @@
-import type {
-  LibraryItem,
-  LibraryItemInput,
-  LibrarySort,
-} from "../types/library";
+import type { LibraryItem, LibraryItemInput } from "../types/library";
 import type {
   AvailabilityHistoryPoint,
   ChartPeriod,
@@ -21,12 +17,8 @@ export async function returnLibraryItem(id: string) {
   return api.post<LibraryItem>(`${LOANS_URL}/${id}/return`);
 }
 
-export async function getLibraryItems(sort: LibrarySort = "title-asc") {
-  return api.get<LibraryItem[]>(LIBRARY_ITEMS_URL, {
-    params: {
-      sort,
-    },
-  });
+export async function getLibraryItems() {
+  return api.get<LibraryItem[]>(LIBRARY_ITEMS_URL);
 }
 
 export async function getLibraryItem(id: string) {

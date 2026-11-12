@@ -35,7 +35,7 @@ function App() {
 
   const loadLibraryItems = useCallback(async () => {
     try {
-      const response = await getLibraryItems(sort);
+      const response = await getLibraryItems();
       setLibraryItems(response.data);
       setLibraryItemsError("");
     } catch (error) {
@@ -44,7 +44,7 @@ function App() {
         "Kunde inte hämta böcker från servern. Kontrollera att backend-servern är igång och försök igen.",
       );
     }
-  }, [sort]);
+  }, []);
 
   const loadCategories = useCallback(async () => {
     try {
