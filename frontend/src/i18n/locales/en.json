@@ -410,7 +410,7 @@
     "confirmPasswordPlaceholder": "Enter password again",
     "loading": "Saving...",
     "submit": "Save new password",
-    "success": "Your password has been reset. You can now log in.",
+    "success": "All done! Your password has been updated. You can now log in with your new password.",
     "error": "Could not reset your password. The link may have expired or already been used.",
     "invalidLink": "The reset link is invalid or missing a token.",
     "passwordMismatch": "The passwords do not match.",

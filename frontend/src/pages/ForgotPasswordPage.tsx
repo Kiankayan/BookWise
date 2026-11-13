@@ -9,22 +9,22 @@ import { forgotPasswordUser } from "../services/AuthService";
 function ForgotPasswordPage() {
   const { t } = useTranslation();
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    setMessage("");
-    setError("");
+    setIsSuccess(false);
+    setError(false);
     setIsLoading(true);
 
     try {
       await forgotPasswordUser(email);
-      setMessage(t("forgotPassword.success"));
+      setIsSuccess(true);
     } catch {
-      setError(t("forgotPassword.error"));
+      setError(true);
     } finally {
       setIsLoading(false);
     }
@@ -62,15 +62,15 @@ function ForgotPasswordPage() {
                 </div>
               </div>
 
-              {message && (
+              {isSuccess && (
                 <p className="auth-success" role="status">
-                  {message}
+                  {t("forgotPassword.success")}
                 </p>
               )}
 
               {error && (
                 <p className="auth-error" role="alert">
-                  {error}
+                  {t("forgotPassword.error")}
                 </p>
               )}
 

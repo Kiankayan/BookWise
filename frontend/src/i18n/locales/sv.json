@@ -131,7 +131,7 @@
     "emailPlaceholder": "Ange din e-postadress",
     "loading": "Skickar...",
     "submit": "Återställ lösenord",
-    "success": "Om kontot finns har instruktioner för lösenordsåterställning skickats.",
+    "success": "Om kontot finns registrerat har vi skickat instruktioner för att återställa ditt lösenord.",
     "error": "Något gick fel. Försök igen senare.",
     "backToLogin": "Tillbaka till inloggning"
   },
@@ -410,7 +410,7 @@
     "confirmPasswordPlaceholder": "Ange lösenordet igen",
     "loading": "Sparar...",
     "submit": "Spara nytt lösenord",
-    "success": "Ditt lösenord har återställts. Du kan nu logga in.",
+    "success": "Klart! Ditt lösenord har uppdaterats. Nu kan du logga in med ditt nya lösenord.",
     "error": "Det gick inte att återställa lösenordet. Länken kan ha gått ut eller redan använts.",
     "invalidLink": "Återställningslänken är ogiltig eller saknar token.",
     "passwordMismatch": "Lösenorden matchar inte.",

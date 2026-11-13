@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { LockKeyhole } from "lucide-react";
+import { Eye, EyeOff, LockKeyhole } from "lucide-react";
 import AuthBrandPanel from "../components/auth/AuthBrandPanel";
 import AuthLanguageSwitch from "../components/auth/AuthLanguageSwitch";
 import { resetPasswordUser } from "../services/AuthService";
@@ -14,6 +14,7 @@ function ResetPasswordPage() {
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -76,12 +77,12 @@ function ResetPasswordPage() {
                     {t("resetPassword.password")}
                   </label>
 
-                  <div className="auth-input-wrapper">
+                  <div className="auth-input-wrapper auth-password-wrapper">
                     <LockKeyhole size={18} />
 
                     <input
                       id="password"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       value={password}
                       onChange={(event) => setPassword(event.target.value)}
                       placeholder={t("resetPassword.passwordPlaceholder")}
@@ -89,6 +90,19 @@ function ResetPasswordPage() {
                       maxLength={72}
                       required
                     />
+
+                    <button
+                      className="auth-password-toggle"
+                      type="button"
+                      onClick={() => setShowPassword((current) => !current)}
+                      aria-label={
+                        showPassword
+                          ? t("login.hidePassword")
+                          : t("login.showPassword")
+                      }
+                    >
+                      {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                    </button>
                   </div>
                 </div>
 
@@ -97,12 +111,12 @@ function ResetPasswordPage() {
                     {t("resetPassword.confirmPassword")}
                   </label>
 
-                  <div className="auth-input-wrapper">
+                  <div className="auth-input-wrapper auth-password-wrapper">
                     <LockKeyhole size={18} />
 
                     <input
                       id="confirmPassword"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       value={confirmPassword}
                       onChange={(event) =>
                         setConfirmPassword(event.target.value)
