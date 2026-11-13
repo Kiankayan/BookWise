@@ -36,3 +36,14 @@ export async function loginUser(
 export async function logoutUser() {
   return api.post(`${API_URL}/logout`);
 }
+
+export async function forgotPasswordUser(email: string) {
+  return api.post(`${API_URL}/forgot-password`, { email });
+}
+
+export async function resetPasswordUser(token: string, password: string) {
+  return api.post(`${API_URL}/reset-password`, {
+    token,
+    password,
+  });
+}

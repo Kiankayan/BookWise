@@ -124,6 +124,17 @@
     "noAccount": "Har du inget konto?",
     "register": "Registrera dig"
   },
+  "forgotPassword": {
+    "title": "Glömt lösenord?",
+    "description": "Ange din e-postadress så hjälper vi dig att återställa ditt lösenord.",
+    "email": "E-postadress",
+    "emailPlaceholder": "Ange din e-postadress",
+    "loading": "Skickar...",
+    "submit": "Återställ lösenord",
+    "success": "Om kontot finns har instruktioner för lösenordsåterställning skickats.",
+    "error": "Något gick fel. Försök igen senare.",
+    "backToLogin": "Tillbaka till inloggning"
+  },
   "register": {
     "brandDescription": "Bibliotekshantering",
     "heroTitle": "Upptäck en värld av kunskap.",
@@ -218,7 +229,7 @@
     "cancel": "Avbryt",
     "confirmBorrow": "Bekräfta lån",
     "deleteDialogTitle": "Ta bort bibliotekspost",
-    "deleteDialogDescription": "Är du säker på att du vill ta bort {{title}}? Den här åtgärden kan inte ångras.",
+    "deleteDialogDescription": "Vill du verkligen ta bort {{title}}? Den här åtgärden kan inte ångras.",
     "returnDialogTitle": "Återlämna bibliotekspost",
     "returnDialogDescription": "Vill du bekräfta att {{title}} har återlämnats?",
     "confirmReturn": "Bekräfta återlämning"
@@ -318,7 +329,6 @@
     "updateRoleError": "Kunde inte ändra användarroll. Försök igen.",
     "updateStatusError": "Kunde inte ändra kontostatus. Försök igen."
   },
-
   "profilePage": {
     "administrator": "Administratör",
     "user": "Användare",

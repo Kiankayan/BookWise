@@ -124,6 +124,17 @@
     "noAccount": "Don't have an account?",
     "register": "Register"
   },
+  "forgotPassword": {
+    "title": "Forgot password?",
+    "description": "Enter your email address and we will help you reset your password.",
+    "email": "Email address",
+    "emailPlaceholder": "Enter your email address",
+    "loading": "Sending...",
+    "submit": "Reset password",
+    "success": "If the account exists, password reset instructions have been sent.",
+    "error": "Something went wrong. Please try again later.",
+    "backToLogin": "Back to login"
+  },
   "register": {
     "brandDescription": "Library management",
     "heroTitle": "Discover a world of knowledge.",

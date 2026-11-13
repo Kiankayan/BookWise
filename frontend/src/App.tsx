@@ -14,6 +14,7 @@ import CategoriesPage from "./pages/CategoriesPage";
 import AddItemPage from "./pages/AddItemPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import MyLoansPage from "./pages/MyLoansPage";
 import ProfilePage from "./pages/ProfilePage";
 import UsersPage from "./pages/UsersPage";
@@ -135,6 +136,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
         <Route element={<ProtectedRoute />}>
           <Route element={<AppLayout />}>
