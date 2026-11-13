@@ -2,17 +2,17 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { motion, useReducedMotion } from "motion/react";
-import { BookOpen, CircleAlert, CircleCheck, ArrowRight } from "lucide-react";
+import { BookOpen, CircleAlert, CircleCheck } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import { getMyLoans } from "../services/LoanService";
 import type { Loan } from "../types/loan";
-import { getLibraryItemImage } from "../utils/libraryItemImage";
 import UserDashboardWelcome from "../components/user-dashboard/UserDashboardWelcome";
 import UserDashboardStats from "../components/user-dashboard/UserDashboardStats";
 import UserLoanChart, {
   type ChartPeriod,
 } from "../components/user-dashboard/UserLoanChart";
 import UserCategoryChart from "../components/user-dashboard/UserCategoryChart";
+import UserRecentActivity from "../components/user-dashboard/UserRecentActivity";
 
 function UserDashboardPage() {
   const { user } = useAuth();
@@ -333,85 +333,12 @@ function UserDashboardPage() {
             />
           </section>
 
-          <section className="page-panel">
-            <div className="page-panel-heading">
-              <div>
-                <h3>{t("userDashboard.recentActivity")}</h3>
-                <p>{t("userDashboard.recentActivityDescription")}</p>
-              </div>
-
-              <button
-                className="dashboard-recent-loans-view-all"
-                type="button"
-                onClick={() => navigate("/my-loans")}
-              >
-                {t("dashboard.viewAll")}
-                <ArrowRight size={14} />
-              </button>
-            </div>
-
-            {recentActivities.length === 0 ? (
-              <p>{t("userDashboard.noActivity")}</p>
-            ) : (
-              <div className="dashboard-recent-loans-list">
-                {recentActivities.map((activity) => {
-                  const isReturned = activity.type === "returned";
-                  const isOverdue =
-                    !isReturned && new Date(activity.loan.dueDate) < now;
-
-                  const status = isReturned
-                    ? t("dashboard.returned")
-                    : isOverdue
-                      ? t("dashboard.overdueStatus")
-                      : t("dashboard.borrowedStatus");
-
-                  const statusClass = isReturned
-                    ? "is-returned"
-                    : isOverdue
-                      ? "is-overdue"
-                      : "is-borrowed";
-
-                  return (
-                    <article
-                      className="dashboard-recent-loan"
-                      key={activity.id}
-                    >
-                      <div className="dashboard-recent-loan-details">
-                        <img
-                          className={`dashboard-recent-loan-cover ${
-                            activity.loan.item.imageUrl
-                              ? ""
-                              : "is-default-image"
-                          }`}
-                          src={getLibraryItemImage(activity.loan.item)}
-                          alt={t("userDashboard.coverAlt", {
-                            title: activity.loan.item.title,
-                          })}
-                        />
-
-                        <div className="dashboard-recent-loan-info">
-                          <h4>{activity.loan.item.title}</h4>
-                          <p>
-                            {isReturned
-                              ? t("dashboard.returned")
-                              : t("dashboard.borrowDate")}
-                            :{" "}
-                            {new Date(activity.date).toLocaleDateString(locale)}
-                          </p>
-                        </div>
-                      </div>
-
-                      <span
-                        className={`dashboard-recent-loan-status ${statusClass}`}
-                      >
-                        {status}
-                      </span>
-                    </article>
-                  );
-                })}
-              </div>
-            )}
-          </section>
+          <UserRecentActivity
+            activities={recentActivities}
+            now={now}
+            locale={locale}
+            onViewAll={() => navigate("/my-loans")}
+          />
 
           <section className="dashboard-overview-card">
             <div className="dashboard-overview-content">
