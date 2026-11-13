@@ -22,6 +22,7 @@ import CategoryChart from "../components/dashboard/CategoryChart";
 import AvailabilityChart from "../components/dashboard/AvailabilityChart";
 import RecentLoans from "../components/dashboard/RecentLoans";
 import DashboardWelcome from "../components/dashboard/DashboardWelcome";
+import DashboardOverview from "../components/dashboard/DashboardOverview";
 
 type DashboardPageProps = {
   libraryItems: LibraryItem[];
@@ -261,48 +262,17 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
         />
       </div>
 
-      <section className="dashboard-overview-card">
-        <div className="dashboard-overview-content">
-          <p className="eyebrow">{t("dashboard.overviewEyebrow")}</p>
-          <h3>{t("dashboard.overviewTitle")}</h3>
-          <p>
-            {t("dashboard.overviewDescription", {
-              itemCount: libraryItems.length,
-              categoryCount: categories.length,
-            })}
-          </p>
-
-          <button
-            className="dashboard-library-button"
-            type="button"
-            onClick={() => navigate("/library")}
-          >
-            {t("dashboard.exploreLibrary")}
-            <span aria-hidden="true">→</span>
-          </button>
-        </div>
-
-        <motion.img
-          className="dashboard-overview-illustration"
-          src="/images/dashboard-book-stack.png"
-          alt=""
-          aria-hidden="true"
-          animate={
-            shouldReduceMotion
-              ? undefined
-              : {
-                  y: [0, -5, 0],
-                  rotate: [0, 1, 0],
-                }
-          }
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 0.5,
-          }}
-        />
-      </section>
+      <DashboardOverview
+        eyebrow={t("dashboard.overviewEyebrow")}
+        title={t("dashboard.overviewTitle")}
+        description={t("dashboard.overviewDescription", {
+          itemCount: libraryItems.length,
+          categoryCount: categories.length,
+        })}
+        exploreLibrary={t("dashboard.exploreLibrary")}
+        shouldReduceMotion={shouldReduceMotion}
+        onExploreLibrary={() => navigate("/library")}
+      />
     </motion.div>
   );
 }
