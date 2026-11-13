@@ -4,21 +4,14 @@ import { BookOpen, CircleAlert, CircleCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { getMyLoans } from "../services/LoanService";
 import type { Loan } from "../types/loan";
-import { getLibraryItemImage } from "../utils/libraryItemImage";
+import MyLoanItem from "../components/my-loans/MyLoanItem";
 
 function MyLoansPage() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [loans, setLoans] = useState<Loan[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const shouldReduceMotion = useReducedMotion();
-
-  const dateLocale = i18n.resolvedLanguage?.startsWith("en")
-    ? "en-GB"
-    : "sv-SE";
-
-  const formatDate = (date: string | Date) =>
-    new Date(date).toLocaleDateString(dateLocale);
 
   useEffect(() => {
     async function loadMyLoans() {
@@ -141,59 +134,14 @@ function MyLoansPage() {
               <p>{t("myLoansPage.noActiveLoans")}</p>
             ) : (
               <div className="my-loans-list">
-                {activeLoans.map((loan, index) => {
-                  const isOverdue = new Date(loan.dueDate) < now;
-
-                  return (
-                    <motion.article
-                      className="my-loans-item"
-                      key={loan.id}
-                      initial={
-                        shouldReduceMotion ? false : { opacity: 0, y: 12 }
-                      }
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{
-                        duration: 0.25,
-                        delay: shouldReduceMotion ? 0 : 0.3 + index * 0.08,
-                        ease: "easeOut",
-                      }}
-                    >
-                      <div className="my-loans-item-details">
-                        <img
-                          className={`my-loans-item-cover ${
-                            loan.item.imageUrl ? "" : "is-default-image"
-                          }`}
-                          src={getLibraryItemImage(loan.item)}
-                          alt={t("myLoansPage.coverAlt", {
-                            title: loan.item.title,
-                          })}
-                        />
-
-                        <div className="my-loans-item-info">
-                          <h4>{loan.item.title}</h4>
-                          <p>
-                            {t("myLoansPage.borrowedDate")}:{" "}
-                            {formatDate(loan.borrowDate)}
-                          </p>
-                          <p>
-                            {t("myLoansPage.dueDate")}:{" "}
-                            {formatDate(loan.dueDate)}
-                          </p>
-                        </div>
-                      </div>
-
-                      <span
-                        className={`my-loans-item-status ${
-                          isOverdue ? "is-overdue" : "is-borrowed"
-                        }`}
-                      >
-                        {isOverdue
-                          ? t("myLoansPage.overdue")
-                          : t("myLoansPage.active")}
-                      </span>
-                    </motion.article>
-                  );
-                })}
+                {activeLoans.map((loan, index) => (
+                  <MyLoanItem
+                    key={loan.id}
+                    loan={loan}
+                    type="active"
+                    index={index}
+                  />
+                ))}
               </div>
             )}
           </motion.section>
@@ -224,45 +172,12 @@ function MyLoansPage() {
             ) : (
               <div className="my-loans-list">
                 {returnedLoans.map((loan, index) => (
-                  <motion.article
-                    className="my-loans-item"
+                  <MyLoanItem
                     key={loan.id}
-                    initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: 0.25,
-                      delay: shouldReduceMotion ? 0 : 0.45 + index * 0.08,
-                      ease: "easeOut",
-                    }}
-                  >
-                    <div className="my-loans-item-details">
-                      <img
-                        className={`my-loans-item-cover ${
-                          loan.item.imageUrl ? "" : "is-default-image"
-                        }`}
-                        src={getLibraryItemImage(loan.item)}
-                        alt={t("myLoansPage.coverAlt", {
-                          title: loan.item.title,
-                        })}
-                      />
-
-                      <div className="my-loans-item-info">
-                        <h4>{loan.item.title}</h4>
-                        <p>
-                          {t("myLoansPage.borrowedDate")}:{" "}
-                          {formatDate(loan.borrowDate)}
-                        </p>
-                        <p>
-                          {t("myLoansPage.returnedDate")}:{" "}
-                          {formatDate(loan.returnedAt!)}
-                        </p>
-                      </div>
-                    </div>
-
-                    <span className="my-loans-item-status is-returned">
-                      {t("myLoansPage.returned")}
-                    </span>
-                  </motion.article>
+                    loan={loan}
+                    type="returned"
+                    index={index}
+                  />
                 ))}
               </div>
             )}
