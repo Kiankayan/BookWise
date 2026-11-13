@@ -96,6 +96,28 @@ router.post("/reset-password", async (req, res) => {
     });
   }
 
+  const user = await prisma.user.findUnique({
+    where: {
+      id: resetToken.userId,
+    },
+  });
+
+  if (!user) {
+    return res.status(400).json({
+      message: "Återställningslänken är ogiltig eller har gått ut.",
+    });
+  }
+
+  const isSamePassword = await bcrypt.compare(password, user.passwordHash);
+
+  if (isSamePassword) {
+    return res.status(400).json({
+      code: "SAME_PASSWORD",
+      message:
+        "Det nya lösenordet måste skilja sig från ditt nuvarande lösenord.",
+    });
+  }
+
   const passwordHash = await bcrypt.hash(password, 12);
   const now = new Date();
 

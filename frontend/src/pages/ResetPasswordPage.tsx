@@ -5,6 +5,7 @@ import { LockKeyhole } from "lucide-react";
 import AuthBrandPanel from "../components/auth/AuthBrandPanel";
 import AuthLanguageSwitch from "../components/auth/AuthLanguageSwitch";
 import { resetPasswordUser } from "../services/AuthService";
+import axios from "axios";
 
 function ResetPasswordPage() {
   const { t } = useTranslation();
@@ -13,23 +14,23 @@ function ResetPasswordPage() {
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [message, setMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    setMessage("");
+    setIsSuccess(false);
     setError("");
 
     if (!token) {
-      setError(t("resetPassword.invalidLink"));
+      setError("resetPassword.invalidLink");
       return;
     }
 
     if (password !== confirmPassword) {
-      setError(t("resetPassword.passwordMismatch"));
+      setError("resetPassword.passwordMismatch");
       return;
     }
 
@@ -37,11 +38,18 @@ function ResetPasswordPage() {
 
     try {
       await resetPasswordUser(token, password);
-      setMessage(t("resetPassword.success"));
+      setIsSuccess(true);
       setPassword("");
       setConfirmPassword("");
-    } catch {
-      setError(t("resetPassword.error"));
+    } catch (error) {
+      if (
+        axios.isAxiosError(error) &&
+        error.response?.data?.code === "SAME_PASSWORD"
+      ) {
+        setError("resetPassword.samePassword");
+      } else {
+        setError("resetPassword.error");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -109,19 +117,19 @@ function ResetPasswordPage() {
                   </div>
                 </div>
 
-                {message && (
+                {isSuccess && (
                   <p className="auth-success" role="status">
-                    {message}
+                    {t("resetPassword.success")}
                   </p>
                 )}
 
                 {error && (
                   <p className="auth-error" role="alert">
-                    {error}
+                    {t(error)}
                   </p>
                 )}
 
-                {!message && (
+                {!isSuccess && (
                   <button
                     className="auth-submit-button"
                     type="submit"

@@ -402,6 +402,7 @@
   },
   "resetPassword": {
     "title": "Reset password",
+    "samePassword": "The new password must be different from your current password.",
     "description": "Choose a new password for your account.",
     "password": "New password",
     "passwordPlaceholder": "Enter new password",

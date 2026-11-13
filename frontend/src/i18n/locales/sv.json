@@ -401,6 +401,7 @@
     "loggingOut": "Loggar ut"
   },
   "resetPassword": {
+    "samePassword": "Det nya lösenordet måste skilja sig från ditt nuvarande lösenord.",
     "title": "Återställ lösenord",
     "description": "Välj ett nytt lösenord till ditt konto.",
     "password": "Nytt lösenord",
