@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { getMyLoans } from "../services/LoanService";
+import { getUserLoanChartData } from "../utils/userDashboardUtils";
 import type { Loan } from "../types/loan";
 import type { ChartPeriod } from "../components/user-dashboard/UserLoanChart";
 
@@ -17,11 +18,6 @@ type Activity = {
 type CategoryLoan = {
   name: string;
   value: number;
-};
-
-type LoanChartData = {
-  label: string;
-  total: number;
 };
 
 const categoryColors = [
@@ -93,85 +89,7 @@ function useUserDashboard(chartPeriod: ChartPeriod) {
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5);
 
-  const loanChartData: LoanChartData[] = (() => {
-    if (chartPeriod === "week") {
-      return Array.from({ length: 7 }, (_, index) => {
-        const date = new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate() - 6 + index,
-        );
-
-        const nextDate = new Date(
-          date.getFullYear(),
-          date.getMonth(),
-          date.getDate() + 1,
-        );
-
-        const total = loans.filter((loan) => {
-          const borrowDate = new Date(loan.borrowDate);
-          return borrowDate >= date && borrowDate < nextDate;
-        }).length;
-
-        return {
-          label: date.toLocaleDateString(locale, { weekday: "short" }),
-          total,
-        };
-      });
-    }
-
-    if (chartPeriod === "month") {
-      return Array.from({ length: 4 }, (_, index) => {
-        const startDate = new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate() - 27 + index * 7,
-        );
-
-        const endDate = new Date(
-          startDate.getFullYear(),
-          startDate.getMonth(),
-          startDate.getDate() + 7,
-        );
-
-        const total = loans.filter((loan) => {
-          const borrowDate = new Date(loan.borrowDate);
-          return borrowDate >= startDate && borrowDate < endDate;
-        }).length;
-
-        return {
-          label: `${startDate.getDate()} ${startDate.toLocaleDateString(locale, { month: "short" })}`,
-          total,
-        };
-      });
-    }
-
-    const numberOfMonths = chartPeriod === "sixMonths" ? 6 : 12;
-
-    return Array.from({ length: numberOfMonths }, (_, index) => {
-      const monthDate = new Date(
-        now.getFullYear(),
-        now.getMonth() - (numberOfMonths - 1 - index),
-        1,
-      );
-
-      const nextMonth = new Date(
-        monthDate.getFullYear(),
-        monthDate.getMonth() + 1,
-        1,
-      );
-
-      const total = loans.filter((loan) => {
-        const borrowDate = new Date(loan.borrowDate);
-        return borrowDate >= monthDate && borrowDate < nextMonth;
-      }).length;
-
-      return {
-        label: monthDate.toLocaleDateString(locale, { month: "short" }),
-        total,
-      };
-    });
-  })();
+  const loanChartData = getUserLoanChartData(loans, chartPeriod, now, locale);
 
   const categoryLoans: CategoryLoan[] = Object.values(
     loans.reduce<Record<string, CategoryLoan>>((categories, loan) => {
