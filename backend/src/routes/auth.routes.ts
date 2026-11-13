@@ -17,6 +17,7 @@ import {
   createPasswordResetToken,
   hashPasswordResetToken,
 } from "../services/password-reset.service.js";
+import { sendPasswordResetEmail } from "../services/email.service.js";
 
 const router = Router();
 
@@ -55,7 +56,7 @@ router.post("/forgot-password", async (req, res) => {
     const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
     const resetUrl = `${frontendUrl}/reset-password?token=${token}`;
 
-    console.log("Lösenordsåterställningslänk:", resetUrl);
+    await sendPasswordResetEmail(user.email, resetUrl);
   }
 
   return res.status(200).json({
