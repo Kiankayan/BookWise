@@ -21,6 +21,7 @@ import DashboardStats from "../components/dashboard/DashboardStats";
 import CategoryChart from "../components/dashboard/CategoryChart";
 import AvailabilityChart from "../components/dashboard/AvailabilityChart";
 import RecentLoans from "../components/dashboard/RecentLoans";
+import DashboardWelcome from "../components/dashboard/DashboardWelcome";
 
 type DashboardPageProps = {
   libraryItems: LibraryItem[];
@@ -221,12 +222,6 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
     overdueItems,
   ]);
 
-  const illustrationTransition = {
-    duration: 5,
-    repeat: Infinity,
-    ease: "easeInOut" as const,
-  };
-
   return (
     <motion.div
       className="dashboard-page"
@@ -234,45 +229,7 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.45, ease: "easeOut" }}
     >
-      <section className="dashboard-welcome">
-        <div className="dashboard-welcome-content">
-          <p className="eyebrow">{t("dashboard.welcomeEyebrow")}</p>
-          <h2>{t("dashboard.welcomeTitle")}</h2>
-          <p>{t("dashboard.welcomeDescription")}</p>
-        </div>
-
-        <div className="dashboard-book-illustration">
-          <motion.img
-            className="dashboard-welcome-illustration"
-            src="/images/dashboard-open-book.png"
-            alt=""
-            aria-hidden="true"
-            animate={
-              shouldReduceMotion
-                ? undefined
-                : {
-                    y: [0, -6, 0],
-                    rotate: [0, 0.5, 0],
-                  }
-            }
-            transition={illustrationTransition}
-          />
-
-          <motion.img
-            className="dashboard-book-page-test"
-            src="/images/book-page-test.png"
-            alt=""
-            aria-hidden="true"
-            style={{ transformOrigin: "bottom center" }}
-            animate={shouldReduceMotion ? undefined : { rotate: [0, -12, 0] }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-        </div>
-      </section>
+      <DashboardWelcome shouldReduceMotion={shouldReduceMotion} />
 
       <DashboardStats
         stats={stats}
@@ -339,8 +296,9 @@ function DashboardPage({ libraryItems, categories }: DashboardPageProps) {
                 }
           }
           transition={{
-            ...illustrationTransition,
             duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut",
             delay: 0.5,
           }}
         />
