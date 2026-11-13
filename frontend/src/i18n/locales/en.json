@@ -117,6 +117,7 @@
     "showPassword": "Show password",
     "hidePassword": "Hide password",
     "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
     "loading": "Logging in...",
     "submit": "Log in",
     "error": "Incorrect email or password. Please try again.",

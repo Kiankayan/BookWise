@@ -117,6 +117,7 @@
     "showPassword": "Visa lösenord",
     "hidePassword": "Dölj lösenord",
     "rememberMe": "Kom ihåg mig",
+    "forgotPassword": "Glömt lösenord?",
     "loading": "Loggar in...",
     "submit": "Logga in",
     "error": "Fel e-postadress eller lösenord. Försök igen.",
