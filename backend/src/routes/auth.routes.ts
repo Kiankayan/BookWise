@@ -2,12 +2,21 @@ import { Router } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { Prisma, prisma } from "../lib/prisma.js";
-import { loginUserSchema, registerUserSchema } from "../schemas/user.schema.js";
+import {
+  forgotPasswordSchema,
+  loginUserSchema,
+  registerUserSchema,
+  resetPasswordSchema,
+} from "../schemas/user.schema.js";
 import {
   createSession,
   rotateSession,
   revokeSession,
 } from "../services/session.service.js";
+import {
+  createPasswordResetToken,
+  hashPasswordResetToken,
+} from "../services/password-reset.service.js";
 
 const router = Router();
 
@@ -16,6 +25,129 @@ const jwtSecret = process.env.JWT_SECRET;
 if (!jwtSecret) {
   throw new Error("JWT_SECRET saknas i miljövariablerna.");
 }
+
+router.post("/forgot-password", async (req, res) => {
+  if (process.env.NODE_ENV === "production") {
+    return res.status(503).json({
+      message: "Lösenordsåterställning är inte tillgänglig just nu.",
+    });
+  }
+
+  const validation = forgotPasswordSchema.safeParse(req.body);
+
+  if (!validation.success) {
+    return res.status(400).json({
+      message: "Ange en giltig e-postadress.",
+      errors: validation.error.flatten().fieldErrors,
+    });
+  }
+
+  const { email } = validation.data;
+
+  const user = await prisma.user.findUnique({
+    where: {
+      email: email.toLowerCase(),
+    },
+  });
+
+  if (user && user.isActive) {
+    const token = await createPasswordResetToken(user.id);
+    const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+    const resetUrl = `${frontendUrl}/reset-password?token=${token}`;
+
+    console.log("Lösenordsåterställningslänk:", resetUrl);
+  }
+
+  return res.status(200).json({
+    message:
+      "Om kontot finns har instruktioner för lösenordsåterställning skickats.",
+  });
+});
+
+router.post("/reset-password", async (req, res) => {
+  if (process.env.NODE_ENV === "production") {
+    return res.status(503).json({
+      message: "Lösenordsåterställning är inte tillgänglig just nu.",
+    });
+  }
+
+  const validation = resetPasswordSchema.safeParse(req.body);
+
+  if (!validation.success) {
+    return res.status(400).json({
+      message: "Ogiltiga uppgifter för lösenordsåterställning.",
+      errors: validation.error.flatten().fieldErrors,
+    });
+  }
+
+  const { token, password } = validation.data;
+  const tokenHash = hashPasswordResetToken(token);
+
+  const resetToken = await prisma.passwordResetToken.findUnique({
+    where: {
+      tokenHash,
+    },
+  });
+
+  if (!resetToken || resetToken.usedAt || resetToken.expiresAt <= new Date()) {
+    return res.status(400).json({
+      message: "Återställningslänken är ogiltig eller har gått ut.",
+    });
+  }
+
+  const passwordHash = await bcrypt.hash(password, 12);
+  const now = new Date();
+
+  const tokenUsed = await prisma.$transaction(async (tx) => {
+    const result = await tx.passwordResetToken.updateMany({
+      where: {
+        id: resetToken.id,
+        usedAt: null,
+        expiresAt: {
+          gt: now,
+        },
+      },
+      data: {
+        usedAt: now,
+      },
+    });
+
+    if (result.count !== 1) {
+      return false;
+    }
+
+    await tx.user.update({
+      where: {
+        id: resetToken.userId,
+      },
+      data: {
+        passwordHash,
+      },
+    });
+
+    await tx.session.updateMany({
+      where: {
+        userId: resetToken.userId,
+        revokedAt: null,
+      },
+      data: {
+        revokedAt: now,
+      },
+    });
+
+    return true;
+  });
+
+  if (!tokenUsed) {
+    return res.status(400).json({
+      message: "Återställningslänken är ogiltig eller har gått ut.",
+    });
+  }
+
+  return res.status(200).json({
+    message: "Ditt lösenord har uppdaterats.",
+  });
+});
 
 router.post("/register", async (req, res) => {
   const validation = registerUserSchema.safeParse(req.body);

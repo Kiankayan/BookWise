@@ -29,3 +29,20 @@ export const loginUserSchema = z.object({
 
   rememberMe: z.boolean().default(false),
 });
+
+export const forgotPasswordSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .email("Ange en giltig e-postadress.")
+    .max(255, "E-postadressen får vara högst 255 tecken."),
+});
+
+export const resetPasswordSchema = z.object({
+  token: z.string().min(1, "Återställningstoken saknas."),
+
+  password: z
+    .string()
+    .min(8, "Lösenordet måste innehålla minst 8 tecken.")
+    .max(72, "Lösenordet får vara högst 72 tecken."),
+});
