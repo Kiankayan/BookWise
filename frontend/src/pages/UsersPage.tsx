@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "motion/react";
 import { Users, ShieldCheck, UserRound, Search } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -10,9 +9,10 @@ import {
 } from "../services/UserService";
 import { useAuth } from "../context/AuthContext";
 import type { ManagedUser } from "../types/user";
+import UserListItem from "../components/users/UserListItem";
 
 function UsersPage() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { user: currentUser } = useAuth();
   const shouldReduceMotion = useReducedMotion();
 
@@ -208,129 +208,21 @@ function UsersPage() {
               <p className="users-empty">{t("usersPage.noUsersFound")}</p>
             ) : (
               <div className="users-list">
-                {filteredUsers.map((user, index) => {
-                  const isCurrentUser = user.id === currentUser?.id;
-                  const isUpdating = updatingUserId === user.id;
-
-                  return (
-                    <motion.article
-                      className="users-item"
-                      key={user.id}
-                      initial={
-                        shouldReduceMotion ? false : { opacity: 0, y: 12 }
-                      }
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{
-                        duration: 0.25,
-                        delay: shouldReduceMotion ? 0 : 0.3 + index * 0.06,
-                        ease: "easeOut",
-                      }}
-                    >
-                      <div className="users-item-main">
-                        <div className="users-avatar">
-                          {user.avatarUrl ? (
-                            <img
-                              src={user.avatarUrl}
-                              alt={t("usersPage.profilePictureAlt", {
-                                name: user.name,
-                              })}
-                            />
-                          ) : user.gender === "MAN" ? (
-                            <img
-                              src="/images/avatar-man.png"
-                              alt={t("usersPage.profilePictureAlt", {
-                                name: user.name,
-                              })}
-                            />
-                          ) : user.gender === "WOMAN" ? (
-                            <img
-                              src="/images/avatar-woman.png"
-                              alt={t("usersPage.profilePictureAlt", {
-                                name: user.name,
-                              })}
-                            />
-                          ) : (
-                            <UserRound size={21} />
-                          )}
-                        </div>
-
-                        <div className="users-item-info">
-                          <div className="users-item-title">
-                            <h4>
-                              <Link to={`/users/${user.id}`}>{user.name}</Link>
-                            </h4>
-                            <span
-                              className={`users-status ${
-                                user.isActive ? "is-active" : "is-inactive"
-                              }`}
-                            >
-                              {user.isActive
-                                ? t("usersPage.active")
-                                : t("usersPage.inactive")}
-                            </span>
-                          </div>
-
-                          <p className="users-email">{user.email}</p>
-
-                          <p className="users-registered">
-                            {t("usersPage.registered")}{" "}
-                            {new Date(user.createdAt).toLocaleDateString(
-                              i18n.language.startsWith("sv")
-                                ? "sv-SE"
-                                : "en-GB",
-                            )}
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="users-item-actions">
-                        <button
-                          type="button"
-                          className={`users-status-button ${
-                            user.isActive ? "is-deactivate" : "is-activate"
-                          }`}
-                          disabled={isCurrentUser || isUpdating}
-                          onClick={() =>
-                            void handleStatusChange(user.id, !user.isActive)
-                          }
-                        >
-                          {isUpdating
-                            ? t("usersPage.updating")
-                            : isCurrentUser
-                              ? t("usersPage.ownAccount")
-                              : user.isActive
-                                ? t("usersPage.deactivateAccount")
-                                : t("usersPage.activateAccount")}
-                        </button>
-
-                        <label className="users-role-control">
-                          <span>{t("usersPage.userRole")}</span>
-                          <select
-                            value={user.role}
-                            disabled={isCurrentUser || isUpdating}
-                            onChange={(event) =>
-                              void handleRoleChange(
-                                user.id,
-                                event.target.value as ManagedUser["role"],
-                              )
-                            }
-                          >
-                            <option value="USER">{t("usersPage.user")}</option>
-                            <option value="ADMIN">
-                              {t("usersPage.administrator")}
-                            </option>
-                          </select>
-                        </label>
-                      </div>
-
-                      {isCurrentUser && (
-                        <p className="users-own-account">
-                          {t("usersPage.ownAccountWarning")}
-                        </p>
-                      )}
-                    </motion.article>
-                  );
-                })}
+                {filteredUsers.map((user, index) => (
+                  <UserListItem
+                    key={user.id}
+                    user={user}
+                    currentUserId={currentUser?.id}
+                    isUpdating={updatingUserId === user.id}
+                    index={index}
+                    onStatusChange={(userId, isActive) =>
+                      void handleStatusChange(userId, isActive)
+                    }
+                    onRoleChange={(userId, role) =>
+                      void handleRoleChange(userId, role)
+                    }
+                  />
+                ))}
               </div>
             )}
           </motion.section>
