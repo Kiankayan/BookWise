@@ -1,25 +1,16 @@
-import { useRef, useState, type FormEvent } from "react";
-import { motion } from "motion/react";
-import {
-  BookOpen,
-  Eye,
-  EyeOff,
-  ImagePlus,
-  LockKeyhole,
-  Mail,
-  Tag,
-  UserRound,
-  X,
-} from "lucide-react";
+import { useState, type FormEvent } from "react";
+import { Eye, EyeOff, LockKeyhole, Mail, UserRound } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { registerUser } from "../services/AuthService";
 import { uploadAvatarImage } from "../services/ImageUploadService";
+import AuthBrandPanel from "../components/auth/AuthBrandPanel";
+import AuthLanguageSwitch from "../components/auth/AuthLanguageSwitch";
+import AuthAvatarUpload from "../components/auth/AuthAvatarUpload";
 
 function RegisterPage() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -27,45 +18,9 @@ function RegisterPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-
-    if (!file) {
-      return;
-    }
-
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
-
-    if (!allowedTypes.includes(file.type)) {
-      setError(t("register.invalidImageFormat"));
-      event.target.value = "";
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      setError(t("register.imageTooLarge"));
-      event.target.value = "";
-      return;
-    }
-
-    setError("");
-    setAvatarFile(file);
-    setAvatarPreview(URL.createObjectURL(file));
-  };
-
-  const handleRemoveAvatar = () => {
-    setAvatarFile(null);
-    setAvatarPreview("");
-
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -110,149 +65,22 @@ function RegisterPage() {
   return (
     <main className="auth-page">
       <section className="auth-container">
-        <div className="auth-brand-panel">
-          <div className="auth-brand">
-            <div className="auth-brand-logo">B</div>
-            <div className="auth-brand-text">
-              <span>BookWise</span>
-            </div>
-          </div>
-
-          <div className="auth-brand-content">
-            <p className="auth-brand-description">
-              {t("register.brandDescription")}
-            </p>
-
-            <h1>{t("register.heroTitle")}</h1>
-
-            <p>{t("register.heroDescription")}</p>
-
-            <motion.img
-              className="auth-illustration"
-              src="/images/bookwise-auth-illustration.png"
-              alt="Illustration of books representing BookWise"
-              animate={{
-                y: [0, -12, 0],
-                rotate: [0, -1.5, 1.5, 0],
-                scale: [1, 1.025, 1],
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-            />
-
-            <div className="auth-features">
-              <div className="auth-feature">
-                <span className="auth-feature-icon">
-                  <BookOpen size={13} />
-                </span>
-                <span>{t("register.featureManage")}</span>
-              </div>
-
-              <div className="auth-feature">
-                <span className="auth-feature-icon">
-                  <Tag size={13} />
-                </span>
-                <span>{t("register.featureBorrow")}</span>
-              </div>
-
-              <div className="auth-feature">
-                <span className="auth-feature-icon">
-                  <UserRound size={13} />
-                </span>
-                <span>{t("register.featureLoans")}</span>
-              </div>
-            </div>
-          </div>
-        </div>
+        <AuthBrandPanel variant="register" />
 
         <div className="auth-form-panel">
           <div className="auth-form-content">
-            <div className="auth-language-switch">
-              <button
-                type="button"
-                className={i18n.language.startsWith("sv") ? "active" : ""}
-                onClick={() => i18n.changeLanguage("sv")}
-                aria-pressed={i18n.language.startsWith("sv")}
-              >
-                {i18n.language.startsWith("sv") && (
-                  <motion.span
-                    layoutId="auth-language-indicator"
-                    className="auth-language-indicator"
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  />
-                )}
-                <span>SV</span>
-              </button>
+            <AuthLanguageSwitch />
 
-              <button
-                type="button"
-                className={i18n.language.startsWith("en") ? "active" : ""}
-                onClick={() => i18n.changeLanguage("en")}
-                aria-pressed={i18n.language.startsWith("en")}
-              >
-                {i18n.language.startsWith("en") && (
-                  <motion.span
-                    layoutId="auth-language-indicator"
-                    className="auth-language-indicator"
-                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  />
-                )}
-                <span>EN</span>
-              </button>
-            </div>
             <div className="auth-form-heading">
               <h2>{t("register.title")}</h2>
               <p>{t("register.welcome")}</p>
             </div>
 
             <form className="auth-form" onSubmit={handleSubmit}>
-              <div className="auth-form-group">
-                <label>{t("register.profilePicture")}</label>
-
-                <div className="auth-avatar-upload">
-                  {avatarPreview ? (
-                    <div className="auth-avatar-preview">
-                      <img src={avatarPreview} alt={t("register.previewAlt")} />
-
-                      <button
-                        type="button"
-                        onClick={handleRemoveAvatar}
-                        aria-label={t("register.removePicture")}
-                      >
-                        <X size={16} />
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="auth-avatar-placeholder">
-                      <UserRound size={28} />
-                    </div>
-                  )}
-
-                  <div className="auth-avatar-actions">
-                    <button
-                      type="button"
-                      className="auth-avatar-select-button"
-                      onClick={() => fileInputRef.current?.click()}
-                    >
-                      <ImagePlus size={16} />
-                      {t("register.chooseImage")}
-                    </button>
-
-                    <span>{t("register.imageFormats")}</span>
-                  </div>
-
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    onChange={handleAvatarChange}
-                    hidden
-                  />
-                </div>
-              </div>
+              <AuthAvatarUpload
+                onAvatarChange={setAvatarFile}
+                onError={setError}
+              />
 
               <div className="auth-form-group">
                 <label htmlFor="name">{t("register.name")}</label>

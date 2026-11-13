@@ -2,7 +2,11 @@ import { motion } from "motion/react";
 import { BookOpen, Tag, UserRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-function AuthBrandPanel() {
+type AuthBrandPanelProps = {
+  variant: "login" | "register";
+};
+
+function AuthBrandPanel({ variant }: AuthBrandPanelProps) {
   const { t } = useTranslation();
 
   return (
@@ -15,11 +19,13 @@ function AuthBrandPanel() {
       </div>
 
       <div className="auth-brand-content">
-        <p className="auth-brand-description">{t("login.brandDescription")}</p>
+        <p className="auth-brand-description">
+          {t(`${variant}.brandDescription`)}
+        </p>
 
-        <h1>{t("login.heroTitle")}</h1>
+        <h1>{t(`${variant}.heroTitle`)}</h1>
 
-        <p>{t("login.heroDescription")}</p>
+        <p>{t(`${variant}.heroDescription`)}</p>
 
         <motion.img
           className="auth-illustration"
@@ -42,21 +48,21 @@ function AuthBrandPanel() {
             <span className="auth-feature-icon">
               <BookOpen size={13} />
             </span>
-            <span>{t("login.featureManage")}</span>
+            <span>{t(`${variant}.featureManage`)}</span>
           </div>
 
           <div className="auth-feature">
             <span className="auth-feature-icon">
               <Tag size={13} />
             </span>
-            <span>{t("login.featureBorrow")}</span>
+            <span>{t(`${variant}.featureBorrow`)}</span>
           </div>
 
           <div className="auth-feature">
             <span className="auth-feature-icon">
               <UserRound size={13} />
             </span>
-            <span>{t("login.featureLoans")}</span>
+            <span>{t(`${variant}.featureLoans`)}</span>
           </div>
         </div>
       </div>

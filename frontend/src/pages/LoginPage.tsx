@@ -47,7 +47,7 @@ function LoginPage() {
   return (
     <main className="auth-page">
       <section className="auth-container">
-        <AuthBrandPanel />
+        <AuthBrandPanel variant="login" />
 
         <div className="auth-form-panel">
           <div className="auth-form-content">
