@@ -102,7 +102,6 @@ function LoginPage() {
                     {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
                   </button>
                 </div>
-
                 <div className="auth-remember-me">
                   <label>
                     <input
@@ -112,6 +111,10 @@ function LoginPage() {
                     />
                     {t("login.rememberMe")}
                   </label>
+
+                  <Link to="/forgot-password" className="auth-forgot-password">
+                    {t("login.forgotPassword")}
+                  </Link>
                 </div>
               </div>
 
