@@ -399,5 +399,20 @@
     "defaultMessage": "Bibliotekshantering",
     "loading": "Laddar",
     "loggingOut": "Loggar ut"
+  },
+  "resetPassword": {
+    "title": "Återställ lösenord",
+    "description": "Välj ett nytt lösenord till ditt konto.",
+    "password": "Nytt lösenord",
+    "passwordPlaceholder": "Ange nytt lösenord",
+    "confirmPassword": "Bekräfta lösenord",
+    "confirmPasswordPlaceholder": "Ange lösenordet igen",
+    "loading": "Sparar...",
+    "submit": "Spara nytt lösenord",
+    "success": "Ditt lösenord har återställts. Du kan nu logga in.",
+    "error": "Det gick inte att återställa lösenordet. Länken kan ha gått ut eller redan använts.",
+    "invalidLink": "Återställningslänken är ogiltig eller saknar token.",
+    "passwordMismatch": "Lösenorden matchar inte.",
+    "backToLogin": "Tillbaka till inloggning"
   }
 }

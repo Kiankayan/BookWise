@@ -399,5 +399,20 @@
     "defaultMessage": "Library Management",
     "loading": "Loading",
     "loggingOut": "Logging out"
+  },
+  "resetPassword": {
+    "title": "Reset password",
+    "description": "Choose a new password for your account.",
+    "password": "New password",
+    "passwordPlaceholder": "Enter new password",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordPlaceholder": "Enter password again",
+    "loading": "Saving...",
+    "submit": "Save new password",
+    "success": "Your password has been reset. You can now log in.",
+    "error": "Could not reset your password. The link may have expired or already been used.",
+    "invalidLink": "The reset link is invalid or missing a token.",
+    "passwordMismatch": "The passwords do not match.",
+    "backToLogin": "Back to login"
   }
 }
