@@ -2,11 +2,14 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { getMyLoans } from "../services/LoanService";
-import { getUserLoanChartData } from "../utils/userDashboardUtils";
+import {
+  getUserLoanChartData,
+  getUserDashboardPercentageChanges,
+  type UserDashboardPercentageChanges,
+  type UserDashboardStatValues,
+} from "../utils/userDashboardUtils";
 import type { Loan } from "../types/loan";
 import type { ChartPeriod } from "../components/user-dashboard/UserLoanChart";
-
-type StatKey = "activeLoans" | "overdueLoans" | "returnedLoans";
 
 type Activity = {
   id: string;
@@ -108,19 +111,18 @@ function useUserDashboard(chartPeriod: ChartPeriod) {
     }, {}),
   );
 
-  const currentValues = {
+  const currentValues: UserDashboardStatValues = {
     activeLoans: activeLoans.length,
     overdueLoans: overdueLoans.length,
     returnedLoans: returnedLoans.length,
   };
 
-  const [percentageChanges, setPercentageChanges] = useState<
-    Record<StatKey, number>
-  >({
-    activeLoans: 0,
-    overdueLoans: 0,
-    returnedLoans: 0,
-  });
+  const [percentageChanges, setPercentageChanges] =
+    useState<UserDashboardPercentageChanges>({
+      activeLoans: 0,
+      overdueLoans: 0,
+      returnedLoans: 0,
+    });
 
   useEffect(() => {
     if (isLoading) return;
@@ -129,13 +131,17 @@ function useUserDashboard(chartPeriod: ChartPeriod) {
     const storedData = localStorage.getItem(storageKey);
 
     type StoredData = {
-      values: typeof currentValues;
-      changes: Record<StatKey, number>;
+      values: UserDashboardStatValues;
+      changes: UserDashboardPercentageChanges;
     };
 
     const stored = storedData ? (JSON.parse(storedData) as StoredData) : null;
 
-    const keys = Object.keys(currentValues) as StatKey[];
+    const keys: (keyof UserDashboardStatValues)[] = [
+      "activeLoans",
+      "overdueLoans",
+      "returnedLoans",
+    ];
 
     const sameValues =
       stored !== null &&
@@ -146,26 +152,10 @@ function useUserDashboard(chartPeriod: ChartPeriod) {
       return;
     }
 
-    const changes = {} as Record<StatKey, number>;
-
-    keys.forEach((key) => {
-      const oldValue = stored?.values[key];
-      const newValue = currentValues[key];
-
-      if (oldValue === undefined || oldValue === newValue) {
-        changes[key] = 0;
-        return;
-      }
-
-      changes[key] =
-        oldValue === 0
-          ? newValue > 0
-            ? 100
-            : -100
-          : Number(
-              (((newValue - oldValue) / Math.abs(oldValue)) * 100).toFixed(1),
-            );
-    });
+    const changes = getUserDashboardPercentageChanges(
+      currentValues,
+      stored?.values,
+    );
 
     localStorage.setItem(
       storageKey,

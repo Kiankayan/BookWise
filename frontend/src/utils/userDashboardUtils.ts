@@ -6,6 +6,18 @@ type LoanChartData = {
   total: number;
 };
 
+export type UserDashboardStatKey =
+  | "activeLoans"
+  | "overdueLoans"
+  | "returnedLoans";
+
+export type UserDashboardStatValues = Record<UserDashboardStatKey, number>;
+
+export type UserDashboardPercentageChanges = Record<
+  UserDashboardStatKey,
+  number
+>;
+
 export function getUserLoanChartData(
   loans: Loan[],
   chartPeriod: ChartPeriod,
@@ -89,4 +101,38 @@ export function getUserLoanChartData(
       total,
     };
   });
+}
+
+export function getUserDashboardPercentageChanges(
+  currentValues: UserDashboardStatValues,
+  previousValues?: UserDashboardStatValues,
+): UserDashboardPercentageChanges {
+  const keys: UserDashboardStatKey[] = [
+    "activeLoans",
+    "overdueLoans",
+    "returnedLoans",
+  ];
+
+  const changes = {} as UserDashboardPercentageChanges;
+
+  keys.forEach((key) => {
+    const oldValue = previousValues?.[key];
+    const newValue = currentValues[key];
+
+    if (oldValue === undefined || oldValue === newValue) {
+      changes[key] = 0;
+      return;
+    }
+
+    changes[key] =
+      oldValue === 0
+        ? newValue > 0
+          ? 100
+          : -100
+        : Number(
+            (((newValue - oldValue) / Math.abs(oldValue)) * 100).toFixed(1),
+          );
+  });
+
+  return changes;
 }
