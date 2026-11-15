@@ -136,6 +136,7 @@
     "backToLogin": "Back to login"
   },
   "register": {
+    "registrationSuccess": "Your account has been created! You can now log in.",
     "brandDescription": "Library management",
     "heroTitle": "Discover a world of knowledge.",
     "heroDescription": "Organize your library, manage your books and keep track of everything in one place.",

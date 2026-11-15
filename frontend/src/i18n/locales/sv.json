@@ -136,6 +136,7 @@
     "backToLogin": "Tillbaka till inloggning"
   },
   "register": {
+    "registrationSuccess": "Ditt konto har skapats! Du kan nu logga in.",
     "brandDescription": "Bibliotekshantering",
     "heroTitle": "Upptäck en värld av kunskap.",
     "heroDescription": "Organisera ditt bibliotek, hantera dina böcker och håll koll på allt på ett och samma ställe.",

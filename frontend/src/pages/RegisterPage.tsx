@@ -19,6 +19,7 @@ function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -26,6 +27,7 @@ function RegisterPage() {
     event.preventDefault();
 
     setError("");
+    setSuccess("");
 
     if (gender === "") {
       setError(t("register.genderRequired"));
@@ -54,7 +56,11 @@ function RegisterPage() {
         avatarUrl,
       });
 
-      navigate("/login");
+      setSuccess(t("register.registrationSuccess"));
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 3000);
     } catch {
       setError(t("register.registerError"));
     } finally {
@@ -198,10 +204,16 @@ function RegisterPage() {
                 </p>
               )}
 
+              {success && (
+                <p className="auth-success" role="status">
+                  {success}
+                </p>
+              )}
+
               <button
                 className="auth-submit-button"
                 type="submit"
-                disabled={isLoading}
+                disabled={isLoading || Boolean(success)}
               >
                 {isLoading ? t("register.loading") : t("register.submit")}
               </button>
