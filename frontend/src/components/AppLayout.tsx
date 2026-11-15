@@ -49,6 +49,13 @@ function AppLayout() {
         <main className="page-content">
           <Outlet />
         </main>
+
+        <footer className="app-footer">
+          <span>{t("appLayout.footerTagline")}</span>
+          <span>
+            {t("appLayout.footerCopyright", { year: new Date().getFullYear() })}
+          </span>
+        </footer>
       </div>
     </div>
   );

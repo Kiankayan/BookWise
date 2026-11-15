@@ -393,7 +393,9 @@
     "title": "Bibliotekshantering",
     "administrator": "Administratör",
     "user": "Användare",
-    "profilePicture": "Profilbild"
+    "profilePicture": "Profilbild",
+    "footerTagline": "BookWise · Din digitala bokhylla",
+    "footerCopyright": "© {{year}} BookWise. Alla rättigheter förbehållna."
   },
   "loadingScreen": {
     "defaultMessage": "Bibliotekshantering",

@@ -393,7 +393,9 @@
     "title": "Library Management",
     "administrator": "Administrator",
     "user": "User",
-    "profilePicture": "Profile picture"
+    "profilePicture": "Profile picture",
+    "footerTagline": "BookWise · Your digital bookshelf",
+    "footerCopyright": "© {{year}} BookWise. All rights reserved."
   },
   "loadingScreen": {
     "defaultMessage": "Library Management",
