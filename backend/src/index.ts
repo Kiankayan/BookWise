@@ -2,11 +2,9 @@ export { Router } from "express";
 export { default as bcrypt } from "bcrypt";
 export { default as jwt } from "jsonwebtoken";
 export { Prisma, prisma } from "./lib/prisma.js";
-
 export { default as admin } from "./middleware/admin.js";
 export { default as auth } from "./middleware/auth.js";
 export type { AuthRequest } from "./middleware/auth.js";
-
 export { createCategorySchema } from "./schemas/category.schema.js";
 export { default as cloudinary } from "./config/cloudinary.js";
 

@@ -1,18 +1,20 @@
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import {
+  useAuth,
   borrowLibraryItem,
   returnLibraryItem,
   deleteLibraryItem,
-} from "../services/LibraryItemService";
-import type { Category, LibraryItem, LibrarySort } from "../types/library";
-import BookDetailsModal from "./BookDetailsModal";
-import LibraryToolbar from "./LibraryToolbar";
-import LibraryItemCard from "./LibraryItemCard";
-import LibraryItemDialogs from "./LibraryItemDialogs";
-import { getTypeLabel } from "../utils/libraryItemHelpers";
+  type Category,
+  type LibraryItem,
+  type LibrarySort,
+  BookDetailsModal,
+  LibraryToolbar,
+  LibraryItemCard,
+  LibraryItemDialogs,
+  getTypeLabel,
+} from "../index";
 
 interface LibraryItemListProps {
   libraryItems: LibraryItem[];

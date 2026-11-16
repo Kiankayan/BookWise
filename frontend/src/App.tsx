@@ -1,29 +1,33 @@
 import { useCallback, useEffect, useState } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { useAuth } from "./context/AuthContext";
-import { getLibraryItems } from "./services/LibraryItemService";
-import { getCategories } from "./services/CategoryService";
-import type { Category, LibraryItem, LibrarySort } from "./types/library";
-import AppLayout from "./components/AppLayout";
-import LoadingScreen from "./components/LoadingScreen";
-import ProtectedRoute from "./components/ProtectedRoute";
-import DashboardPage from "./pages/DashboardPage";
-import UserDashboardPage from "./pages/UserDashboardPage";
-import LibraryPage from "./pages/LibraryPage";
-import CategoriesPage from "./pages/CategoriesPage";
-import AddItemPage from "./pages/AddItemPage";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import ForgotPasswordPage from "./pages/ForgotPasswordPage";
-import ResetPasswordPage from "./pages/ResetPasswordPage";
-import MyLoansPage from "./pages/MyLoansPage";
-import ProfilePage from "./pages/ProfilePage";
-import UsersPage from "./pages/UsersPage";
-import UserDetailsPage from "./pages/UserDetailsPage";
-import AdminRoute from "./components/AdminRoute";
-import "./App.css";
-import SettingsPage from "./pages/SettingsPage";
 import { useTranslation } from "react-i18next";
+import {
+  useAuth,
+  getLibraryItems,
+  getCategories,
+  type Category,
+  type LibraryItem,
+  type LibrarySort,
+  AppLayout,
+  LoadingScreen,
+  ProtectedRoute,
+  AdminRoute,
+  DashboardPage,
+  UserDashboardPage,
+  LibraryPage,
+  CategoriesPage,
+  AddItemPage,
+  LoginPage,
+  RegisterPage,
+  ForgotPasswordPage,
+  ResetPasswordPage,
+  MyLoansPage,
+  ProfilePage,
+  UsersPage,
+  UserDetailsPage,
+  SettingsPage,
+} from "./index";
+import "./App.css";
 
 function App() {
   const { isAuthenticated, isLoggingOut, user } = useAuth();

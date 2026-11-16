@@ -2,13 +2,16 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
-import { createLibraryItem } from "../services/LibraryItemService";
-import type { Category, LibraryItemType } from "../types/library";
-import { libraryItemSchema } from "../schemas/libraryItemSchema";
-import { buildLibraryItemFormData } from "../utils/libraryItemFormUtils";
-import LibraryItemFields from "./LibraryItemFields";
-import ImageDropzone from "./ImageDropzone";
-import { uploadLibraryItemImage } from "../services/ImageUploadService";
+import {
+  createLibraryItem,
+  uploadLibraryItemImage,
+  type Category,
+  type LibraryItemType,
+  libraryItemSchema,
+  buildLibraryItemFormData,
+  LibraryItemFields,
+  ImageDropzone,
+} from "../index";
 import axios from "axios";
 
 interface LibraryItemFormProps {
