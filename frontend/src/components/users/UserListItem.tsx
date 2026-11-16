@@ -1,7 +1,8 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion, useReducedMotion } from "motion/react";
 import { UserRound } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import type { MouseEvent, KeyboardEvent } from "react";
 import type { ManagedUser } from "../../types/user";
 
 type UserListItemProps = {
@@ -23,11 +24,37 @@ function UserListItem({
 }: UserListItemProps) {
   const { t, i18n } = useTranslation();
   const shouldReduceMotion = useReducedMotion();
+  const navigate = useNavigate();
   const isCurrentUser = user.id === currentUserId;
+
+  const handleCardClick = (event: MouseEvent<HTMLElement>) => {
+    const target = event.target as HTMLElement;
+
+    if (target.closest("a, button, select, input, label")) {
+      return;
+    }
+
+    navigate(`/users/${user.id}`);
+  };
+
+  const handleCardKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    if (
+      event.target === event.currentTarget &&
+      (event.key === "Enter" || event.key === " ")
+    ) {
+      event.preventDefault();
+      navigate(`/users/${user.id}`);
+    }
+  };
 
   return (
     <motion.article
       className="users-item"
+      role="link"
+      tabIndex={0}
+      onClick={handleCardClick}
+      onKeyDown={handleCardKeyDown}
+      style={{ cursor: "pointer" }}
       initial={shouldReduceMotion ? false : { opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
