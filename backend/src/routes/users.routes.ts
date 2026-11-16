@@ -282,6 +282,40 @@ router.delete("/:id", auth, admin, async (req: Request, res) => {
   }
 
   try {
+    const userToDelete = await prisma.user.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        role: true,
+        isActive: true,
+      },
+    });
+
+    if (!userToDelete) {
+      return res.status(404).json({
+        message: "Användaren kunde inte hittas.",
+      });
+    }
+
+    if (userToDelete.role === "ADMIN" && userToDelete.isActive) {
+      const otherActiveAdmins = await prisma.user.count({
+        where: {
+          role: "ADMIN",
+          isActive: true,
+          id: {
+            not: id,
+          },
+        },
+      });
+
+      if (otherActiveAdmins === 0) {
+        return res.status(409).json({
+          message: "Den sista aktiva administratören kan inte tas bort.",
+        });
+      }
+    }
+
     const activeLoans = await prisma.loan.count({
       where: {
         userId: id,
