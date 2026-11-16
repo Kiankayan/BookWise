@@ -2,14 +2,16 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import usersRouter from "./routes/users.routes.js";
-import authRouter from "./routes/auth.routes.js";
-import categoriesRouter from "./routes/categories.routes.js";
-import libraryItemsRouter from "./routes/library-items.routes.js";
-import uploadRouter from "./routes/upload.routes.js";
-import dashboardRouter from "./routes/dashboard.routes.js";
-import loansRouter from "./routes/loans.routes.js";
-import profileRouter from "./routes/profile.routes.js";
+import {
+  usersRouter,
+  authRouter,
+  categoriesRouter,
+  libraryItemsRouter,
+  uploadRouter,
+  dashboardRouter,
+  loansRouter,
+  profileRouter,
+} from "./index.js";
 
 const app = express();
 const PORT = process.env.PORT || 5001;

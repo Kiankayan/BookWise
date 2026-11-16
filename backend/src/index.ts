@@ -48,3 +48,12 @@ export {
   rotateSession,
   revokeSession,
 } from "./services/session.service.js";
+
+export { default as usersRouter } from "./routes/users.routes.js";
+export { default as authRouter } from "./routes/auth.routes.js";
+export { default as categoriesRouter } from "./routes/categories.routes.js";
+export { default as libraryItemsRouter } from "./routes/library-items.routes.js";
+export { default as uploadRouter } from "./routes/upload.routes.js";
+export { default as dashboardRouter } from "./routes/dashboard.routes.js";
+export { default as loansRouter } from "./routes/loans.routes.js";
+export { default as profileRouter } from "./routes/profile.routes.js";
