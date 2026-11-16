@@ -1,7 +1,11 @@
-import { Router, Request } from "express";
-import { Prisma, prisma } from "../lib/prisma.js";
-import auth, { AuthRequest } from "../middleware/auth.js";
-import { updateProfileSchema } from "../schemas/profile.schema.js";
+import { Router, type Request } from "express";
+import {
+  Prisma,
+  prisma,
+  auth,
+  type AuthRequest,
+  updateProfileSchema,
+} from "../index.js";
 
 const router = Router();
 

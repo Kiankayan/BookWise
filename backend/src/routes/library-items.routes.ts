@@ -1,11 +1,12 @@
-import { Router } from "express";
-import { prisma, Prisma } from "../lib/prisma.js";
-import auth from "../middleware/auth.js";
-import admin from "../middleware/admin.js";
 import {
+  Router,
+  prisma,
+  Prisma,
+  auth,
+  admin,
   createLibraryItemSchema,
   updateLibraryItemSchema,
-} from "../schemas/library-item.schema.js";
+} from "../index.js";
 
 const router = Router();
 

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import multer, { MulterError } from "multer";
-import cloudinary from "../config/cloudinary.js";
+import { cloudinary } from "../index.js";
 
 const router = Router();
 

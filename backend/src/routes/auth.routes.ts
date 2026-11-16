@@ -1,23 +1,20 @@
-import { Router } from "express";
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import { Prisma, prisma } from "../lib/prisma.js";
 import {
+  Router,
+  bcrypt,
+  jwt,
+  Prisma,
+  prisma,
   forgotPasswordSchema,
   loginUserSchema,
   registerUserSchema,
   resetPasswordSchema,
-} from "../schemas/user.schema.js";
-import {
   createSession,
   rotateSession,
   revokeSession,
-} from "../services/session.service.js";
-import {
   createPasswordResetToken,
   hashPasswordResetToken,
-} from "../services/password-reset.service.js";
-import { sendPasswordResetEmail } from "../services/email.service.js";
+  sendPasswordResetEmail,
+} from "../index.js";
 
 const router = Router();
 

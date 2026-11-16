@@ -1,17 +1,15 @@
-import { Router } from "express";
-import auth, { type AuthRequest } from "../middleware/auth.js";
-import admin from "../middleware/admin.js";
 import {
+  Router,
+  auth,
+  type AuthRequest,
+  admin,
   borrowLibraryItem,
   returnLibraryItem,
   getUserLoans,
   getRecentLoans,
-} from "../services/loan.service.js";
-
-import {
   getAvailabilityHistory,
   type AvailabilityChartPeriod,
-} from "../services/availabilityHistory.service.js";
+} from "../index.js";
 
 const router = Router();
 
