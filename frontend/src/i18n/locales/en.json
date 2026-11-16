@@ -1,5 +1,7 @@
 {
   "settings": {
+    "deleteAccountSuccess": "Account permanently deleted",
+    "deleteAccountSuccessDescription": "Your BookWise account has now been deleted.",
     "title": "Settings",
     "description": "Customize your personal settings in BookWise.",
     "personal": "PERSONAL",
@@ -33,7 +35,20 @@
     "user": "User",
     "userId": "User ID",
     "notAvailable": "Not available",
-    "avatarAlt": "Profile picture"
+    "avatarAlt": "Profile picture",
+    "deleteAccount": "Delete account",
+    "deleteAccountDescription": "Permanently delete your BookWise account and its associated login sessions.",
+    "deleteAccountButton": "Delete my account",
+    "deletePasswordRequired": "Enter your password to continue.",
+    "deleteAccountError": "Could not delete your account. Please try again.",
+    "close": "Close",
+    "deleteAccountConfirmTitle": "Are you sure you want to delete your account?",
+    "deleteAccountConfirmDescription": "This action is permanent and cannot be undone. Your account will be deleted.",
+    "deleteAccountPassword": "Confirm your password",
+    "deleteAccountPasswordPlaceholder": "Enter your current password",
+    "cancel": "Cancel",
+    "deletingAccount": "Deleting account...",
+    "confirmDeleteAccount": "Permanently delete account"
   },
   "dashboard": {
     "welcomeEyebrow": "YOUR LIBRARY OVERVIEW",

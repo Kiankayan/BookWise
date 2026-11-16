@@ -4520,3 +4520,158 @@ button:active {
     text-align: center;
   }
 }
+
+.settings-delete-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid #dc2626;
+  border-radius: 10px;
+  background: transparent;
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 700;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.settings-delete-button:hover {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+:root[data-theme="dark"] .settings-delete-button {
+  color: #f87171;
+  border-color: #f87171;
+}
+
+:root[data-theme="dark"] .settings-delete-button:hover {
+  background: #7f1d1d;
+  color: #ffffff;
+}
+
+.settings-delete-dialog {
+  width: min(100% - 32px, 460px);
+  padding: 28px;
+  border: 1px solid var(--bookwise-border);
+  border-radius: 20px;
+  background: var(--bookwise-surface);
+  color: var(--bookwise-text);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.settings-delete-dialog-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  color: #dc2626;
+}
+
+.settings-delete-dialog-heading button {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  min-height: 36px;
+  padding: 0;
+  background: var(--bookwise-bg);
+  color: var(--bookwise-muted);
+}
+
+.settings-delete-dialog h3 {
+  margin: 0 0 12px;
+  color: var(--bookwise-text);
+  font-size: 20px;
+}
+
+.settings-delete-dialog > p {
+  color: var(--bookwise-muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.settings-delete-password {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: 22px;
+  color: var(--bookwise-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.settings-delete-password input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.settings-delete-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.settings-delete-dialog-actions > button:first-child {
+  background: var(--bookwise-bg);
+  color: var(--bookwise-text);
+  border: 1px solid var(--bookwise-border);
+}
+
+.settings-delete-confirm-button {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+.settings-delete-confirm-button:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+@media (max-width: 480px) {
+  .settings-delete-dialog {
+    padding: 22px 18px;
+  }
+
+  .settings-delete-dialog-actions {
+    flex-direction: column-reverse;
+  }
+
+  .settings-delete-dialog-actions button {
+    width: 100%;
+  }
+}
+
+.settings-delete-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(15, 15, 25, 0.65);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.settings-delete-dialog {
+  width: min(100%, 460px);
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
+  margin: auto;
+}
+
+.settings-delete-dialog .auth-error {
+  color: #dc2626;
+  margin-top: 12px;
+}
+
+.settings-delete-success {
+  color: #16a34a;
+}

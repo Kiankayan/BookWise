@@ -1,19 +1,35 @@
+import { useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import { Bell, Moon, Sun, ShieldCheck, Languages } from "lucide-react";
+import {
+  Bell,
+  Moon,
+  Sun,
+  ShieldCheck,
+  Languages,
+  Trash2,
+  AlertTriangle,
+  X,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { useTheme } from "../context/ThemeContext";
 import SettingsAvatar from "../components/settings/SettingsAvatar";
-import { useState } from "react";
+import { deleteMyAccount } from "../services/UserService";
 
 function SettingsPage() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const { t, i18n } = useTranslation();
+
   const shouldReduceMotion = useReducedMotion();
 
   const [reminderNotifications, setReminderNotifications] = useState(true);
   const [overdueNotifications, setOverdueNotifications] = useState(true);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [password, setPassword] = useState("");
+  const [deleteError, setDeleteError] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
 
   const roleLabel =
     user?.role === "ADMIN" ? t("settings.administrator") : t("settings.user");
@@ -27,6 +43,29 @@ function SettingsPage() {
       ease: "easeOut" as const,
     },
   });
+
+  const handleDeleteAccount = async () => {
+    if (!password.trim()) {
+      setDeleteError(t("settings.deletePasswordRequired"));
+      return;
+    }
+
+    try {
+      setIsDeleting(true);
+      setDeleteError("");
+
+      await deleteMyAccount(password);
+
+      setShowDeleteDialog(false);
+      setDeleteSuccess(true);
+    } catch (error: any) {
+      setDeleteError(
+        error.response?.data?.message || t("settings.deleteAccountError"),
+      );
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <motion.div
@@ -164,6 +203,126 @@ function SettingsPage() {
           </p>
         </div>
       </motion.section>
+
+      <motion.section className="settings-panel" {...panelAnimation(0.5)}>
+        <div className="settings-panel-heading">
+          <div>
+            <h3>{t("settings.deleteAccount")}</h3>
+            <p>{t("settings.deleteAccountDescription")}</p>
+          </div>
+          <Trash2 size={22} />
+        </div>
+
+        <button
+          type="button"
+          className="settings-delete-button"
+          onClick={() => {
+            setDeleteError("");
+            setPassword("");
+            setShowDeleteDialog(true);
+          }}
+        >
+          <Trash2 size={17} />
+          {t("settings.deleteAccountButton")}
+        </button>
+      </motion.section>
+
+      {deleteSuccess && (
+        <div className="settings-delete-overlay">
+          <motion.div
+            className="settings-delete-dialog"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            role="status"
+          >
+            <div className="settings-delete-dialog-heading settings-delete-success">
+              <ShieldCheck size={28} />
+            </div>
+
+            <h3>{t("settings.deleteAccountSuccess")}</h3>
+            <p>{t("settings.deleteAccountSuccessDescription")}</p>
+
+            <div className="settings-delete-dialog-actions">
+              <button
+                type="button"
+                className="settings-delete-confirm-button"
+                onClick={logout}
+              >
+                {t("settings.close")}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {showDeleteDialog && (
+        <div className="settings-delete-overlay">
+          <motion.div
+            className="modal-content settings-delete-dialog"
+            initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-account-title"
+          >
+            <div className="settings-delete-dialog-heading">
+              <AlertTriangle size={28} />
+              <button
+                type="button"
+                onClick={() => setShowDeleteDialog(false)}
+                aria-label={t("settings.close")}
+                disabled={isDeleting}
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <h3 id="delete-account-title">
+              {t("settings.deleteAccountConfirmTitle")}
+            </h3>
+            <p>{t("settings.deleteAccountConfirmDescription")}</p>
+
+            <label className="settings-delete-password">
+              <span>{t("settings.deleteAccountPassword")}</span>
+              <input
+                type="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder={t("settings.deleteAccountPasswordPlaceholder")}
+                autoComplete="current-password"
+                disabled={isDeleting}
+              />
+            </label>
+
+            {deleteError && (
+              <p className="auth-error" role="alert">
+                {deleteError}
+              </p>
+            )}
+
+            <div className="settings-delete-dialog-actions">
+              <button
+                type="button"
+                onClick={() => setShowDeleteDialog(false)}
+                disabled={isDeleting}
+              >
+                {t("settings.cancel")}
+              </button>
+
+              <button
+                type="button"
+                className="settings-delete-confirm-button"
+                onClick={handleDeleteAccount}
+                disabled={isDeleting}
+              >
+                {isDeleting
+                  ? t("settings.deletingAccount")
+                  : t("settings.confirmDeleteAccount")}
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </motion.div>
   );
 }

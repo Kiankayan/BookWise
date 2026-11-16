@@ -1,4 +1,5 @@
 import { Router, Request } from "express";
+import bcrypt from "bcrypt";
 import { prisma, Prisma } from "../lib/prisma.js";
 import auth, { AuthRequest } from "../middleware/auth.js";
 import admin from "../middleware/admin.js";
@@ -27,6 +28,105 @@ router.get("/", auth, admin, async (_req, res) => {
   return res.status(200).json({
     users,
   });
+});
+
+router.delete("/me", auth, async (req: Request, res) => {
+  const currentUserId = (req as AuthRequest).user?.userId;
+  const { password } = req.body;
+
+  if (!currentUserId) {
+    return res.status(401).json({
+      message: "Du måste vara inloggad.",
+    });
+  }
+
+  if (typeof password !== "string" || !password.trim()) {
+    return res.status(400).json({
+      message: "Du måste ange ditt lösenord.",
+    });
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: currentUserId,
+      },
+      select: {
+        passwordHash: true,
+        role: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Användarkontot kunde inte hittas.",
+      });
+    }
+
+    const passwordIsValid = await bcrypt.compare(password, user.passwordHash);
+
+    if (!passwordIsValid) {
+      return res.status(401).json({
+        message: "Fel lösenord.",
+      });
+    }
+
+    const activeLoans = await prisma.loan.count({
+      where: {
+        userId: currentUserId,
+        returnedAt: null,
+      },
+    });
+
+    if (activeLoans > 0) {
+      return res.status(409).json({
+        message:
+          "Du måste lämna tillbaka dina aktiva lån innan du tar bort kontot.",
+      });
+    }
+
+    if (user.role === "ADMIN") {
+      const otherActiveAdmins = await prisma.user.count({
+        where: {
+          role: "ADMIN",
+          isActive: true,
+          id: {
+            not: currentUserId,
+          },
+        },
+      });
+
+      if (otherActiveAdmins === 0) {
+        return res.status(409).json({
+          message:
+            "Den sista aktiva administratören kan inte ta bort sitt konto.",
+        });
+      }
+    }
+
+    await prisma.user.delete({
+      where: {
+        id: currentUserId,
+      },
+    });
+
+    res.clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/api/auth",
+    });
+
+    return res.status(200).json({
+      message: "Ditt konto har tagits bort.",
+    });
+  } catch (error) {
+    console.error("Delete own account error:", error);
+
+    return res.status(500).json({
+      message: "Ett fel uppstod när kontot skulle tas bort.",
+    });
+  }
 });
 
 router.get("/:id", auth, admin, async (req: Request, res) => {

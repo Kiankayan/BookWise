@@ -33,6 +33,12 @@ export async function deleteUser(id: string) {
   return api.delete<{ message: string }>(`${USERS_URL}/${id}`);
 }
 
+export async function deleteMyAccount(password: string) {
+  return api.delete<{ message: string }>(`${USERS_URL}/me`, {
+    data: { password },
+  });
+}
+
 export async function updateMyProfile(data: {
   name: string;
   email: string;

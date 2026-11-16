@@ -1,5 +1,7 @@
 {
   "settings": {
+    "deleteAccountSuccess": "Kontot har raderats permanent",
+    "deleteAccountSuccessDescription": "Ditt BookWise-konto har nu tagits bort.",
     "title": "Inställningar",
     "description": "Anpassa dina personliga inställningar i BookWise.",
     "personal": "PERSONLIGT",
@@ -33,7 +35,20 @@
     "user": "Användare",
     "userId": "Användar-ID",
     "notAvailable": "Inte tillgängligt",
-    "avatarAlt": "Profilbild"
+    "avatarAlt": "Profilbild",
+    "deleteAccount": "Ta bort konto",
+    "deleteAccountDescription": "Ta bort ditt BookWise-konto permanent och tillhörande inloggningssessioner.",
+    "deleteAccountButton": "Ta bort mitt konto",
+    "deletePasswordRequired": "Ange ditt lösenord för att fortsätta.",
+    "deleteAccountError": "Det gick inte att ta bort ditt konto. Försök igen.",
+    "close": "Stäng",
+    "deleteAccountConfirmTitle": "Är du säker på att du vill ta bort ditt konto?",
+    "deleteAccountConfirmDescription": "Åtgärden är permanent och kan inte ångras. Ditt konto kommer att tas bort.",
+    "deleteAccountPassword": "Bekräfta ditt lösenord",
+    "deleteAccountPasswordPlaceholder": "Ange ditt nuvarande lösenord",
+    "cancel": "Avbryt",
+    "deletingAccount": "Tar bort konto...",
+    "confirmDeleteAccount": "Ta bort konto permanent"
   },
   "dashboard": {
     "welcomeEyebrow": "DIN BIBLIOTEKSÖVERSIKT",
