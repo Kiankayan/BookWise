@@ -5263,3 +5263,7 @@ button:active {
     transition: none;
   }
 }
+
+:root[data-theme="dark"] .user-delete-cancel-button {
+  color: var(--bookwise-text);
+}
