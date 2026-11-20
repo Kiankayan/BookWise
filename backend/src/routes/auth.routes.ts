@@ -25,12 +25,6 @@ if (!jwtSecret) {
 }
 
 router.post("/forgot-password", async (req, res) => {
-  if (process.env.NODE_ENV === "production") {
-    return res.status(503).json({
-      message: "Lösenordsåterställning är inte tillgänglig just nu.",
-    });
-  }
-
   const validation = forgotPasswordSchema.safeParse(req.body);
 
   if (!validation.success) {
@@ -63,12 +57,6 @@ router.post("/forgot-password", async (req, res) => {
 });
 
 router.post("/reset-password", async (req, res) => {
-  if (process.env.NODE_ENV === "production") {
-    return res.status(503).json({
-      message: "Lösenordsåterställning är inte tillgänglig just nu.",
-    });
-  }
-
   const validation = resetPasswordSchema.safeParse(req.body);
 
   if (!validation.success) {
