@@ -42,8 +42,9 @@ Built with a modern frontend and backend architecture, BookWise combines data ma
 ### User Dashboard
 ![BookWise Screenshot](screenshots/17.png)
 ![BookWise Screenshot](screenshots/16.png)
-
+### Users Loans
 ![BookWise Screenshot](screenshots/23.png)
+### Reset Password
 ![BookWise Screenshot](screenshots/18.png)
 ![BookWise Screenshot](screenshots/19.png)
 ![BookWise Screenshot](screenshots/20.png)
