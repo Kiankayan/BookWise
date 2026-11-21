@@ -17,16 +17,16 @@ Built with a modern frontend and backend architecture, BookWise combines data ma
 ### Loading Screen
 ![Admin Dashboard](screenshots/1.png)
 
-### Admin Dashboard
+### Login Page
 ![Library Management](screenshots/2.png)
 
-### Library
+### Admin Dashboard
 ![User Dashboard](screenshots/3.png)
 
-### Library Details
+### Library
 ![Borrowing and Returns](screenshots/4.png)
 
-### User Management
+### Library Card Details
 ![User Management](screenshots/5.png)
 
 ![BookWise Screenshot](screenshots/7.png)
