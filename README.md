@@ -35,12 +35,13 @@ Built with a modern frontend and backend architecture, BookWise combines data ma
 ![BookWise Screenshot](screenshots/12.png)
 ![BookWise Screenshot](screenshots/17.png)
 ![BookWise Screenshot](screenshots/16.png)
+![BookWise Screenshot](screenshots/23.png)
 ![BookWise Screenshot](screenshots/18.png)
 ![BookWise Screenshot](screenshots/19.png)
 ![BookWise Screenshot](screenshots/20.png)
 ![BookWise Screenshot](screenshots/21.png)
 ![BookWise Screenshot](screenshots/22.png)
-![BookWise Screenshot](screenshots/23.png)
+
 
 ## Features
 
