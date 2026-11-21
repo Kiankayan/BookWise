@@ -29,12 +29,19 @@ Built with a modern frontend and backend architecture, BookWise combines data ma
 ### Library Card Details
 ![User Management](screenshots/5.png)
 
+### Users view
 ![BookWise Screenshot](screenshots/7.png)
+### Users Details
 ![BookWise Screenshot](screenshots/8.png)
+
 ![BookWise Screenshot](screenshots/11.png)
+
 ![BookWise Screenshot](screenshots/12.png)
+
 ![BookWise Screenshot](screenshots/17.png)
+
 ![BookWise Screenshot](screenshots/16.png)
+
 ![BookWise Screenshot](screenshots/23.png)
 ![BookWise Screenshot](screenshots/18.png)
 ![BookWise Screenshot](screenshots/19.png)
