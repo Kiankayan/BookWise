@@ -12,6 +12,36 @@ The application provides separate experiences for administrators and regular use
 
 Built with a modern frontend and backend architecture, BookWise combines data management, authentication, email integration and cloud-based image storage in one application.
 
+## Screenshots
+
+### Admin Dashboard
+![Admin Dashboard](screenshots/1.png)
+
+### Library Management
+![Library Management](screenshots/2.png)
+
+### User Dashboard
+![User Dashboard](screenshots/3.png)
+
+### Borrowing & Returns
+![Borrowing and Returns](screenshots/4.png)
+
+### User Management
+![User Management](screenshots/5.png)
+
+![BookWise Screenshot](screenshots/7.png)
+![BookWise Screenshot](screenshots/8.png)
+![BookWise Screenshot](screenshots/11.png)
+![BookWise Screenshot](screenshots/12.png)
+![BookWise Screenshot](screenshots/16.png)
+![BookWise Screenshot](screenshots/17.png)
+![BookWise Screenshot](screenshots/18.png)
+![BookWise Screenshot](screenshots/19.png)
+![BookWise Screenshot](screenshots/20.png)
+![BookWise Screenshot](screenshots/21.png)
+![BookWise Screenshot](screenshots/22.png)
+![BookWise Screenshot](screenshots/23.png)
+
 ## Features
 
 ### Authentication & Account Management
